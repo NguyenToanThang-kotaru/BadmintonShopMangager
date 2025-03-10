@@ -53,7 +53,7 @@ public class Login extends JFrame {
 
         JPanel textPanel = new JPanel(new GridLayout(2, 1));
         textPanel.add(title);
-
+        
         textPanel.add(subtitle);
         textPanel.setOpaque(false);
 
