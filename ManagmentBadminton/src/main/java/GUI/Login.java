@@ -101,6 +101,7 @@ public class Login extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new Login().setVisible(true));
+        Login a= new Login();
+        a.setVisible(true);
     }
 }
