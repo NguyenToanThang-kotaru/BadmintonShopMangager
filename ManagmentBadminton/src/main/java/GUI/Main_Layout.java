@@ -40,7 +40,7 @@ public class Main_Layout extends JFrame {
         leftPanel.setOpaque(false);
 
 // Load icon ứng dụng
-        String iconLogo = "src/main/resources/images/appLogo.png";
+        String iconLogo = "src/main/resources/images/LOGOAPP.png";
         ImageIcon appIcon = new ImageIcon(iconLogo);
         Image imgLogo = appIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
         appIcon = new ImageIcon(imgLogo);
