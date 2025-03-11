@@ -28,6 +28,7 @@ public class Main_Layout extends JFrame {
         menuItems.add("Nhà Cung Cấp");
         menuItems.add("Khách Hàng");
         menuItems.add("Tài Khoản");
+        menuItems.add("Bảo Hành");
 
         // ====== Title Bar ======
         // ====== Title Bar ======
@@ -124,6 +125,9 @@ public class Main_Layout extends JFrame {
                     break;
                 case "Tài Khoản":
                     iconPath += "icon_account.png";
+                    break;
+                case "Bảo Hành":
+                    iconPath += "icon_baohanh.png";
                     break;
                 default:
                     iconPath = null;
