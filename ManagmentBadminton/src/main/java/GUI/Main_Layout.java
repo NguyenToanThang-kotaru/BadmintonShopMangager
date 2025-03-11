@@ -1,76 +1,196 @@
 package GUI;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.*;
+import java.util.ArrayList;
+import javax.swing.border.MatteBorder;
 
 public class Main_Layout extends JFrame {
-    private JTable productTable;
-    private DefaultTableModel tableModel;
-    private JTextField txtId, txtName, txtQuantity;
+
+    private int mouseX, mouseY;
+    private ArrayList<String> menuItems;
 
     public Main_Layout() {
         setTitle("Quản Lý Kho Hàng");
         setSize(1000, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setLayout(new BorderLayout(10, 10));
-        JButton thongke,sanpham,donhang,nhacungcap,khachhang,taikhoan;
-        
-        
-        
-        
-        
-        
-        // ====== Thanh Chức Năng (Bắc - NORTH) ======
-//        JPanel functionPanel = new JPanel();
-//        functionPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-//        functionPanel.add(new JButton("Thêm"));
-//        functionPanel.add(new JButton("Xóa"));
-//        functionPanel.add(new JButton("Sửa"));
-//        functionPanel.add(new JButton("Tìm Kiếm"));
-//        add(functionPanel, BorderLayout.NORTH);
+        setLayout(new BorderLayout(0, 0));
+        setUndecorated(true);
 
-        // ====== Sidebar (Tây - WEST) ======
-        JPanel sidebarPanel = new JPanel();
-        sidebarPanel.setLayout(new FlowLayout());
-        sidebarPanel.add(new JButton("Trang Chủ"));
-        sidebarPanel.add(new JButton("Sản Phẩm"));
-        sidebarPanel.add(new JButton("Đơn Hàng"));
-        sidebarPanel.add(new JButton("Khách Hàng"));
-        sidebarPanel.add(new JButton("Báo Cáo"));
+        // ====== Danh sách menu từ ArrayList ======
+        menuItems = new ArrayList<>();
+        menuItems.add("Thống kê");
+        menuItems.add("Sản Phẩm");
+        menuItems.add("Đơn Hàng");
+        menuItems.add("Nhân Viên");
+        menuItems.add("Nhà Cung Cấp");
+        menuItems.add("Khách Hàng");
+        menuItems.add("Tài Khoản");
+
+        // ====== Title Bar ======
+        // ====== Title Bar ======
+        JPanel titleBar = new JPanel(new BorderLayout());
+        titleBar.setBackground(new Color(50, 50, 50));
+        titleBar.setPreferredSize(new Dimension(getWidth(), 40));
+
+// ====== Left Panel (Icon + Title) ======
+        JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
+        leftPanel.setOpaque(false);
+
+// Load icon ứng dụng
+        String iconLogo = "src/main/resources/images/appLogo.png";
+        ImageIcon appIcon = new ImageIcon(iconLogo);
+        Image imgLogo = appIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+        appIcon = new ImageIcon(imgLogo);
+
+        JLabel iconLabel = new JLabel(appIcon);
+        JLabel titleLabel = new JLabel(" Quản Lý Cửa Hàng Cầu Lông");
+        titleLabel.setForeground(Color.WHITE);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
+
+// Thêm icon + tiêu đề vào leftPanel
+        leftPanel.add(iconLabel);
+        leftPanel.add(titleLabel);
+
+// ====== Right Panel (Nút minimize + close) ======
+        JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 5));
+        rightPanel.setOpaque(false);
+
+        JButton minimizeButton = new JButton("–");
+        minimizeButton.setForeground(Color.WHITE);
+        minimizeButton.setBackground(new Color(100, 100, 100));
+        minimizeButton.setFocusPainted(false);
+        minimizeButton.addActionListener(e -> setState(JFrame.ICONIFIED));
+
+        JButton closeButton = new JButton("X");
+        closeButton.setForeground(Color.WHITE);
+        closeButton.setBackground(Color.RED);
+        closeButton.setFocusPainted(false);
+        closeButton.addActionListener(e -> System.exit(0));
+
+// Thêm nút vào rightPanel
+        rightPanel.add(minimizeButton);
+        rightPanel.add(closeButton);
+
+// ====== Thêm vào Title Bar ======
+        titleBar.add(leftPanel, BorderLayout.WEST);
+        titleBar.add(rightPanel, BorderLayout.EAST);
+        add(titleBar, BorderLayout.NORTH);
+
+        // ====== Sidebar ======
+        JPanel sidebarPanel = new JPanel(new BorderLayout());
+        sidebarPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        sidebarPanel.setBackground(Color.LIGHT_GRAY);
+        sidebarPanel.setPreferredSize(new Dimension(200, 600));
+
+        // ====== panel1: Tiêu đề MENU ======
+        JPanel panel1 = new JPanel();
+        panel1.setBackground(Color.LIGHT_GRAY);
+        panel1.setLayout(new FlowLayout(FlowLayout.CENTER));
+        JLabel titleMenu = new JLabel("MENU");
+        titleMenu.setFont(new Font("Roboto", Font.BOLD, 30));
+        titleMenu.setForeground(new Color(0, 153, 153));
+        titleMenu.setBorder(new MatteBorder(0, 0, 2, 0, new Color(0, 153, 100)));
+        panel1.add(titleMenu);
+
+        // ====== panel2: Danh sách menu ======
+        JPanel panel2 = new JPanel();
+        panel2.setLayout(new BoxLayout(panel2, BoxLayout.Y_AXIS));
+        panel2.setBackground(Color.LIGHT_GRAY);
+
+        for (String item : menuItems) {
+            // Định nghĩa đường dẫn của icon tương ứng
+            String iconPath = "src/main/resources/images/";
+            switch (item) {
+                case "Thống kê":
+                    iconPath += "icontk.png";
+                    break;
+                case "Sản Phẩm":
+                    iconPath += "icon_sanpham.png";
+                    break;
+                case "Đơn Hàng":
+                    iconPath += "icon_donhang.png";
+                    break;
+                case "Nhân Viên":
+                    iconPath += "icon_nhanvien.png";
+                    break;
+                case "Nhà Cung Cấp":
+                    iconPath += "icon_supplier.png";
+                    break;
+                case "Khách Hàng":
+                    iconPath += "icon_khachhang.png";
+                    break;
+                case "Tài Khoản":
+                    iconPath += "icon_account.png";
+                    break;
+                default:
+                    iconPath = null;
+            }
+
+            // Tạo JLabel có icon
+            JLabel label;
+            if (iconPath != null) {
+                ImageIcon icon = new ImageIcon(iconPath);
+                Image img = icon.getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
+                icon = new ImageIcon(img);
+                label = new JLabel(item, icon, JLabel.LEFT);
+            } else {
+                label = new JLabel(item, JLabel.LEFT);
+            }
+
+            label.setFont(new Font("Roboto", Font.BOLD, 19));
+            label.setOpaque(true);
+            label.setBackground(Color.LIGHT_GRAY);
+            label.setForeground(Color.BLACK);
+            label.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+            label.setPreferredSize(new Dimension(200, 40));
+
+            // Hiệu ứng hover
+            label.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    label.setBackground(new Color(0, 153, 153));
+                    label.setForeground(Color.WHITE);
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    label.setBackground(Color.LIGHT_GRAY);
+                    label.setForeground(Color.BLACK);
+                }
+            });
+
+            panel2.add(label);
+            panel2.add(Box.createVerticalStrut(5));
+        }
+
+        // ====== panel3: Nút thoát ======
+        JPanel panel3 = new JPanel();
+        panel3.setBackground(Color.LIGHT_GRAY);
+        panel3.setPreferredSize(new Dimension(getWidth(), 50));
+
+        JButton exitButton = new JButton("Thoát");
+        exitButton.setForeground(Color.WHITE);
+        exitButton.setBackground(Color.RED);
+        exitButton.setFocusPainted(false);
+        exitButton.setFont(new Font("Arial", Font.BOLD, 14));
+        exitButton.addActionListener(e -> System.exit(0));
+        panel3.add(exitButton);
+
+        // ====== Sắp xếp các panel trong sidebar ======
+        sidebarPanel.add(panel1, BorderLayout.NORTH);
+        sidebarPanel.add(panel2, BorderLayout.CENTER);
+        sidebarPanel.add(panel3, BorderLayout.SOUTH); // Đặt ở dưới cùng
+
         add(sidebarPanel, BorderLayout.WEST);
-
-        // ====== Bảng Sản Phẩm (Trung tâm - CENTER) ======
-//        tableModel = new DefaultTableModel(new String[]{"ID", "Tên Sản Phẩm", "Số Lượng"}, 0);
-//        productTable = new JTable(tableModel);  
-//        add(new JScrollPane(productTable), BorderLayout.CENTER);
-//        productTable.setFillsViewportHeight(true);
-//        productTable.setBackground(Color.LIGHT_GRAY);
-//        productTable.getTableHeader().setForeground(Color.BLUE);
-//        productTable.getTableHeader().setBackground(Color.YELLOW);
-
-        // ====== Form nhập dữ liệu (Nam - SOUTH) ======
-//        JPanel inputPanel = new JPanel(new GridLayout(2, 4, 5, 5));
-//        inputPanel.add(new JLabel("ID:"));
-//        txtId = new JTextField();
-//        inputPanel.add(txtId);
-//
-//        inputPanel.add(new JLabel("Tên Sản Phẩm:"));
-//        txtName = new JTextField();
-//        inputPanel.add(txtName);
-//
-//        inputPanel.add(new JLabel("Số Lượng:"));
-//        txtQuantity = new JTextField();
-//        inputPanel.add(txtQuantity);
-//
-//        inputPanel.add(new JButton("Lưu"));
-//        inputPanel.add(new JButton("Hủy"));
-//        add(inputPanel, BorderLayout.SOUTH);
     }
 
     public static void main(String[] args) {
-            Main_Layout a = new Main_Layout();
-            a.setVisible(true);
+        SwingUtilities.invokeLater(() -> {
+            Main_Layout frame = new Main_Layout();
+            frame.setVisible(true);
+        });
     }
 }
