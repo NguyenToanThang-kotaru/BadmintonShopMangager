@@ -8,21 +8,21 @@ package DTO;
  *
  * @author Thang Nguyen
  */
-public class AcountDTO {
+public class AccountDTO {
 
     private String username;
     private String password;
     private String employeeID;
     private String rankID;
 
-    public AcountDTO() {
+    public AccountDTO() {
         username = "";
         password = "";
         employeeID = "";
         rankID = "";
     }
 
-    public AcountDTO(String username, String password, String employeeID, String rankID) {
+    public AccountDTO(String username, String password, String employeeID, String rankID) {
         this.username = username;
         this.password = password;
         this.employeeID = employeeID;
