@@ -33,17 +33,16 @@ public class Main_Layout extends JFrame {
         menuItems.add("Bảo Hành");
         menuItems.add("Phân Quyền");
 
-        // ====== Title Bar ======
-        // ====== Title Bar ======
+        // ================================ Title Bar ================================
         JPanel titleBar = new JPanel(new BorderLayout());
         titleBar.setBackground(new Color(50, 50, 50));
         titleBar.setPreferredSize(new Dimension(getWidth(), 40));
 
-// ====== Left Panel (Icon + Title) ======
+        // ====== Left Panel (Icon + Title) ======
         JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
         leftPanel.setOpaque(false);
 
-// Load icon ứng dụng
+        // Load icon ứng dụng
         String iconLogo = "src/main/resources/images/LOGOAPP.png";
         ImageIcon appIcon = new ImageIcon(iconLogo);
         Image imgLogo = appIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
@@ -54,11 +53,11 @@ public class Main_Layout extends JFrame {
         titleLabel.setForeground(Color.WHITE);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
 
-// Thêm icon + tiêu đề vào leftPanel
+        // Thêm icon + tiêu đề vào leftPanel
         leftPanel.add(iconLabel);
         leftPanel.add(titleLabel);
 
-// ====== Right Panel (Nút minimize + close) ======
+        // ====== Right Panel (Nút minimize + close) ======
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 5));
         rightPanel.setOpaque(false);
 
@@ -74,16 +73,15 @@ public class Main_Layout extends JFrame {
         closeButton.setFocusPainted(false);
         closeButton.addActionListener(e -> System.exit(0));
 
-// Thêm nút vào rightPanel
+        // Thêm nút vào rightPanel
         rightPanel.add(minimizeButton);
         rightPanel.add(closeButton);
 
-// ====== Thêm vào Title Bar ======
+        // ====== Thêm vào Title Bar ======
         titleBar.add(leftPanel, BorderLayout.WEST);
         titleBar.add(rightPanel, BorderLayout.EAST);
-        add(titleBar, BorderLayout.NORTH);
 
-        // ====== Sidebar ======
+        // ================================ Sidebar ================================
         JPanel sidebarPanel = new JPanel(new BorderLayout());
         sidebarPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         sidebarPanel.setBackground(Color.LIGHT_GRAY);
@@ -192,7 +190,7 @@ public class Main_Layout extends JFrame {
         verticalScrollBar.setUnitIncrement(10); // Cuộn mượt hơn
         verticalScrollBar.setBorder(BorderFactory.createLineBorder(new Color(180, 180, 180), 1)); // Viền mỏng màu nhạt
 
-// Tùy chỉnh màu sắc thanh cuộn
+        // Tùy chỉnh màu sắc thanh cuộn
         verticalScrollBar.setUI(new javax.swing.plaf.basic.BasicScrollBarUI() {
             @Override
             protected void configureScrollBarColors() {
@@ -218,7 +216,7 @@ public class Main_Layout extends JFrame {
             }
         });
 
-// ====== Thêm JScrollPane vào sidebar ======
+    // ====== Thêm JScrollPane vào sidebar ======
         // ====== panel3: Nút thoát ======
         JPanel panel3 = new JPanel();
         panel3.setBackground(Color.LIGHT_GRAY);
@@ -236,8 +234,10 @@ public class Main_Layout extends JFrame {
         sidebarPanel.add(panel1, BorderLayout.NORTH);
         sidebarPanel.add(scrollPane, BorderLayout.CENTER);
         sidebarPanel.add(panel3, BorderLayout.SOUTH); // Đặt ở dưới cùng
-
+            
+        add(titleBar, BorderLayout.NORTH);
         add(sidebarPanel, BorderLayout.WEST);
+
     }
 
     public static void main(String[] args) {
