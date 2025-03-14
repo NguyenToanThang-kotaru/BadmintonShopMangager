@@ -3,8 +3,7 @@ package GUI;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
-import javax.swing.border.MatteBorder;
+
 
 public class Main_Layout extends JFrame {
 
@@ -61,9 +60,9 @@ public class Main_Layout extends JFrame {
         Sidebar.customerPanel.setBackground(Color.RED);
         Sidebar.customerPanel.add(new JLabel("Khách hàng"));
 
-        Sidebar.accountPanel = new JPanel();
-        Sidebar.accountPanel.setBackground(Color.GRAY);
-        Sidebar.accountPanel.add(new JLabel("Tài khoản"));
+        Sidebar.accountPanel = new Account();
+//        Sidebar.accountPanel.setBackground(Color.GRAY);
+//        Sidebar.accountPanel.add(new JLabel("Tài khoản"));
 
         Sidebar.repairPanel = new JPanel();
         Sidebar.repairPanel.setBackground(Color.DARK_GRAY);

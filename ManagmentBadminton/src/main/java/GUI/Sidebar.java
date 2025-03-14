@@ -19,6 +19,7 @@ public class Sidebar extends JPanel {
             repairPanel, employeePanel;
     private JLabel titleMenu;
     public JPanel panel1, panel2, panel3;
+    public CustomScrollPane scrollPane;
 
     public Sidebar(JFrame login, JFrame Main_Layout) {
         setLayout(new BorderLayout());
@@ -131,41 +132,7 @@ public class Sidebar extends JPanel {
             panel2.add(Box.createVerticalStrut(5));
         }
         // ====== Tạo JScrollPane cho menu ======
-        JScrollPane scrollPane = new JScrollPane(panel2);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.getVerticalScrollBar().setUnitIncrement(10); // Tốc độ cuộn
-        scrollPane.setBorder(BorderFactory.createEmptyBorder());
-        JScrollBar verticalScrollBar = scrollPane.getVerticalScrollBar();
-        verticalScrollBar.setPreferredSize(new Dimension(0, 0)); // Giảm độ rộng thanh cuộn
-        verticalScrollBar.setUnitIncrement(10); // Cuộn mượt hơn
-        verticalScrollBar.setBorder(BorderFactory.createLineBorder(new Color(180, 180, 180), 1)); // Viền mỏng màu nhạt
-
-        // Tùy chỉnh màu sắc thanh cuộn
-        verticalScrollBar.setUI(new javax.swing.plaf.basic.BasicScrollBarUI() {
-            @Override
-            protected void configureScrollBarColors() {
-                this.thumbColor = new Color(100, 100, 100); // Màu của phần cuộn
-                this.trackColor = new Color(220, 220, 220); // Màu nền của thanh cuộn
-            }
-
-            @Override
-            protected JButton createDecreaseButton(int orientation) {
-                return createZeroButton(); // Ẩn nút lên trên
-            }
-
-            @Override
-            protected JButton createIncreaseButton(int orientation) {
-                return createZeroButton(); // Ẩn nút xuống dưới
-            }
-
-            private JButton createZeroButton() {
-                JButton button = new JButton();
-                button.setPreferredSize(new Dimension(0, 0)); // Loại bỏ nút tăng/giảm
-                button.setVisible(false);
-                return button;
-            }
-        });
+        scrollPane = new CustomScrollPane(panel2);
 
         // ====== Thêm JScrollPane vào sidebar ======
         // ====== panel3: Nút thoát ======

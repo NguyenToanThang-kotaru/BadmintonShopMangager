@@ -22,7 +22,7 @@ public class Login extends JFrame {
         tittleBar = new TittleBar(this);
         add(tittleBar, BorderLayout.NORTH);
 
-        // Panel chính chứa 2 phần
+    // Panel chính chứa 2 phần
         JPanel mainPanel = new JPanel(new GridLayout(1, 2));
         getContentPane().add(mainPanel);
 
@@ -93,7 +93,7 @@ public class Login extends JFrame {
         passField.setBounds(150, 230, 180, 25);
         rightPanel.add(passField);
 
-        JButton loginButton = new JButton("Đăng nhập");
+        CustomButton loginButton = new CustomButton("Đăng nhập");
         loginButton.setBounds(130, 290, 140, 40);
         loginButton.setFont(new Font("Arial", Font.BOLD, 14));
         loginButton.setForeground(Color.WHITE);
