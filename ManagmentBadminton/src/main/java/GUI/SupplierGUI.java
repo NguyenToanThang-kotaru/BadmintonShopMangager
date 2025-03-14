@@ -2,6 +2,8 @@ package GUI;
 
 import BUS.SupplierBUS;
 import DTO.SupplierDTO;
+
+import java.awt.Color;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
@@ -15,5 +17,6 @@ public class SupplierGUI {
     }
     
     public void initComponent(){
+        panel.setBackground(Color.RED);
     }
 }
