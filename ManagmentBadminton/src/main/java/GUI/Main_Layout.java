@@ -45,8 +45,6 @@ public class Main_Layout extends JFrame {
 
 
         Sidebar.supplierPanel = new JPanel();
-        Sidebar.supplierPanel.setBackground(Color.YELLOW);
-        Sidebar.supplierPanel.add(new JLabel("Nhà cung cấp"));
 
         Sidebar.importPanel = new JPanel();
         Sidebar.importPanel.setBackground(Color.PINK);
@@ -92,6 +90,7 @@ public class Main_Layout extends JFrame {
                                 contentPanel.add(Sidebar.employeePanel, BorderLayout.CENTER);
                                 break;
                             case "Nhà Cung Cấp" :
+                                new SupplierGUI(Sidebar.supplierPanel);
                                 contentPanel.add(Sidebar.supplierPanel, BorderLayout.CENTER);
                                 break;
                             case "Hóa Đơn Nhập" :
