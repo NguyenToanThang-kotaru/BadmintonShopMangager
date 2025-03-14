@@ -80,29 +80,40 @@ public class Main_Layout extends JFrame {
                         contentPanel.removeAll(); // Xóa nội dung cũ
 
                         switch (menuLabel.getText()) {
-                            case "Thống kê" ->
+                            case "Thống kê":
                                 contentPanel.add(Sidebar.statisticsPanel, BorderLayout.CENTER);
-                            case "Sản Phẩm" ->
+                                break;
+                            case "Sản Phẩm" :
                                 contentPanel.add(Sidebar.productPanel, BorderLayout.CENTER);
-                            case "Đơn Hàng" ->
+                                break;
+                            case "Đơn Hàng" :
                                 contentPanel.add(Sidebar.orderPanel, BorderLayout.CENTER);
-                            case "Nhân Viên" ->
+                                break;
+                            case "Nhân Viên" :
                                 contentPanel.add(Sidebar.employeePanel, BorderLayout.CENTER);
-                            case "Nhà Cung Cấp" ->
+                                break;
+                            case "Nhà Cung Cấp" :
                                 contentPanel.add(Sidebar.supplierPanel, BorderLayout.CENTER);
-                            case "Hóa Đơn Nhập" ->
+                                break;
+                            case "Hóa Đơn Nhập" :
                                 contentPanel.add(Sidebar.importPanel, BorderLayout.CENTER);
-                            case "Khuyến Mãi" ->
+                                break;
+                            case "Khuyến Mãi" :
                                 contentPanel.add(Sidebar.promotionPanel, BorderLayout.CENTER);
-                            case "Khách Hàng" ->
+                                break;
+                            case "Khách Hàng" :
                                 contentPanel.add(Sidebar.customerPanel, BorderLayout.CENTER);
-                            case "Tài Khoản" ->
+                                break;
+                            case "Tài Khoản" :
                                 contentPanel.add(Sidebar.accountPanel, BorderLayout.CENTER);
-                            case "Bảo Hành" ->
+                                break;
+                            case "Bảo Hành" :
                                 contentPanel.add(Sidebar.repairPanel, BorderLayout.CENTER);
-                            case "Phân Quyền" ->
+                                break;
+                            case "Phân Quyền" :
                                 contentPanel.add(Sidebar.rolePanel, BorderLayout.CENTER);
-                            default ->
+                                break;
+                            default :
                                 contentPanel.add(new JLabel("Chưa có nội dung"), BorderLayout.CENTER);
                         }
 
