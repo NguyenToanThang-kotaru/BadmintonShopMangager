@@ -11,46 +11,66 @@ public class ProductManagement extends JFrame {
 
     public ProductManagement() {
         setTitle("Quản Lý Kho Hàng");
-        setSize(600, 400);
+        setSize(1000, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+        setLayout(new BorderLayout(10, 10));
 
-        // Bảng hiển thị sản phẩm
+        // ====== Thanh Chức Năng (Bắc - NORTH) ======
+        JPanel functionPanel = new JPanel();
+        functionPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+        functionPanel.add(new JButton("Thêm"));
+        functionPanel.add(new JButton("Xóa"));
+        functionPanel.add(new JButton("Sửa"));
+        functionPanel.add(new JButton("Tìm Kiếm"));
+        add(functionPanel, BorderLayout.NORTH);
+
+        // ====== Sidebar (Tây - WEST) ======
+        JPanel sidebarPanel = new JPanel();
+        sidebarPanel.setLayout(new GridLayout(5, 1, 5, 5));
+        sidebarPanel.add(new JButton("Trang Chủ"));
+        sidebarPanel.add(new JButton("Sản Phẩm"));
+        sidebarPanel.add(new JButton("Đơn Hàng"));
+        sidebarPanel.add(new JButton("Khách Hàng"));
+        sidebarPanel.add(new JButton("Báo Cáo"));
+        add(sidebarPanel, BorderLayout.WEST);
+
+        // ====== Bảng Sản Phẩm (Trung tâm - CENTER) ======
         tableModel = new DefaultTableModel(new String[]{"ID", "Tên Sản Phẩm", "Số Lượng"}, 0);
-        productTable = new JTable(tableModel);
+        productTable = new JTable(tableModel);  
         add(new JScrollPane(productTable), BorderLayout.CENTER);
+        productTable.setFillsViewportHeight(true);
+        productTable.setBackground(Color.LIGHT_GRAY);
+        productTable.getTableHeader().setForeground(Color.BLUE);
+        productTable.getTableHeader().setBackground(Color.YELLOW);
 
-        // Form nhập liệu
-        JPanel panelInput = new JPanel(new GridLayout(4, 2));
-        panelInput.add(new JLabel("ID:"));
+        // ====== Form nhập dữ liệu (Nam - SOUTH) ======
+        JPanel inputPanel = new JPanel(new GridLayout(2, 4, 5, 5));
+        inputPanel.add(new JLabel("ID:"));
         txtId = new JTextField();
-        panelInput.add(txtId);
+        inputPanel.add(txtId);
 
-        panelInput.add(new JLabel("Tên Sản Phẩm:"));
+        inputPanel.add(new JLabel("Tên Sản Phẩm:"));
         txtName = new JTextField();
-        panelInput.add(txtName);
+        inputPanel.add(txtName);
 
-        panelInput.add(new JLabel("Số Lượng:"));
+        inputPanel.add(new JLabel("Số Lượng:"));
         txtQuantity = new JTextField();
-        panelInput.add(txtQuantity);
+        inputPanel.add(txtQuantity);
 
-        JButton btnAdd = new JButton("Thêm");
-        panelInput.add(btnAdd);
+        inputPanel.add(new JButton("Lưu"));
+        inputPanel.add(new JButton("Hủy"));
+        add(inputPanel, BorderLayout.SOUTH);
 
-        JButton btnRemove = new JButton("Xóa");
-        panelInput.add(btnRemove);
-
-        add(panelInput, BorderLayout.SOUTH);
-
-        setVisible(true);
+            setVisible(true);
     }
 
-   public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable(){
-            public void run(){
-                new ProductManagement();
-            }
-        });
-        
+    public static void main(String[] args) {
+            try {
+        UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+        SwingUtilities.invokeLater(ProductManagement::new);
     }
 }
