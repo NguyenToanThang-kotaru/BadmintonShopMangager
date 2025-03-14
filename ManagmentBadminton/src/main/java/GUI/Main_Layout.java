@@ -10,11 +10,12 @@ public class Main_Layout extends JFrame {
 
     private ArrayList<String> menuItems;
     private JPanel contentPanel;
-    private JPanel statisticsPanel, productPanel, orderPanel,
-            supplierPanel, importPanel, promotionPanel,
-            customerPanel, accountPanel, rolePanel,
-            repairPanel, employeePanel;
+    private JPanel  statisticsPanel, productPanel, orderPanel,
+                    supplierPanel, importPanel, promotionPanel,
+                    customerPanel, accountPanel, rolePanel,
+                    repairPanel, employeePanel;
     private int mouseX, mouseY;
+    private TittleBar tittleBar;
 
     public Main_Layout() {
         setTitle("Quản Lý Kho Hàng");
@@ -25,70 +26,7 @@ public class Main_Layout extends JFrame {
         setUndecorated(true);
         
         // ================================ Title Bar ================================
-        JPanel titleBar = new JPanel(new BorderLayout());
-        titleBar.setBackground(new Color(50, 50, 50));
-        titleBar.setPreferredSize(new Dimension(getWidth(), 40));
-
-        // Xử lý sự kiện kéo cửa sổ
-        titleBar.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                mouseX = e.getX();
-                mouseY = e.getY();
-            }
-        });
-
-        titleBar.addMouseMotionListener(new MouseMotionAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent e) {
-                int x = e.getXOnScreen();
-                int y = e.getYOnScreen();
-                setLocation(x - mouseX, y - mouseY);
-            }
-        });
-
-        // ====== Left Panel (Icon + Title) ======
-        JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        leftPanel.setOpaque(false);
-
-        // Load icon ứng dụng
-        String iconLogo = "src/main/resources/images/LOGOAPP.png";
-        ImageIcon appIcon = new ImageIcon(iconLogo);
-        Image imgLogo = appIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
-        appIcon = new ImageIcon(imgLogo);
-
-        JLabel iconLabel = new JLabel(appIcon);
-        JLabel titleLabel = new JLabel(" Quản Lý Cửa Hàng Cầu Lông");
-        titleLabel.setForeground(Color.WHITE);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
-
-        // Thêm icon + tiêu đề vào leftPanel
-        leftPanel.add(iconLabel);
-        leftPanel.add(titleLabel);
-
-        // ====== Right Panel (Nút minimize + close) ======
-        JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 5));
-        rightPanel.setOpaque(false);
-
-        JButton minimizeButton = new JButton("–");
-        minimizeButton.setForeground(Color.WHITE);
-        minimizeButton.setBackground(new Color(100, 100, 100));
-        minimizeButton.setFocusPainted(false);
-        minimizeButton.addActionListener(e -> setState(JFrame.ICONIFIED));
-
-        JButton closeButton = new JButton("X");
-        closeButton.setForeground(Color.WHITE);
-        closeButton.setBackground(Color.RED);
-        closeButton.setFocusPainted(false);
-        closeButton.addActionListener(e -> System.exit(0));
-
-        // Thêm nút vào rightPanel
-        rightPanel.add(minimizeButton);
-        rightPanel.add(closeButton);
-
-        // ====== Thêm vào Title Bar ======
-        titleBar.add(leftPanel, BorderLayout.WEST);
-        titleBar.add(rightPanel, BorderLayout.EAST);
+        tittleBar = new TittleBar(this);
 
         // ================================ Sidebar ================================
         JPanel sidebarPanel = new JPanel(new BorderLayout());
@@ -349,7 +287,7 @@ public class Main_Layout extends JFrame {
             }
         }
 
-        add(titleBar, BorderLayout.NORTH);
+        add(tittleBar, BorderLayout.NORTH);
         add(sidebarPanel, BorderLayout.WEST);
         add(contentPanel, BorderLayout.CENTER);
     }

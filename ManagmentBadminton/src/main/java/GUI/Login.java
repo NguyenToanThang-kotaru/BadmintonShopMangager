@@ -2,9 +2,12 @@ package GUI;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class Login extends JFrame {
-
+    private TittleBar tittleBar;
+    
     public Login() {
         // Cấu hình cửa sổ
         setTitle("Đăng nhập");
@@ -12,6 +15,10 @@ public class Login extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
+        setUndecorated(true);
+        // ===== THÊM THANH TIÊU ĐỀ =====
+        tittleBar = new TittleBar(this);
+        add(tittleBar, BorderLayout.NORTH);
 
         // Panel chính chứa 2 phần
         JPanel mainPanel = new JPanel(new GridLayout(1, 2));
@@ -42,7 +49,7 @@ public class Login extends JFrame {
         subtitle.setHorizontalAlignment(SwingConstants.RIGHT);
 
         
-        ImageIcon originalIcon = new ImageIcon("src/main/resources/images/logo.png");
+        ImageIcon originalIcon = new ImageIcon("src/main/resources/images/appLogo.png");
         Image originalImage = originalIcon.getImage();
         int newWidth = 200;
         int newHeight = 150;
@@ -94,12 +101,31 @@ public class Login extends JFrame {
         loginButton.setBackground(new Color(0, 150, 255));
         loginButton.setFocusPainted(false);
 
+        
+        loginButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                checkLogin(); // Gọi hàm check khi bấm nút
+            }
+        });
+
+        
+        
         rightPanel.add(loginButton);
         // Thêm vào mainPanel   
         mainPanel.add(leftPanel);
         mainPanel.add(rightPanel);
+        
+        
+        
     }
 
+    
+    private void checkLogin(){
+        System.out.println("da click");
+    }
+    
+    
     public static void main(String[] args) {
         Login a= new Login();
         a.setVisible(true);
