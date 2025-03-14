@@ -26,9 +26,12 @@ public class Main_Layout extends JFrame {
         menuItems.add("Đơn Hàng");
         menuItems.add("Nhân Viên");
         menuItems.add("Nhà Cung Cấp");
+        menuItems.add("Hóa Đơn Nhập");
+        menuItems.add("Khuyến Mãi");
         menuItems.add("Khách Hàng");
         menuItems.add("Tài Khoản");
         menuItems.add("Bảo Hành");
+        menuItems.add("Phân Quyền");
 
         // ====== Title Bar ======
         // ====== Title Bar ======
@@ -129,6 +132,15 @@ public class Main_Layout extends JFrame {
                 case "Bảo Hành":
                     iconPath += "icon_baohanh.png";
                     break;
+                case "Hóa Đơn Nhập":
+                    iconPath += "hoadonnhap.png";
+                    break;
+                case "Phân Quyền":
+                    iconPath += "icon_role.png";
+                    break;
+                case "Khuyến Mãi":
+                    iconPath += "icon_khuyenmai.png";
+                    break;
                 default:
                     iconPath = null;
             }
@@ -169,7 +181,44 @@ public class Main_Layout extends JFrame {
             panel2.add(label);
             panel2.add(Box.createVerticalStrut(5));
         }
+        // ====== Tạo JScrollPane cho menu ======
+        JScrollPane scrollPane = new JScrollPane(panel2);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(10); // Tốc độ cuộn
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        JScrollBar verticalScrollBar = scrollPane.getVerticalScrollBar();
+        verticalScrollBar.setPreferredSize(new Dimension(0, 0)); // Giảm độ rộng thanh cuộn
+        verticalScrollBar.setUnitIncrement(10); // Cuộn mượt hơn
+        verticalScrollBar.setBorder(BorderFactory.createLineBorder(new Color(180, 180, 180), 1)); // Viền mỏng màu nhạt
 
+// Tùy chỉnh màu sắc thanh cuộn
+        verticalScrollBar.setUI(new javax.swing.plaf.basic.BasicScrollBarUI() {
+            @Override
+            protected void configureScrollBarColors() {
+                this.thumbColor = new Color(100, 100, 100); // Màu của phần cuộn
+                this.trackColor = new Color(220, 220, 220); // Màu nền của thanh cuộn
+            }
+
+            @Override
+            protected JButton createDecreaseButton(int orientation) {
+                return createZeroButton(); // Ẩn nút lên trên
+            }
+
+            @Override
+            protected JButton createIncreaseButton(int orientation) {
+                return createZeroButton(); // Ẩn nút xuống dưới
+            }
+
+            private JButton createZeroButton() {
+                JButton button = new JButton();
+                button.setPreferredSize(new Dimension(0, 0)); // Loại bỏ nút tăng/giảm
+                button.setVisible(false);
+                return button;
+            }
+        });
+
+// ====== Thêm JScrollPane vào sidebar ======
         // ====== panel3: Nút thoát ======
         JPanel panel3 = new JPanel();
         panel3.setBackground(Color.LIGHT_GRAY);
@@ -185,7 +234,7 @@ public class Main_Layout extends JFrame {
 
         // ====== Sắp xếp các panel trong sidebar ======
         sidebarPanel.add(panel1, BorderLayout.NORTH);
-        sidebarPanel.add(panel2, BorderLayout.CENTER);
+        sidebarPanel.add(scrollPane, BorderLayout.CENTER);
         sidebarPanel.add(panel3, BorderLayout.SOUTH); // Đặt ở dưới cùng
 
         add(sidebarPanel, BorderLayout.WEST);
