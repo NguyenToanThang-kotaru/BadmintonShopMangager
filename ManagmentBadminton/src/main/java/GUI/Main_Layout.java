@@ -8,8 +8,13 @@ import javax.swing.border.MatteBorder;
 
 public class Main_Layout extends JFrame {
 
-    private int mouseX, mouseY;
     private ArrayList<String> menuItems;
+    private JPanel contentPanel;
+    private JPanel statisticsPanel, productPanel, orderPanel,
+            supplierPanel, importPanel, promotionPanel,
+            customerPanel, accountPanel, rolePanel,
+            repairPanel, employeePanel;
+    private int mouseX, mouseY;
 
     public Main_Layout() {
         setTitle("Quản Lý Kho Hàng");
@@ -18,25 +23,29 @@ public class Main_Layout extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(0, 0));
         setUndecorated(true);
-
-        // ====== Danh sách menu từ ArrayList ======
-        menuItems = new ArrayList<>();
-        menuItems.add("Thống kê");
-        menuItems.add("Sản Phẩm");
-        menuItems.add("Đơn Hàng");
-        menuItems.add("Nhân Viên");
-        menuItems.add("Nhà Cung Cấp");
-        menuItems.add("Hóa Đơn Nhập");
-        menuItems.add("Khuyến Mãi");
-        menuItems.add("Khách Hàng");
-        menuItems.add("Tài Khoản");
-        menuItems.add("Bảo Hành");
-        menuItems.add("Phân Quyền");
-
+        
         // ================================ Title Bar ================================
         JPanel titleBar = new JPanel(new BorderLayout());
         titleBar.setBackground(new Color(50, 50, 50));
         titleBar.setPreferredSize(new Dimension(getWidth(), 40));
+
+        // Xử lý sự kiện kéo cửa sổ
+        titleBar.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                mouseX = e.getX();
+                mouseY = e.getY();
+            }
+        });
+
+        titleBar.addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                int x = e.getXOnScreen();
+                int y = e.getYOnScreen();
+                setLocation(x - mouseX, y - mouseY);
+            }
+        });
 
         // ====== Left Panel (Icon + Title) ======
         JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
@@ -98,6 +107,23 @@ public class Main_Layout extends JFrame {
         panel1.add(titleMenu);
 
         // ====== panel2: Danh sách menu ======
+        
+                // ====== Danh sách menu từ ArrayList ======
+        menuItems = new ArrayList<>();
+        menuItems.add("Thống kê");
+        menuItems.add("Sản Phẩm");
+        menuItems.add("Đơn Hàng");
+        menuItems.add("Nhân Viên");
+        menuItems.add("Nhà Cung Cấp");
+        menuItems.add("Hóa Đơn Nhập");
+        menuItems.add("Khuyến Mãi");
+        menuItems.add("Khách Hàng");
+        menuItems.add("Tài Khoản");
+        menuItems.add("Bảo Hành");
+        menuItems.add("Phân Quyền");
+        
+        
+        
         JPanel panel2 = new JPanel();
         panel2.setLayout(new BoxLayout(panel2, BoxLayout.Y_AXIS));
         panel2.setBackground(Color.LIGHT_GRAY);
@@ -216,7 +242,7 @@ public class Main_Layout extends JFrame {
             }
         });
 
-    // ====== Thêm JScrollPane vào sidebar ======
+        // ====== Thêm JScrollPane vào sidebar ======
         // ====== panel3: Nút thoát ======
         JPanel panel3 = new JPanel();
         panel3.setBackground(Color.LIGHT_GRAY);
@@ -234,10 +260,98 @@ public class Main_Layout extends JFrame {
         sidebarPanel.add(panel1, BorderLayout.NORTH);
         sidebarPanel.add(scrollPane, BorderLayout.CENTER);
         sidebarPanel.add(panel3, BorderLayout.SOUTH); // Đặt ở dưới cùng
-            
+
+        // ================================ Content ================================
+        contentPanel = new JPanel(new BorderLayout());
+
+        statisticsPanel = new JPanel();
+        statisticsPanel.setBackground(Color.CYAN);
+        statisticsPanel.add(new JLabel("Thống kê doanh thu"));
+
+        productPanel = new JPanel();
+        productPanel.setBackground(Color.GREEN);
+        productPanel.add(new JLabel("Danh sách sản phẩm"));
+
+        orderPanel = new JPanel();
+        orderPanel.setBackground(Color.ORANGE);
+        orderPanel.add(new JLabel("Danh sách đơn hàng"));
+
+        employeePanel = new JPanel();
+        employeePanel.setBackground(Color.MAGENTA);
+        employeePanel.add(new JLabel("Nhân viên"));
+
+
+        supplierPanel = new JPanel();
+        supplierPanel.setBackground(Color.YELLOW);
+        supplierPanel.add(new JLabel("Nhà cung cấp"));
+
+        importPanel = new JPanel();
+        importPanel.setBackground(Color.PINK);
+        importPanel.add(new JLabel("Hóa đơn nhập"));
+
+        promotionPanel = new JPanel();
+        promotionPanel.setBackground(Color.BLUE);
+        promotionPanel.add(new JLabel("Khuyến mãi"));
+
+        customerPanel = new JPanel();
+        customerPanel.setBackground(Color.RED);
+        customerPanel.add(new JLabel("Khách hàng"));
+
+        accountPanel = new JPanel();
+        accountPanel.setBackground(Color.GRAY);
+        accountPanel.add(new JLabel("Tài khoản"));
+
+        repairPanel = new JPanel();
+        repairPanel.setBackground(Color.DARK_GRAY);
+        repairPanel.add(new JLabel("Bảo hành"));
+
+        rolePanel = new JPanel();
+        rolePanel.setBackground(Color.LIGHT_GRAY);
+        rolePanel.add(new JLabel("Phân quyền"));
+        for (Component comp : panel2.getComponents()) {
+            if (comp instanceof JLabel menuLabel) {
+                menuLabel.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        contentPanel.removeAll(); // Xóa nội dung cũ
+
+                        switch (menuLabel.getText()) {
+                            case "Thống kê" ->
+                                contentPanel.add(statisticsPanel, BorderLayout.CENTER);
+                            case "Sản Phẩm" ->
+                                contentPanel.add(productPanel, BorderLayout.CENTER);
+                            case "Đơn Hàng" ->
+                                contentPanel.add(orderPanel, BorderLayout.CENTER);
+                            case "Nhân Viên" ->
+                                contentPanel.add(employeePanel, BorderLayout.CENTER);
+                            case "Nhà Cung Cấp" ->
+                                contentPanel.add(supplierPanel, BorderLayout.CENTER);
+                            case "Hóa Đơn Nhập" ->
+                                contentPanel.add(importPanel, BorderLayout.CENTER);
+                            case "Khuyến Mãi" ->
+                                contentPanel.add(promotionPanel, BorderLayout.CENTER);
+                            case "Khách Hàng" ->
+                                contentPanel.add(customerPanel, BorderLayout.CENTER);
+                            case "Tài Khoản" ->
+                                contentPanel.add(accountPanel, BorderLayout.CENTER);
+                            case "Bảo Hành" ->
+                                contentPanel.add(repairPanel, BorderLayout.CENTER);
+                            case "Phân Quyền" ->
+                                contentPanel.add(rolePanel, BorderLayout.CENTER);
+                            default ->
+                                contentPanel.add(new JLabel("Chưa có nội dung"), BorderLayout.CENTER);
+                        }
+
+                        contentPanel.revalidate();
+                        contentPanel.repaint();
+                    }
+                });
+            }
+        }
+
         add(titleBar, BorderLayout.NORTH);
         add(sidebarPanel, BorderLayout.WEST);
-
+        add(contentPanel, BorderLayout.CENTER);
     }
 
     public static void main(String[] args) {
