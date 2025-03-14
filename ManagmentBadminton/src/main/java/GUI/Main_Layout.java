@@ -59,8 +59,6 @@ public class Main_Layout extends JFrame {
         Sidebar.customerPanel.add(new JLabel("Khách hàng"));
 
         Sidebar.accountPanel = new Account();
-//        Sidebar.accountPanel.setBackground(Color.GRAY);
-//        Sidebar.accountPanel.add(new JLabel("Tài khoản"));
 
         Sidebar.repairPanel = new JPanel();
         Sidebar.repairPanel.setBackground(Color.DARK_GRAY);
