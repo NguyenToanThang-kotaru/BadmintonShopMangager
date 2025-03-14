@@ -29,8 +29,10 @@ CREATE TABLE employee (
 );
 
 -- Tạo dữ liệu cho Employee
-INSERT INTO employee(`EmployeeID`,`FullName`,`Age`,`Phone`,`Email`,`Address`,`Gender`,`Salary`,`StartDate`) VALUES
-('E00', 'Admin', 30, '0987654321', 'admin@gmail.com', 'abc', 'Nam', 0, '2022-08-20');
+INSERT INTO employee(EmployeeID, FullName, Age, Phone, Email, Address, Gender, Salary, StartDate) 
+VALUES
+('E01', 'Nguyen Van A', 28, '0123456789', 'a@gmail.com', 'Hanoi', 'Nam', 7000000, '2024-03-14'),
+('E02', 'Tran Thi B', 25, '0987654321', 'b@gmail.com', 'Ho Chi Minh', 'Nữ', 8000000, '2024-03-14');
 
 -- Tạo bảng Employee Rank
 CREATE TABLE employee_rank (
@@ -39,9 +41,11 @@ CREATE TABLE employee_rank (
     BaseSalary DOUBLE NOT NULL
 );
 
--- Tạo dữ liệu cho Employee Rank
-INSERT INTO employee_rank(`RankID`,`RankName`,`BaseSalary`) VALUES
-('R00','Admin','0');
+-- Thêm dữ liệu mẫu cho bảng employee_rank
+INSERT INTO employee_rank(RankID, RankName, BaseSalary) 
+VALUES
+('R01', 'Nhân viên', 5000000),
+('R02', 'Quản lý', 10000000);
 
 -- Tạo bảng Account
 CREATE TABLE account (
@@ -51,9 +55,10 @@ CREATE TABLE account (
     RankID VARCHAR(10) NOT NULL
 );
 
--- Tạo dữ liệu cho Accoutn
-INSERT INTO account(`Username`,`Password`,`EmployeeID`,`RankID`) VALUES
-('A00','Admin','E00','R00');
+INSERT INTO account(Username, Password, EmployeeID, RankID) 
+VALUES
+('admin', 'admin123', 'E01', 'R02'),
+('staff1', 'staff123', 'E02', 'R01');
 
 
 -- Tạo bảng Customer
@@ -64,6 +69,12 @@ CREATE TABLE customer (
     TotalSpending DOUBLE NOT NULL
 );
 
+-- Thêm dữ liệu mẫu cho bảng customer
+INSERT INTO customer(CustomerID, FullName, Phone, TotalSpending) 
+VALUES
+('C01', 'Le Van C', '0912345678', 500000),
+('C02', 'Pham Thi D', '0934567890', 1200000);
+
 -- Tạo bảng Sales Invoice
 CREATE TABLE sales_invoice (
     SalesID VARCHAR(10) PRIMARY KEY,
@@ -71,11 +82,22 @@ CREATE TABLE sales_invoice (
     CustomerID VARCHAR(10) NOT NULL
 );
 
+-- Thêm dữ liệu mẫu cho bảng sales_invoice
+INSERT INTO sales_invoice(SalesID, EmployeeID, CustomerID) 
+VALUES
+('SI01', 'E01', 'C01'),
+('SI02', 'E02', 'C02');
+
 -- Tạo bảng Type Product
 CREATE TABLE type_product (
     TypeID VARCHAR(10) PRIMARY KEY,
     TypeName VARCHAR(50) NOT NULL
 );
+
+INSERT INTO type_product(TypeID, TypeName) 
+VALUES
+('T01', 'Vợt cầu lông'),
+('T02', 'Giày cầu lông');
 
 -- Tạo bảng Supplier
 CREATE TABLE supplier (
@@ -85,6 +107,11 @@ CREATE TABLE supplier (
     Email VARCHAR(256),
     Address VARCHAR(256)
 );
+
+INSERT INTO supplier(SupplierID, SupplierName, Phone, Email, Address) 
+VALUES
+('S01', 'Yonex', '0988123456', 'contact@yonex.com', 'Nhật Bản'),
+('S02', 'Lining', '0977123456', 'support@lining.com', 'Trung Quốc');
 
 -- Tạo bảng Product
 CREATE TABLE product (
@@ -96,6 +123,12 @@ CREATE TABLE product (
     TypeID VARCHAR(10) NOT NULL
 );
 
+-- Thêm dữ liệu mẫu cho bảng product
+INSERT INTO product(ProductID, ProductName, ProductImg, Quantity, SupplierID, TypeID) 
+VALUES
+('P01', 'Vợt Yonex Astrox', 'astrox.jpg', 20, 'S01', 'T01'),
+('P02', 'Giày Lining Turbo', 'lining_turbo.jpg', 15, 'S02', 'T02');
+
 -- Tạo bảng Detail of Sales Invoice
 CREATE TABLE detail_sales_invoice (
     DetailSalesID VARCHAR(10) PRIMARY KEY,
@@ -106,12 +139,23 @@ CREATE TABLE detail_sales_invoice (
     TotalPrice DOUBLE NOT NULL
 );
 
+-- Thêm dữ liệu mẫu cho bảng detail_sales_invoice
+INSERT INTO detail_sales_invoice(DetailSalesID, SalesID, ProductID, Quantity, Price, TotalPrice) 
+VALUES
+('DSI01', 'SI01', 'P01', 1, 2000000, 2000000),
+('DSI02', 'SI02', 'P02', 2, 1500000, 3000000);
+
 -- Tạo bảng Import Invoice
 CREATE TABLE import_invoice (
     ImportID VARCHAR(10) PRIMARY KEY,
     EmployeeID VARCHAR(10) NOT NULL,
     SupplierID VARCHAR(10) NOT NULL
 );
+
+INSERT INTO import_invoice(ImportID, EmployeeID, SupplierID) 
+VALUES
+('I01', 'E01', 'S01'),
+('I02', 'E02', 'S02');
 
 -- Tạo bảng Detail of Import Invoice
 CREATE TABLE detail_import_invoice (
@@ -122,6 +166,13 @@ CREATE TABLE detail_import_invoice (
     Price DOUBLE NOT NULL,
     TotalPrice DOUBLE NOT NULL
 );
+
+-- Thêm dữ liệu mẫu cho bảng detail_import_invoice
+INSERT INTO detail_import_invoice(DetailImportID, ImportID, ProductID, Quantity, Price, TotalPrice) 
+VALUES
+('DI01', 'I01', 'P01', 10, 1500000, 15000000),
+('DI02', 'I02', 'P02', 8, 1200000, 9600000);
+
 
 -- Cấp lại các foreign keys
 ALTER TABLE account ADD CONSTRAINT fk_employee FOREIGN KEY (EmployeeID) REFERENCES employee(EmployeeID);
