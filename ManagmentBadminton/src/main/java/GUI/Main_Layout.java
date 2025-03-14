@@ -94,6 +94,7 @@ public class Main_Layout extends JFrame {
                                 break;
                             case "Nhà Cung Cấp" :
                                 contentPanel.add(Sidebar.supplierPanel, BorderLayout.CENTER);
+                                new SupplierGUI(contentPanel);
                                 break;
                             case "Hóa Đơn Nhập" :
                                 contentPanel.add(Sidebar.importPanel, BorderLayout.CENTER);
