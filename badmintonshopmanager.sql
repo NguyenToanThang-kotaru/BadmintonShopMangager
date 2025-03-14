@@ -25,14 +25,15 @@ CREATE TABLE employee (
     Address VARCHAR(256) NOT NULL,
     Gender ENUM('Nam', 'Nữ') NOT NULL,
     Salary DOUBLE NOT NULL,
-    StartDate DATE NOT NULL
+    StartDate DATE NOT NULL,
+    `Status` varchar(10) NOT NULL
 );
 
 -- Tạo dữ liệu cho Employee
 INSERT INTO employee(EmployeeID, FullName, Age, Phone, Email, Address, Gender, Salary, StartDate) 
 VALUES
-('E01', 'Nguyen Van A', 28, '0123456789', 'a@gmail.com', 'Hanoi', 'Nam', 7000000, '2024-03-14'),
-('E02', 'Tran Thi B', 25, '0987654321', 'b@gmail.com', 'Ho Chi Minh', 'Nữ', 8000000, '2024-03-14');
+('E01', 'Nguyen Van A', 28, '0123456789', 'a@gmail.com', 'Hanoi', 'Nam', 7000000, '2024-03-14','Hiện'),
+('E02', 'Tran Thi B', 25, '0987654321', 'b@gmail.com', 'Ho Chi Minh', 'Nữ', 8000000, '2024-03-14','Hiện');
 
 -- Tạo bảng Employee Rank
 CREATE TABLE employee_rank (
@@ -50,15 +51,16 @@ VALUES
 -- Tạo bảng Account
 CREATE TABLE account (
     Username VARCHAR(50) PRIMARY KEY,
-    Password VARCHAR(50) NOT NULL,
+    `Password` VARCHAR(50) NOT NULL,
     EmployeeID VARCHAR(10) NOT NULL,
-    RankID VARCHAR(10) NOT NULL
+    RankID VARCHAR(10) NOT NULL,
+    `Status` varchar(10) NOT NULL
 );
 
-INSERT INTO account(Username, Password, EmployeeID, RankID) 
+INSERT INTO account(Username, `Password`, EmployeeID, RankID, `Status`) 
 VALUES
-('admin', 'admin123', 'E01', 'R02'),
-('staff1', 'staff123', 'E02', 'R01');
+('admin', 'admin123', 'E01', 'R02', 'Hiện'),
+('staff1', 'staff123', 'E02', 'R01', 'Hiện');
 
 
 -- Tạo bảng Customer
@@ -120,18 +122,41 @@ CREATE TABLE product (
     ProductImg VARCHAR(256),
     Quantity INT NOT NULL,
     SupplierID VARCHAR(10) NOT NULL,
-    TypeID VARCHAR(10) NOT NULL
+    TypeID VARCHAR(10) NOT NULL,
+    Price double NOT NULL,
+    `Status` varchar(50) NOT NULL
 );
 
 -- Thêm dữ liệu mẫu cho bảng product
-INSERT INTO product(ProductID, ProductName, ProductImg, Quantity, SupplierID, TypeID) 
+INSERT INTO product(ProductID, ProductName, ProductImg, Quantity, SupplierID, TypeID, Price, `Status`) 
 VALUES
-('P01', 'Vợt Yonex Astrox', 'astrox.jpg', 20, 'S01', 'T01'),
-('P02', 'Giày Lining Turbo', 'lining_turbo.jpg', 15, 'S02', 'T02');
+('P01', 'Vợt Yonex Astrox', 'astrox.jpg', 5, 'S01', 'T01', 4000000, 'Hiện'),
+('P02', 'Giày Lining Turbo', 'lining_turbo.jpg', 3, 'S02', 'T02', 1620000, 'Hiện');
+
+
+-- Tạo bảng Product Detail
+CREATE TABLE product_detail (
+	Series BIGINT PRIMARY KEY AUTO_INCREMENT,
+    ProductID VARCHAR(10) NOT NULL,
+    ImportDate DATE NOT NULL,
+    `Status` varchar(50) NOT NULL
+);
+
+-- Thêm dữ liệu mẫu cho bảng product
+INSERT INTO product_detail(Series, ProductID, `Status`) 
+VALUES
+(1,'P01','Hiện'),
+(2,'P01','Hiện'),
+(3,'P01','Hiện'),
+(4,'P01','Hiện'),
+(5,'P01','Hiện'),
+(6,'P02','Hiện'),
+(7,'P02','Hiện'),
+(8,'P02','Hiện');
 
 -- Tạo bảng Detail of Sales Invoice
-CREATE TABLE detail_sales_invoice (
-    DetailSalesID VARCHAR(10) PRIMARY KEY,
+CREATE TABLE sales_invoice_detail (
+    SalesDetailID VARCHAR(10) PRIMARY KEY,
     SalesID VARCHAR(10) NOT NULL,
     ProductID VARCHAR(10) NOT NULL,
     Quantity INT NOT NULL,
@@ -140,7 +165,7 @@ CREATE TABLE detail_sales_invoice (
 );
 
 -- Thêm dữ liệu mẫu cho bảng detail_sales_invoice
-INSERT INTO detail_sales_invoice(DetailSalesID, SalesID, ProductID, Quantity, Price, TotalPrice) 
+INSERT INTO sales_invoice_detail(SalesDetailID, SalesID, ProductID, Quantity, Price, TotalPrice) 
 VALUES
 ('DSI01', 'SI01', 'P01', 1, 2000000, 2000000),
 ('DSI02', 'SI02', 'P02', 2, 1500000, 3000000);
@@ -181,6 +206,7 @@ ALTER TABLE sales_invoice ADD CONSTRAINT fk_employee_sales FOREIGN KEY (Employee
 ALTER TABLE sales_invoice ADD CONSTRAINT fk_customer_sales FOREIGN KEY (CustomerID) REFERENCES customer(CustomerID);
 ALTER TABLE product ADD CONSTRAINT fk_supplier FOREIGN KEY (SupplierID) REFERENCES supplier(SupplierID);
 ALTER TABLE product ADD CONSTRAINT fk_type FOREIGN KEY (TypeID) REFERENCES type_product(TypeID);
+ALTER TABLE product_detail ADD CONSTRAINT fk_product_detail FOREIGN KEY (ProductID) REFERENCES product(ProductID);
 ALTER TABLE detail_sales_invoice ADD CONSTRAINT fk_sales FOREIGN KEY (SalesID) REFERENCES sales_invoice(SalesID);
 ALTER TABLE detail_sales_invoice ADD CONSTRAINT fk_product_sales FOREIGN KEY (ProductID) REFERENCES product(ProductID);
 ALTER TABLE import_invoice ADD CONSTRAINT fk_employee_import FOREIGN KEY (EmployeeID) REFERENCES employee(EmployeeID);
