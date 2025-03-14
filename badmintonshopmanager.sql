@@ -27,10 +27,10 @@ CREATE TABLE employee (
     Salary DOUBLE NOT NULL,
     StartDate DATE NOT NULL,
     `Status` varchar(10) NOT NULL
-);
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Tạo dữ liệu cho Employee
-INSERT INTO employee(EmployeeID, FullName, Age, Phone, Email, Address, Gender, Salary, StartDate) 
+INSERT INTO employee(EmployeeID, FullName, Age, Phone, Email, Address, Gender, Salary, StartDate, `Status`) 
 VALUES
 ('E01', 'Nguyen Van A', 28, '0123456789', 'a@gmail.com', 'Hanoi', 'Nam', 7000000, '2024-03-14','Hiện'),
 ('E02', 'Tran Thi B', 25, '0987654321', 'b@gmail.com', 'Ho Chi Minh', 'Nữ', 8000000, '2024-03-14','Hiện');
@@ -40,7 +40,7 @@ CREATE TABLE employee_rank (
     RankID VARCHAR(10) PRIMARY KEY,
     RankName VARCHAR(50) NOT NULL,
     BaseSalary DOUBLE NOT NULL
-);
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Thêm dữ liệu mẫu cho bảng employee_rank
 INSERT INTO employee_rank(RankID, RankName, BaseSalary) 
@@ -55,7 +55,7 @@ CREATE TABLE account (
     EmployeeID VARCHAR(10) NOT NULL,
     RankID VARCHAR(10) NOT NULL,
     `Status` varchar(10) NOT NULL
-);
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO account(Username, `Password`, EmployeeID, RankID, `Status`) 
 VALUES
@@ -69,7 +69,7 @@ CREATE TABLE customer (
     FullName VARCHAR(50) NOT NULL,
     Phone VARCHAR(15) NOT NULL,
     TotalSpending DOUBLE NOT NULL
-);
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Thêm dữ liệu mẫu cho bảng customer
 INSERT INTO customer(CustomerID, FullName, Phone, TotalSpending) 
@@ -82,7 +82,7 @@ CREATE TABLE sales_invoice (
     SalesID VARCHAR(10) PRIMARY KEY,
     EmployeeID VARCHAR(10) NOT NULL,
     CustomerID VARCHAR(10) NOT NULL
-);
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Thêm dữ liệu mẫu cho bảng sales_invoice
 INSERT INTO sales_invoice(SalesID, EmployeeID, CustomerID) 
@@ -94,7 +94,7 @@ VALUES
 CREATE TABLE type_product (
     TypeID VARCHAR(10) PRIMARY KEY,
     TypeName VARCHAR(50) NOT NULL
-);
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO type_product(TypeID, TypeName) 
 VALUES
@@ -108,7 +108,7 @@ CREATE TABLE supplier (
     Phone VARCHAR(15) NOT NULL,
     Email VARCHAR(256),
     Address VARCHAR(256)
-);
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO supplier(SupplierID, SupplierName, Phone, Email, Address) 
 VALUES
@@ -125,7 +125,7 @@ CREATE TABLE product (
     TypeID VARCHAR(10) NOT NULL,
     Price double NOT NULL,
     `Status` varchar(50) NOT NULL
-);
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Thêm dữ liệu mẫu cho bảng product
 INSERT INTO product(ProductID, ProductName, ProductImg, Quantity, SupplierID, TypeID, Price, `Status`) 
@@ -140,7 +140,7 @@ CREATE TABLE product_detail (
     ProductID VARCHAR(10) NOT NULL,
     ImportDate DATE NOT NULL,
     `Status` varchar(50) NOT NULL
-);
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Thêm dữ liệu mẫu cho bảng product
 INSERT INTO product_detail(Series, ProductID, `Status`) 
@@ -162,9 +162,9 @@ CREATE TABLE sales_invoice_detail (
     Quantity INT NOT NULL,
     Price DOUBLE NOT NULL,
     TotalPrice DOUBLE NOT NULL
-);
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Thêm dữ liệu mẫu cho bảng detail_sales_invoice
+-- Thêm dữ liệu mẫu cho bảng sales_invoice_detail
 INSERT INTO sales_invoice_detail(SalesDetailID, SalesID, ProductID, Quantity, Price, TotalPrice) 
 VALUES
 ('DSI01', 'SI01', 'P01', 1, 2000000, 2000000),
@@ -175,7 +175,7 @@ CREATE TABLE import_invoice (
     ImportID VARCHAR(10) PRIMARY KEY,
     EmployeeID VARCHAR(10) NOT NULL,
     SupplierID VARCHAR(10) NOT NULL
-);
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO import_invoice(ImportID, EmployeeID, SupplierID) 
 VALUES
@@ -183,17 +183,17 @@ VALUES
 ('I02', 'E02', 'S02');
 
 -- Tạo bảng Detail of Import Invoice
-CREATE TABLE detail_import_invoice (
-    DetailImportID VARCHAR(10) PRIMARY KEY,
+CREATE TABLE import_invoice_detail (
+    ImportDetailID VARCHAR(10) PRIMARY KEY,
     ImportID VARCHAR(10) NOT NULL,
     ProductID VARCHAR(10) NOT NULL,
     Quantity INT NOT NULL,
     Price DOUBLE NOT NULL,
     TotalPrice DOUBLE NOT NULL
-);
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Thêm dữ liệu mẫu cho bảng detail_import_invoice
-INSERT INTO detail_import_invoice(DetailImportID, ImportID, ProductID, Quantity, Price, TotalPrice) 
+-- Thêm dữ liệu mẫu cho bảng import_invoice_detail
+INSERT INTO import_invoice_detail(ImportDetailID, ImportID, ProductID, Quantity, Price, TotalPrice) 
 VALUES
 ('DI01', 'I01', 'P01', 10, 1500000, 15000000),
 ('DI02', 'I02', 'P02', 8, 1200000, 9600000);
@@ -207,12 +207,12 @@ ALTER TABLE sales_invoice ADD CONSTRAINT fk_customer_sales FOREIGN KEY (Customer
 ALTER TABLE product ADD CONSTRAINT fk_supplier FOREIGN KEY (SupplierID) REFERENCES supplier(SupplierID);
 ALTER TABLE product ADD CONSTRAINT fk_type FOREIGN KEY (TypeID) REFERENCES type_product(TypeID);
 ALTER TABLE product_detail ADD CONSTRAINT fk_product_detail FOREIGN KEY (ProductID) REFERENCES product(ProductID);
-ALTER TABLE detail_sales_invoice ADD CONSTRAINT fk_sales FOREIGN KEY (SalesID) REFERENCES sales_invoice(SalesID);
-ALTER TABLE detail_sales_invoice ADD CONSTRAINT fk_product_sales FOREIGN KEY (ProductID) REFERENCES product(ProductID);
+ALTER TABLE sales_invoice_detail ADD CONSTRAINT fk_sales FOREIGN KEY (SalesID) REFERENCES sales_invoice(SalesID);
+ALTER TABLE sales_invoice_detail ADD CONSTRAINT fk_product_sales FOREIGN KEY (ProductID) REFERENCES product(ProductID);
 ALTER TABLE import_invoice ADD CONSTRAINT fk_employee_import FOREIGN KEY (EmployeeID) REFERENCES employee(EmployeeID);
 ALTER TABLE import_invoice ADD CONSTRAINT fk_supplier_import FOREIGN KEY (SupplierID) REFERENCES supplier(SupplierID);
-ALTER TABLE detail_import_invoice ADD CONSTRAINT fk_import FOREIGN KEY (ImportID) REFERENCES import_invoice(ImportID);
-ALTER TABLE detail_import_invoice ADD CONSTRAINT fk_product_import FOREIGN KEY (ProductID) REFERENCES product(ProductID);
+ALTER TABLE import_invoice_detail ADD CONSTRAINT fk_import FOREIGN KEY (ImportID) REFERENCES import_invoice(ImportID);
+ALTER TABLE import_invoice_detail ADD CONSTRAINT fk_product_import FOREIGN KEY (ProductID) REFERENCES product(ProductID);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
