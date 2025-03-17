@@ -8,10 +8,10 @@ import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
-public class SupplierGUI {
+public class GUI_SupplierGUI {
     private JPanel panel;
 
-    public SupplierGUI(JPanel panel){
+    public GUI_SupplierGUI(JPanel panel){
         this.panel = panel;
         initComponent();
     }

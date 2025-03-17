@@ -10,7 +10,7 @@ import javax.swing.border.MatteBorder;
  *
  * @author Thang Nguyen
  */
-public class Sidebar extends JPanel {
+public class GUI_Sidebar extends JPanel {
 
     private ArrayList<String> menuItems;
     public JPanel statisticsPanel, productPanel, orderPanel,
@@ -21,7 +21,7 @@ public class Sidebar extends JPanel {
     public JPanel panel1, panel2, panel3;
     public CustomScrollPane scrollPane;
 
-    public Sidebar(JFrame login, JFrame Main_Layout) {
+    public GUI_Sidebar(JFrame login, JFrame Main_Layout) {
         setLayout(new BorderLayout());
         setBackground(Color.LIGHT_GRAY);
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));

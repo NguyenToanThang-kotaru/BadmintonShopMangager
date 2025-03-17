@@ -6,11 +6,11 @@ import java.awt.event.ActionEvent;
 import DAO.AccountDAO;
 import DTO.AccountDTO;
 
-public class Login extends JFrame {
+public class GUI_Login extends JFrame {
 
-    private TittleBar tittleBar;
+    private GUI_TittleBar tittleBar;
 
-    public Login() {
+    public GUI_Login() {
         // Cấu hình cửa sổ
         setTitle("Đăng nhập");
         setSize(734, 460);
@@ -19,7 +19,7 @@ public class Login extends JFrame {
         setResizable(false);
         setUndecorated(true);
         // ===== THÊM THANH TIÊU ĐỀ =====
-        tittleBar = new TittleBar(this);
+        tittleBar = new GUI_TittleBar(this);
         add(tittleBar, BorderLayout.NORTH);
 
     // Panel chính chứa 2 phần
@@ -120,9 +120,9 @@ public class Login extends JFrame {
         } else {
             AccountDTO account = AccountDAO.getAccount(username, password);
             if (account != null) {
-                //Chay vao frame Main_Layout
+                //Chay vao frame GUI_MainLayout
                 this.setVisible(false);
-                Main_Layout mainLayout = new Main_Layout(this);
+                GUI_MainLayout mainLayout = new GUI_MainLayout(this);
                 mainLayout.setVisible(true);
             }
             else{
@@ -133,7 +133,7 @@ public class Login extends JFrame {
     }
 
     public static void main(String[] args) {
-        Login a = new Login();
+        GUI_Login a = new GUI_Login();
         a.setVisible(true);
     }
 }

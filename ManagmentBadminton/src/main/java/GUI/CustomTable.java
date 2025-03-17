@@ -89,4 +89,8 @@ public class CustomTable extends JPanel {
 //        frame.setLocationRelativeTo(null);
 //        frame.setVisible(true);
 //    }
+
+    void setRowCount(int i) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }
