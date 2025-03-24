@@ -14,9 +14,9 @@ import java.awt.*;
 import java.awt.event.*;
 
 
-class TittleBar extends JPanel {
+class GUI_TittleBar extends JPanel {
     private int mouseX, mouseY;
-    public TittleBar(JFrame parentFrame){
+    public GUI_TittleBar(JFrame parentFrame){
         setLayout(new BorderLayout());
         setBackground(new Color(50, 50, 50));
         setPreferredSize(new Dimension(parentFrame.getWidth(), 40));
