@@ -5,6 +5,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import DAO.AccountDAO;
 import DTO.AccountDTO;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class GUI_Login extends JFrame {
 
@@ -101,7 +104,11 @@ public class GUI_Login extends JFrame {
         loginButton.setFocusPainted(false);
 
         loginButton.addActionListener((ActionEvent e) -> {
-            checkLogin(userField, passField); // Gọi hàm check khi bấm nút
+            try {
+                checkLogin(userField, passField); // Gọi hàm check khi bấm nút
+            } catch (SQLException ex) {
+                Logger.getLogger(GUI_Login.class.getName()).log(Level.SEVERE, null, ex);
+            }
         });
 
         rightPanel.add(loginButton);
@@ -111,7 +118,7 @@ public class GUI_Login extends JFrame {
 
     }
 
-    private void checkLogin(JTextField userField, JTextField passField) {
+    private void checkLogin(JTextField userField, JTextField passField) throws SQLException {
         String username = userField.getText();
         String password = passField.getText();
         if (username.isEmpty() || password.isEmpty()) {
@@ -132,8 +139,4 @@ public class GUI_Login extends JFrame {
 
     }
 
-    public static void main(String[] args) {
-        GUI_Login a = new GUI_Login();
-        a.setVisible(true);
-    }
 }

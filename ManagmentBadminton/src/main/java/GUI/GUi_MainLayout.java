@@ -3,6 +3,7 @@ package GUI;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.SQLException;
 
 
 public class GUI_MainLayout extends JFrame {
@@ -39,9 +40,7 @@ public class GUI_MainLayout extends JFrame {
         Sidebar.orderPanel.setBackground(Color.ORANGE);
         Sidebar.orderPanel.add(new JLabel("Danh sách đơn hàng"));
 
-        Sidebar.employeePanel = new JPanel();
-        Sidebar.employeePanel.setBackground(Color.MAGENTA);
-        Sidebar.employeePanel.add(new JLabel("Nhân viên"));
+        Sidebar.employeePanel = new GUI_Employee();
 
 
         Sidebar.supplierPanel = new JPanel();
@@ -64,9 +63,7 @@ public class GUI_MainLayout extends JFrame {
         Sidebar.repairPanel.setBackground(Color.DARK_GRAY);
         Sidebar.repairPanel.add(new JLabel("Bảo hành"));
 
-        Sidebar.rolePanel = new JPanel();
-        Sidebar.rolePanel.setBackground(Color.LIGHT_GRAY);
-        Sidebar.rolePanel.add(new JLabel("Phân quyền"));
+        Sidebar.rolePanel = new GUI_Permission();
         for (Component comp : Sidebar.panel2.getComponents()) {
             if (comp instanceof JLabel menuLabel) {
                 menuLabel.addMouseListener(new MouseAdapter() {

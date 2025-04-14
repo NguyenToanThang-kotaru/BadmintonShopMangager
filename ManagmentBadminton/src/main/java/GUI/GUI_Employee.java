@@ -1,30 +1,31 @@
 package GUI;
 
-import DTO.AccountDTO;
+import DTO.EmployeeDTO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
-import BUS.AccountBUS;
+import BUS.EmployeeBUS;
 import BUS.PermissionBUS;
-import DAO.AccountDAO;
+import DAO.EmployeeDAO;
+import java.util.ArrayList;
 
-public class GUI_Account extends JPanel {
+public class GUI_Employee extends JPanel {
 
     // Khai báo các thành phần giao diện
     private JPanel midPanel, topPanel, botPanel;
-    private JTable accountTable;
+    private JTable employeeTable;
     private DefaultTableModel tableModel;
 //    private JComboBox<String> roleComboBox;
     private CustomButton deleteButton, addButton, editButton, reloadButton;
     private CustomSearch searchField;
-    private AccountBUS accountBUS;
-    private AccountDTO accountChoosing;
-    private AccountDAO AccountDAO;
+    private EmployeeBUS employeeBUS;
+    private EmployeeDTO employeeChoosing;
+    private EmployeeDAO EmployeeDAO;
 
-    public GUI_Account() {
-        accountBUS = new AccountBUS(); // Khởi tạo đối tượng BUS để lấy dữ liệu tài khoản
+    public GUI_Employee() {
+        employeeBUS = new EmployeeBUS(); // Khởi tạo đối tượng BUS để lấy dữ liệu tài khoản
         // Cấu hình layout chính
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -51,13 +52,13 @@ public class GUI_Account extends JPanel {
         midPanel.setBackground(Color.WHITE);
 
         // Định nghĩa tiêu đề cột
-        String[] columnNames = {"STT", "Nhân viên", "Tài khoản", "Mật khẩu", "Quyền"};
+        String[] columnNames = {"STT", "Nhân viên", "Địa chỉ", "Số điện thoại", "Giới tính"};
         CustomTable customTable = new CustomTable(columnNames);
-        accountTable = customTable.getAccountTable(); // Lấy JTable từ CustomTable
+        employeeTable = customTable.getAccountTable(); // Lấy JTable từ CustomTable
         tableModel = customTable.getTableModel(); // Lấy model của bảng
 
         midPanel.add(customTable, BorderLayout.CENTER);
-        CustomScrollPane scrollPane = new CustomScrollPane(accountTable);
+        CustomScrollPane scrollPane = new CustomScrollPane(employeeTable);
         // ========== PANEL CHI TIẾT TÀI KHOẢN ==========
         botPanel = new JPanel(new GridBagLayout());
         botPanel.setBackground(Color.WHITE);
@@ -72,29 +73,36 @@ public class GUI_Account extends JPanel {
         gbc.gridy = 0;
         botPanel.add(new JLabel("Tên Nhân Viên: "), gbc);
         gbc.gridx = 1;
-        JLabel employeeLabel = new JLabel("Chọn Tài Khoản");
-        botPanel.add(employeeLabel, gbc);
+        JLabel nameLabel = new JLabel("Chọn nhân viên");
+        botPanel.add(nameLabel, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 1;
-        botPanel.add(new JLabel("Tài Khoản: "), gbc);
+        botPanel.add(new JLabel("Địa chỉ: "), gbc);
         gbc.gridx = 1;
-        JLabel usernameLabel = new JLabel("");
-        botPanel.add(usernameLabel, gbc);
+        JLabel addressLabel = new JLabel("");
+        botPanel.add(addressLabel, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 2;
-        botPanel.add(new JLabel("Mật Khẩu: "), gbc);
+        botPanel.add(new JLabel("Số điện thoại: "), gbc);
         gbc.gridx = 1;
-        JLabel passwordLabel = new JLabel("");
-        botPanel.add(passwordLabel, gbc);
+        JLabel phoneLabel = new JLabel("");
+        botPanel.add(phoneLabel, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 3;
-        botPanel.add(new JLabel("Quyền Tài Khoản: "), gbc);
+        botPanel.add(new JLabel("Tuổi: "), gbc);
         gbc.gridx = 1;
-        JLabel roleComboBox = new JLabel("");
-        botPanel.add(roleComboBox, gbc);
+        JLabel ageLabel = new JLabel("");
+        botPanel.add(ageLabel, gbc);
+        
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        botPanel.add(new JLabel("Giới tính: "), gbc);
+        gbc.gridx = 1;
+        JLabel genderLabel = new JLabel("");
+        botPanel.add(genderLabel, gbc);
         // Tạo panel chứa hai nút
         JPanel buttonPanel = new JPanel(new BorderLayout());
         buttonPanel.setOpaque(false); // Để không ảnh hưởng đến màu nền
@@ -109,27 +117,28 @@ public class GUI_Account extends JPanel {
 
         // Thêm panel vào `botPanel`
         gbc.gridx = 0;
-        gbc.gridy = 4;
+        gbc.gridy = 5;
         gbc.gridwidth = 2; // Trải dài 2 cột
         gbc.fill = GridBagConstraints.HORIZONTAL; // Căn chỉnh full chiều ngang
 
         // Xử lý sự kiện chọn tài khoản trong bảng
-        accountTable.getSelectionModel().addListSelectionListener(e -> {
-            int selectedRow = accountTable.getSelectedRow();
+        employeeTable.getSelectionModel().addListSelectionListener(e -> {
+            int selectedRow = employeeTable.getSelectedRow();
             if (selectedRow != -1) {
                 // Lấy dữ liệu từ bảng và chuyển đổi sang String một cách an toàn
 
-                String tenNhanVien = (String) accountTable.getValueAt(selectedRow, 1);
-                String taikhoan = (String) accountTable.getValueAt(selectedRow, 2);
-                String matkhau = (String) accountTable.getValueAt(selectedRow, 3);
-                String quyen = (String) accountTable.getValueAt(selectedRow, 4);
+                String tenNhanVien = (String) employeeTable.getValueAt(selectedRow, 1);
+                String diachi = (String) employeeTable.getValueAt(selectedRow, 2);
+                String sdt = (String) employeeTable.getValueAt(selectedRow, 3);
+                String gender = (String) employeeTable.getValueAt(selectedRow, 4);
 //                PermissionDTO temp = PermissionDAO.getPermissionByName(quyen);
-                accountChoosing = AccountBUS.getAccountByUsername(taikhoan);
+                employeeChoosing = EmployeeBUS.getEmployeeByPhone(sdt);
                 // Hiển thị dữ liệu trên giao diện
-                employeeLabel.setText(tenNhanVien);
-                usernameLabel.setText(taikhoan);
-                passwordLabel.setText(matkhau);
-                roleComboBox.setText(quyen);
+                nameLabel.setText(tenNhanVien);
+                addressLabel.setText(diachi);
+                phoneLabel.setText(sdt);
+                ageLabel.setText(employeeChoosing.getAge());
+                genderLabel.setText(gender);
                 botPanel.add(buttonPanel, gbc);
             }
         });
@@ -143,37 +152,38 @@ public class GUI_Account extends JPanel {
         add(botPanel);
 
         // Tải dữ liệu tài khoản lên bảng
-        loadAccounts();
+        loadEmployees();
 
         addButton.addActionListener(e -> {
 
-            //            JOptionPane.showMessageDialog(this, "Chức năng thêm nhân viên chưa được triển khai!");
-            Form_Account GFA = new Form_Account(this, null);
-            GFA.setVisible(true);
+        
+        ////            JOptionPane.showMessageDialog(this, "Chức năng thêm nhân viên chưa được triển khai!");
+//            GUI_Form_Employee GFA = new GUI_Form_Employee(this, null);
+//            GFA.setVisible(true);
         });
 
         editButton.addActionListener(e -> {
-            Form_Account GFA = new Form_Account(this, accountChoosing);
-            GFA.setVisible(true);
+//            GUI_Form_Employee GFA = new GUI_Form_Employee(this, employeeChoosing);
+//            GFA.setVisible(true);
         });
 
         reloadButton.addActionListener(e -> {
-            loadAccounts();
+            loadEmployees();
         });
 
         deleteButton.addActionListener(e -> {
             int result = JOptionPane.showConfirmDialog(
                     this,
-                    "Bạn có chắc chắn muốn xóa quyền này?",
+                    "Bạn có chắc chắn muốn xóa nhân viên này?",
                     "Xác nhận xóa",
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE
             );
 
             if (result == JOptionPane.YES_OPTION) {
-                if (AccountBUS.deletedAccount(accountChoosing.getUsername())) {
+                if (EmployeeBUS.deletedEmployee(employeeChoosing.getEmployeeID())) {
                     JOptionPane.showMessageDialog(this, "Xóa thành công");
-                    loadAccounts();
+                    loadEmployees();
                 } else {
                     JOptionPane.showMessageDialog(this, "Xóa thất bại", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 }
@@ -182,21 +192,19 @@ public class GUI_Account extends JPanel {
 
         searchField.setSearchListener(e -> {
 //            String keyword = searchField.getText();
-//            ArrayList<AccountDTO> ketQua = AccountDAO.searchAccounts(keyword);
+//            ArrayList<EmployeeDTO> ketQua = EmployeeDAO.searchEmployees(keyword);
 //            capNhatBangTaiKhoan(ketQua); // Hiển thị kết quả tìm được trên bảng
         });
 
     }
 
     // Phương thức tải danh sách tài khoản từ database lên bảng
-    private void loadAccounts() {
-        List<AccountDTO> accounts = AccountDAO.getAllAccounts(); // Lấy danh sách tài khoản
+    private void loadEmployees() {
+        ArrayList<EmployeeDTO> employees = EmployeeBUS.getAllEmployees(); // Lấy danh sách tài khoản
         tableModel.setRowCount(0); // Xóa dữ liệu cũ trước khi cập nhật
         int index = 1;
-        for (AccountDTO acc : accounts) {
-            tableModel.addRow(new Object[]{index++, acc.getFullName(),
-                acc.getUsername(), acc.getPassword(), acc.getRankID().getName()});
-
+        for (EmployeeDTO emp : employees) {
+            tableModel.addRow(new Object[]{index++, emp.getFullName(), emp.getAddress(), emp.getPhone(), emp.getGender()});
         }
     }
 

@@ -1,9 +1,11 @@
 package GUI;
+
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
 
 public class CustomTable extends JPanel {
+
     private JTable accountTable;
     private DefaultTableModel tableModel;
 
@@ -36,9 +38,9 @@ public class CustomTable extends JPanel {
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         for (int i = 0; i < accountTable.getColumnCount(); i++) {
-            if (i != 2 && i != 3) {
-                accountTable.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
-            }
+
+            accountTable.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+
         }
 
         // Tùy chỉnh UI phần tiêu đề bảng
