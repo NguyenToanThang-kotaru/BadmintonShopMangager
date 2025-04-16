@@ -1,16 +1,22 @@
 package GUI;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 
-public class Main_Layout extends JFrame {
+public class GUI_MainLayout extends JFrame {
 
-    private Sidebar Sidebar;
-    private TittleBar tittleBar;
+    private GUI_Sidebar Sidebar;
+    private GUI_TittleBar tittleBar;
     
-    public Main_Layout(JFrame login) {
+    public GUI_MainLayout(JFrame login) {
         setTitle("Quản Lý Kho Hàng");
         setSize(1000, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -19,10 +25,10 @@ public class Main_Layout extends JFrame {
         setUndecorated(true);
         
         // ================================ Title Bar ================================
-        tittleBar = new TittleBar(this);
+        tittleBar = new GUI_TittleBar(this);
 
-        // ================================ Sidebar ================================
-        Sidebar = new Sidebar(login,this);
+        // ================================ GUI_Sidebar ================================
+        Sidebar = new GUI_Sidebar(login,this);
 
         // ================================ Content ================================
         JPanel contentPanel = new JPanel(new BorderLayout());
@@ -39,16 +45,12 @@ public class Main_Layout extends JFrame {
         Sidebar.orderPanel.setBackground(Color.ORANGE);
         Sidebar.orderPanel.add(new JLabel("Danh sách đơn hàng"));
 
-        Sidebar.employeePanel = new JPanel();
-        Sidebar.employeePanel.setBackground(Color.MAGENTA);
-        Sidebar.employeePanel.add(new JLabel("Nhân viên"));
+        Sidebar.employeePanel = new GUI_Employee();
 
 
-        Sidebar.supplierPanel = new JPanel();
+        Sidebar.supplierPanel = new GUI_Supplier();
 
-        Sidebar.importPanel = new JPanel();
-        Sidebar.importPanel.setBackground(Color.PINK);
-        Sidebar.importPanel.add(new JLabel("Hóa đơn nhập"));
+        Sidebar.importPanel = new GUI_Import();
 
         Sidebar.promotionPanel = new JPanel();
         Sidebar.promotionPanel.setBackground(Color.BLUE);
@@ -57,15 +59,13 @@ public class Main_Layout extends JFrame {
         // Customer
         Sidebar.customerPanel = new CustomerGUI();
 
-        Sidebar.accountPanel = new Account();
+        Sidebar.accountPanel = new GUI_Account();
 
         Sidebar.repairPanel = new JPanel();
         Sidebar.repairPanel.setBackground(Color.DARK_GRAY);
         Sidebar.repairPanel.add(new JLabel("Bảo hành"));
 
-        Sidebar.rolePanel = new JPanel();
-        Sidebar.rolePanel.setBackground(Color.LIGHT_GRAY);
-        Sidebar.rolePanel.add(new JLabel("Phân quyền"));
+        Sidebar.rolePanel = new GUI_Permission();
         for (Component comp : Sidebar.panel2.getComponents()) {
             if (comp instanceof JLabel menuLabel) {
                 menuLabel.addMouseListener(new MouseAdapter() {
@@ -87,7 +87,6 @@ public class Main_Layout extends JFrame {
                                 contentPanel.add(Sidebar.employeePanel, BorderLayout.CENTER);
                                 break;
                             case "Nhà Cung Cấp" :
-                                new SupplierGUI(Sidebar.supplierPanel);
                                 contentPanel.add(Sidebar.supplierPanel, BorderLayout.CENTER);
                                 break;
                             case "Hóa Đơn Nhập" :

@@ -3,7 +3,7 @@
  */
 
 package com.mycompany.managmentbadminton;
-import GUI.Login;
+import GUI.GUI_Login;
 /**
  *
  * @author Thang Nguyen
@@ -11,7 +11,7 @@ import GUI.Login;
 public class ManagmentBadminton {
 
     public static void main(String[] args) {
-        Login App = new Login();
+        GUI_Login App = new GUI_Login();
         App.setVisible(true);
     }
 }

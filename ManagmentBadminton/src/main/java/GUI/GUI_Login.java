@@ -5,12 +5,15 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import DAO.AccountDAO;
 import DTO.AccountDTO;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-public class Login extends JFrame {
+public class GUI_Login extends JFrame {
 
-    private TittleBar tittleBar;
+    private GUI_TittleBar tittleBar;
 
-    public Login() {
+    public GUI_Login() {
         // Cấu hình cửa sổ
         setTitle("Đăng nhập");
         setSize(734, 460);
@@ -19,7 +22,7 @@ public class Login extends JFrame {
         setResizable(false);
         setUndecorated(true);
         // ===== THÊM THANH TIÊU ĐỀ =====
-        tittleBar = new TittleBar(this);
+        tittleBar = new GUI_TittleBar(this);
         add(tittleBar, BorderLayout.NORTH);
 
     // Panel chính chứa 2 phần
@@ -101,7 +104,11 @@ public class Login extends JFrame {
         loginButton.setFocusPainted(false);
 
         loginButton.addActionListener((ActionEvent e) -> {
-            checkLogin(userField, passField); // Gọi hàm check khi bấm nút
+            try {
+                checkLogin(userField, passField); // Gọi hàm check khi bấm nút
+            } catch (SQLException ex) {
+                Logger.getLogger(GUI_Login.class.getName()).log(Level.SEVERE, null, ex);
+            }
         });
 
         rightPanel.add(loginButton);
@@ -111,7 +118,7 @@ public class Login extends JFrame {
 
     }
 
-    private void checkLogin(JTextField userField, JTextField passField) {
+    private void checkLogin(JTextField userField, JTextField passField) throws SQLException {
         String username = userField.getText();
         String password = passField.getText();
         if (username.isEmpty() || password.isEmpty()) {
@@ -120,9 +127,9 @@ public class Login extends JFrame {
         } else {
             AccountDTO account = AccountDAO.getAccount(username, password);
             if (account != null) {
-                //Chay vao frame Main_Layout
+                //Chay vao frame GUI_MainLayout
                 this.setVisible(false);
-                Main_Layout mainLayout = new Main_Layout(this);
+                GUI_MainLayout mainLayout = new GUI_MainLayout(this);
                 mainLayout.setVisible(true);
             }
             else{
@@ -132,8 +139,4 @@ public class Login extends JFrame {
 
     }
 
-    public static void main(String[] args) {
-        Login a = new Login();
-        a.setVisible(true);
-    }
 }
