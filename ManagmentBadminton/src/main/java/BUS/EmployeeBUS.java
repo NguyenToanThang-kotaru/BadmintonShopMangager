@@ -16,6 +16,9 @@ public class EmployeeBUS {
     public static EmployeeDTO getEmployeeByPhone(String phone){
         return EmployeeDAO.getEmployeeByPhone(phone);
     }
+    public static EmployeeDTO getEmployeeByID(String phone){
+        return EmployeeDAO.getEmployeeByID(phone);
+    }
     public static ArrayList<EmployeeDTO> getAllEmployees(){
         return EmployeeDAO.getAllEmployees();
     }

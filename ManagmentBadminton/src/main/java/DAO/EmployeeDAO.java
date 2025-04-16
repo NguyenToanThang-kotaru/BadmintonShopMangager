@@ -21,7 +21,10 @@ public class EmployeeDAO {
 
     public static ArrayList<EmployeeDTO> getEmployeesWithoutAccount() {
         String sql = "SELECT * FROM employee e "
-                + "WHERE e.IsDeleted = 0 AND e.EmployeeID NOT IN (SELECT a.EmployeeID FROM account a);";
+           + "WHERE e.IsDeleted = 0 "
+           + "AND e.EmployeeID NOT IN ("
+           + "    SELECT a.EmployeeID FROM account a WHERE a.IsDeleted = 0"
+           + ");";
         ArrayList<EmployeeDTO> employees = new ArrayList<>();
         try {
             Connection conn = DatabaseConnection.getConnection();
@@ -47,7 +50,7 @@ public class EmployeeDAO {
     }
 
     public static Boolean delete_Employee(String ID) {
-        String query = "UPDATE `employee` SET `IsDeleted`=1 WHERE EmployeeID = ?;";
+        String query = "DELETE FROM `account` WHERE EmployeeID = ?;";
         try {
             Connection conn = DatabaseConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(query);
@@ -67,6 +70,32 @@ public class EmployeeDAO {
 
     public static EmployeeDTO getEmployeeByPhone(String phone) {
         String sql = "SELECT * FROM employee WHERE Phone = ?;";
+        try {
+            Connection conn = DatabaseConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, phone);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                EmployeeDTO employee = new EmployeeDTO();
+                employee.setEmployeeID(rs.getString("EmployeeID"));
+                employee.setFullName(rs.getString("FullName"));
+                employee.setAge(String.valueOf(rs.getInt("Age")));
+                employee.setPhone(rs.getString("Phone"));
+                employee.setEmail(rs.getString("Email"));
+                employee.setAddress(rs.getString("Address"));
+                employee.setGender(rs.getString("Gender"));
+                return employee;
+            }
+            return null;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    public static EmployeeDTO getEmployeeByID(String phone) {
+        String sql = "SELECT * FROM employee WHERE EmployeeID = ?;";
         try {
             Connection conn = DatabaseConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);

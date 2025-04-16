@@ -103,18 +103,21 @@ public class AccountDAO {
     }
 
     public static boolean updateAccount(AccountDTO account) {
-        String query = "UPDATE account SET Password = ?, RankID = ? WHERE Username = ? AND IsDeleted = 0";
+        String query = "UPDATE account SET Password = ?, RankID = ? WHERE Username = ? ";
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setString(1, account.getPassword());
             stmt.setString(2, account.getPermission().getID());
             stmt.setString(3, account.getUsername());
+//            System.out.println(account.);
 
             int rowsUpdated = stmt.executeUpdate();
+            System.out.println("thanh connnggg");
             return rowsUpdated > 0;
 
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println("sai roi");
             return false;
         }
     }
