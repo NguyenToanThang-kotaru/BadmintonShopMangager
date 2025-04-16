@@ -51,8 +51,11 @@ public class CustomTable extends JPanel {
         // Căn giữa nội dung các cột (trừ cột có index 2 và 3)
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+
         for (int i = 0; i < CustomTable.getColumnCount(); i++) {
-                CustomTable.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);          
+
+            CustomTable.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+
         }
 
         // Tùy chỉnh UI phần tiêu đề bảng

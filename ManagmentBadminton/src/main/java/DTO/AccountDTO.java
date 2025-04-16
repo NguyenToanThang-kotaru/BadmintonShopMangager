@@ -6,22 +6,17 @@ public class AccountDTO {
     private String password;
     private String employeeID;
     private String fullName;  // Thêm trường fullName
-    private String rankID;
+    private PermissionDTO permission;
 
     public AccountDTO() {
-        username = "";
-        password = "";
-        employeeID = "";
-        fullName = "";
-        rankID = "";
     }
 
-    public AccountDTO(String username, String password, String employeeID, String fullName, String rankID) {
+    public AccountDTO(String username, String password, String employeeID, String fullName, PermissionDTO permission) {
         this.username = username;
         this.password = password;
         this.employeeID = employeeID;
         this.fullName = fullName;
-        this.rankID = rankID;
+        this.permission = permission;
     }
 
     public String getUsername() {
@@ -56,11 +51,21 @@ public class AccountDTO {
         this.fullName = fullName;
     }
 
-    public String getRankID() {
-        return rankID;
+    public PermissionDTO getRankID() {
+        return permission;
     }
 
-    public void setRankID(String rankID) {
-        this.rankID = rankID;
+    public void setRankID(PermissionDTO permission) {
+        this.permission = permission;
     }
+
+    public PermissionDTO getPermission() {
+        return permission;
+    }
+
+    public void setPermission(PermissionDTO permission) {
+        this.permission = permission;
+    }
+    
+    
 }
