@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import Connection.DatabaseConnection;
 import DTO.ImportInvoiceDetailDTO;
+import GUI.Utils;
 
 public class ImportInvoiceDetailDAO {
     public static ArrayList<ImportInvoiceDetailDTO> getAllImportInvoiceDetail() {
@@ -32,25 +33,26 @@ public class ImportInvoiceDetailDAO {
         return importInvoiceDetailList;
     }
 
-    public ImportInvoiceDetailDTO getImportInvoiceDetailByID(String id){
-        String sql = "SELECT * FROM import_invoice_detail WHERE ImportID = ?";
+    public ArrayList<ImportInvoiceDetailDTO> getImportInvoiceDetailByImportID(String id){
+        ArrayList<ImportInvoiceDetailDTO> importInvoiceDetailList = new ArrayList<>();
+        String query = "SELECT * FROM import_invoice_detail where ImportID = ?";
         try(Connection conn = DatabaseConnection.getConnection();
-            PreparedStatement pst = conn.prepareStatement(sql)){
+            PreparedStatement pst = conn.prepareStatement(query)){
             pst.setString(1, id);
             ResultSet rs = pst.executeQuery();
-            if(rs.next()){
-                ImportInvoiceDetailDTO importInvoiceDetail = new ImportInvoiceDetailDTO();
-                importInvoiceDetail.setImportID(rs.getString("ImportID"));
-                importInvoiceDetail.setProductID(rs.getString("ProductID"));
-                importInvoiceDetail.setQuantity(rs.getInt("Quatity"));
-                importInvoiceDetail.setPrice(rs.getDouble("Price"));
-                importInvoiceDetail.setTotalPrice(rs.getDouble("TotalPrice"));
-                return importInvoiceDetail;
+            while (rs.next()) {
+                importInvoiceDetailList.add(new ImportInvoiceDetailDTO(
+                    rs.getString("ImportID"),
+                    rs.getString("ProductID"),
+                    rs.getInt("Quantity"),
+                    rs.getDouble("Price"), 
+                    rs.getDouble("TotalPrice") 
+                ));
             }
-        }catch(SQLException e){
-            e.printStackTrace();
+        } catch (SQLException es) {
+            es.printStackTrace();
         }
-        return null;
+        return importInvoiceDetailList;
     }
     
     public boolean insert(ImportInvoiceDetailDTO importInvoiceDetail){
@@ -71,4 +73,33 @@ public class ImportInvoiceDetailDAO {
         }
         return result;
     }
+
+    public ArrayList<Object[]> loadImportDetails(String importID) {
+        ArrayList<Object[]> details = new ArrayList<>();
+        String query = "SELECT *" +
+                       "FROM import_invoice_detail ctnh " +
+                       "JOIN product sp ON ctnh.ProductID = sp.ProductID " +
+                       "WHERE ctnh.ImportID = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, importID);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                int quantity = rs.getInt("Quantity");
+                double price = rs.getDouble("Price");
+                double rowTotal = rs.getDouble("TotalPrice");
+                details.add(new Object[]{
+                    rs.getString("ProductID"),
+                    rs.getString("ProductName"),
+                    quantity,
+                    Utils.formatCurrency(price),
+                    Utils.formatCurrency(rowTotal)
+                });
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return details;
+    }
+    
 }

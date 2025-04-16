@@ -52,9 +52,7 @@ public class GUI_MainLayout extends JFrame {
 
         Sidebar.supplierPanel = new GUI_Supplier();
 
-        Sidebar.importPanel = new JPanel();
-        Sidebar.importPanel.setBackground(Color.PINK);
-        Sidebar.importPanel.add(new JLabel("Hóa đơn nhập"));
+        Sidebar.importPanel = new GUI_Import();
 
         Sidebar.promotionPanel = new JPanel();
         Sidebar.promotionPanel.setBackground(Color.BLUE);

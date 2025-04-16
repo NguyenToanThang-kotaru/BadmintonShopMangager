@@ -1,18 +1,17 @@
 package DTO;
 
-import java.sql.Date;
 
 public class ImportInvoiceDTO {
     private String importID;
     private String employeeID;
     private String supplierID;
-    private Date date;
+    private String date;
     private double totalPrice;
 
     public ImportInvoiceDTO() {
     }
 
-    public ImportInvoiceDTO(String importID, String employeeID, String supplierID, Date date, double totalPrice) {
+    public ImportInvoiceDTO(String importID, String employeeID, String supplierID, String date, double totalPrice) {
         this.importID = importID;
         this.employeeID = employeeID;
         this.supplierID = supplierID;
@@ -44,11 +43,11 @@ public class ImportInvoiceDTO {
         this.supplierID = supplierID;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
