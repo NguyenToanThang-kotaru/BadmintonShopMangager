@@ -1,59 +1,352 @@
 package DAO;
 
-import java.sql.*;
+import Connection.DatabaseConnection;
+import DTO.ProductDTO;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
 // Lớp này dùng để kết nối database và lấy dữ liệu sản phẩm
 public class ProductDAO {
 
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/badmintonshopmanager";
-    private static final String DB_USER = "root";
-    private static final String DB_PASSWORD = "";
+    public static Boolean addProduct(ProductDTO product) {
+        String findMaLoaiSQL = "SELECT TypeID FROM type_product WHERE TypeName = ?";
+        String findMaNCCSQL = "SELECT SupplierID FROM supplier WHERE SupplierName = ?";
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement findMaLoaiStmt = conn.prepareStatement(findMaLoaiSQL); PreparedStatement findMaNCCStmt = conn.prepareStatement(findMaNCCSQL)) {
 
-    // Phương thức kết nối database
-    public static Connection connect() throws SQLException {
-        return DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-    }
+            findMaLoaiStmt.setString(1, product.getTL()); // TL là tên loại
+            ResultSet rs = findMaLoaiStmt.executeQuery();
+            String maLoai = null;
 
-    // Phương thức lấy danh sách sản phẩm từ database
-    public static List<String[]> getProductData() {
-        List<String[]> productList = new ArrayList<>();
-        String query = "SELECT ProductID, ProductName, Quantity, SupplierID, TypeID FROM product";
+            findMaNCCStmt.setString(1, product.gettenNCC()); // tenNCC là tên nhà cung cấp
+            ResultSet rs2 = findMaNCCStmt.executeQuery();
+            String maNCC = null;
 
-        try (Connection conn = connect(); Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(query)) {
+            if (rs.next()) {
+                maLoai = rs.getString("TypeID");
+            } else {
+                System.out.println("Không tìm thấy mã loại cho tên loại: " + product.getTL());
+                return false; // Dừng lại nếu không tìm thấy mã loại
+            }
 
-            while (rs.next()) {
-                String[] product = new String[]{
-                    rs.getString("ProductID"),
-                    rs.getString("ProductName"),
-                    rs.getString("Quantity"),
-                    rs.getString("SupplierID"),
-                    rs.getString("TypeID"),};
-                productList.add(product);
+            if (rs2.next()) {
+                maNCC = rs2.getString("SupplierID");
+            } else {
+                System.out.println("Không tìm thấy mã nhà cung cấp cho tên nhà cung cấp: " + product.gettenNCC());
+                return false; // Dừng lại nếu không tìm thấy mã NCC
+            }
+
+            // Tiếp tục thêm sản phẩm...
+            String sql = "INSERT INTO product (ProductID, ProductName, Price, Quantity, SupplierID, TypeID, ProductImg) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+                String newID = generateNewProductID(); // Tạo ID mới
+
+                stmt.setString(1, newID);
+                stmt.setString(2, product.getProductName());
+                stmt.setDouble(3, Double.parseDouble(product.getGia())); // Chuyển String thành Double
+                stmt.setInt(4, Integer.parseInt(product.getSoluong())); // Chuyển String thành Int
+                stmt.setString(5, maNCC);
+                stmt.setString(6, maLoai);
+                stmt.setString(7, product.getAnh());
+
+                stmt.executeUpdate();
+                System.out.println("Thêm sản phẩm thành công với ID: " + newID);
+                return true;
+
+            } catch (SQLException e) {
+                System.out.println("Lỗi thêm sản phẩm: " + e.getMessage());
+                e.printStackTrace();
+                return false;
             }
 
         } catch (SQLException e) {
+            System.out.println("Lỗi truy vấn mã loại: " + e.getMessage());
             e.printStackTrace();
+            return false;
         }
-        return productList;
     }
 
-    public static String getProductImage(String productID) {
-        String imagePath = null;
-        String query = "SELECT ProductImg FROM product WHERE ProductID = ?";
+    public static Boolean deleteProduct(String productID) {
+        String query = "UPDATE product SET IsDeleted = 1 WHERE ProductID = ?";
 
-        try (Connection conn = connect(); PreparedStatement stmt = conn.prepareStatement(query)) {
-
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, productID);
-            ResultSet rs = stmt.executeQuery();
+            stmt.executeUpdate();
+            System.out.println("Xóa sản phẩm thành công");
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private static String generateNewProductID() {
+        String query = "SELECT ProductID FROM product ORDER BY ProductID DESC LIMIT 1";
+
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
 
             if (rs.next()) {
-                imagePath = rs.getString("ProductImg"); // Lấy tên file ảnh
+                String lastID = rs.getString("ProductID"); // Ví dụ: "SP005"
+
+                int number = Integer.parseInt(lastID.substring(2));
+
+                // Tạo ID mới với định dạng SPXXX
+                return String.format("SP%03d", number + 1); // Ví dụ: "SP006"
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi tạo mã sản phẩm mới: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return "SP001"; // Nếu không có sản phẩm nào, bắt đầu từ "SP001"
+    }
+
+    // Lấy thông tin của một sản phẩm
+    public static ProductDTO getProduct(String ProductID) {
+        String query = "SELECT sp.ProductID, sp.ProductName, sp.Price, sp.Quantity, sp.SupplierID, "
+                + "sp.TypeID, lsp.TypeName, sp.ProductImg, ncc.SupplierName "
+                + "FROM product sp "
+                + "JOIN type_product lsp ON sp.TypeID = lsp.TypeID "
+                + "LEFT JOIN supplier ncc ON sp.SupplierID = ncc.SupplierID "
+                + "WHERE sp.ProductID = ? AND sp.IsDeleted = 0";
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, ProductID);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    String supplierName = rs.getString("SupplierName");
+                    if (supplierName == null) {
+                        supplierName = "Nhà cung cấp đã xóa";
+                    }
+                    return new ProductDTO(
+                            rs.getString("ProductID"),
+                            rs.getString("ProductName"),
+                            rs.getString("Price"),
+                            rs.getString("Quantity"),
+                            rs.getString("SupplierID"),
+                            rs.getString("TypeID"),
+                            rs.getString("TypeName"),
+                            rs.getString("ProductImg"),
+                            supplierName
+                    );
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static ArrayList<String> getAllCategoryNames() {
+        ArrayList<String> categoryList = new ArrayList<>();
+        String query = "SELECT TypeName FROM type_product";
+
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                categoryList.add(rs.getString("TypeName"));  // Lưu tên loại vào danh sách
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi lấy danh sách loại sản phẩm: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return categoryList;
+    }
+
+    public static ArrayList<String> getAllNCCNames() {
+        ArrayList<String> NCCList = new ArrayList<>();
+        String query = "SELECT SupplierName FROM supplier WHERE IsDeleted = 0";
+
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                NCCList.add(rs.getString("SupplierName"));  // Lưu tên nhà cung cấp vào danh sách
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi lấy danh sách nhà cung cấp: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return NCCList;
+    }
+
+    // Lấy danh sách tất cả sản phẩm
+    public static ArrayList<ProductDTO> getAllProducts() {
+        ArrayList<ProductDTO> products = new ArrayList<>();
+        String query = "SELECT sp.ProductID, sp.ProductName, sp.Price, sp.Quantity, sp.SupplierID, "
+                + "sp.TypeID, lsp.TypeName, sp.ProductImg, ncc.SupplierName "
+                + "FROM product sp "
+                + "JOIN type_product lsp ON sp.TypeID = lsp.TypeID "
+                + "LEFT JOIN supplier ncc ON sp.SupplierID = ncc.SupplierID "
+                + "WHERE sp.IsDeleted = 0"; // Chỉ lọc sản phẩm chưa bị xóa
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                String supplierName = rs.getString("SupplierName");
+                if (supplierName == null) {
+                    supplierName = "Nhà cung cấp đã xóa"; // Giá trị mặc định
+                }
+                products.add(new ProductDTO(
+                        rs.getString("ProductID"),
+                        rs.getString("ProductName"),
+                        rs.getString("Price"),
+                        rs.getString("Quantity"),
+                        rs.getString("SupplierID"),
+                        rs.getString("TypeID"),
+                        rs.getString("TypeName"),
+                        rs.getString("ProductImg"),
+                        supplierName
+                ));
+            }
+            System.out.println("Lấy danh sách sản phẩm thành công.");
+        } catch (Exception e) {
+            System.out.println("Lỗi lấy danh sách sản phẩm: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return products;
+    }
+
+    // Cập nhật thông tin sản phẩm
+    public static void updateProduct(ProductDTO product) {
+        String findMaLoaiSQL = "SELECT TypeID FROM type_product WHERE TypeName = ?";
+        String findMaNCCSQL = "SELECT SupplierID FROM supplier WHERE SupplierName = ?";
+        String updateProductSQL = "UPDATE product SET ProductName = ?, Price = ?, Quantity = ?, SupplierID = ?, TypeID = ?, ProductImg = ? WHERE ProductID = ? AND IsDeleted = 0";
+
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement findMaLoaiStmt = conn.prepareStatement(findMaLoaiSQL); PreparedStatement findMaNCCStmt = conn.prepareStatement(findMaNCCSQL); PreparedStatement updateProductStmt = conn.prepareStatement(updateProductSQL)) {
+
+            // Tìm TypeID từ TypeName
+            findMaLoaiStmt.setString(1, product.getTL());
+            ResultSet rs = findMaLoaiStmt.executeQuery();
+            String maLoai = null;
+
+            findMaNCCStmt.setString(1, product.gettenNCC());
+            ResultSet rs2 = findMaNCCStmt.executeQuery();
+            String maNCC = null;
+
+            if (rs.next()) {
+                maLoai = rs.getString("TypeID");  // Lấy TypeID dưới dạng String
+            } else {
+                System.out.println("Không tìm thấy mã loại cho tên loại: " + product.getTL());
+                return; // Không tiếp tục cập nhật nếu không tìm thấy
+            }
+
+            if (rs2.next()) {
+                maNCC = rs2.getString("SupplierID");
+            } else {
+                System.out.println("Không tìm thấy mã NCC cho tên NCC: " + product.gettenNCC());
+                return; // Không tiếp tục cập nhật nếu không tìm thấy
+            }
+
+            updateProductStmt.setString(1, product.getProductName());
+            updateProductStmt.setDouble(2, Double.parseDouble(product.getGia())); // Chuyển String thành Double
+            updateProductStmt.setInt(3, Integer.parseInt(product.getSoluong())); // Chuyển String thành Int
+            updateProductStmt.setString(4, maNCC);
+            updateProductStmt.setString(5, maLoai); // Cập nhật TypeID tìm được
+            updateProductStmt.setString(6, product.getAnh());
+            updateProductStmt.setString(7, product.getProductID());
+
+            int rowsUpdated = updateProductStmt.executeUpdate();
+            if (rowsUpdated > 0) {
+                System.out.println("Cập nhật sản phẩm thành công.");
+            } else {
+                System.out.println("Không có sản phẩm nào được cập nhật. Kiểm tra lại ID!");
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Lỗi cập nhật sản phẩm: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    // Lấy đường dẫn ảnh sản phẩm
+    public static String getProductImage(String productID) {
+        String imagePath = null;
+        String query = "SELECT ProductImg FROM product WHERE ProductID = ? AND IsDeleted = 0";
+
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, productID);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    imagePath = rs.getString("ProductImg"); // Lấy tên file ảnh
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return imagePath;
+    }
+
+    public boolean updateProductQuantity(String productId, int quantity) {
+        String query = "UPDATE product SET Quantity = Quantity + ? WHERE ProductID = ? AND IsDeleted = 0";
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, quantity);
+            stmt.setString(2, productId);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Failed to update product quantity: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public static ArrayList<ProductDTO> searchProducts(String keyword) {
+        ArrayList<ProductDTO> products = new ArrayList<>();
+
+        String query = "SELECT sp.ProductID, sp.ProductName, sp.Price, sp.Quantity, "
+                + "sp.SupplierID, sp.TypeID, "
+                + "lsp.TypeName, sp.ProductImg, ncc.SupplierName "
+                + "FROM product sp "
+                + "JOIN type_product lsp ON sp.TypeID = lsp.TypeID "
+                + "JOIN supplier ncc ON sp.SupplierID = ncc.SupplierID "
+                + "WHERE sp.IsDeleted = 0 AND "
+                + "(sp.ProductID LIKE ? OR sp.ProductName LIKE ? OR lsp.TypeName LIKE ? OR ncc.SupplierName LIKE ?)";
+
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            String searchKeyword = "%" + keyword + "%";
+            stmt.setString(1, searchKeyword);
+            stmt.setString(2, searchKeyword);
+            stmt.setString(3, searchKeyword);
+            stmt.setString(4, searchKeyword);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    products.add(new ProductDTO(
+                            rs.getString("ProductID"),
+                            rs.getString("ProductName"),
+                            rs.getString("Price"),
+                            rs.getString("Quantity"),
+                            rs.getString("SupplierID"),
+                            rs.getString("TypeID"),
+                            rs.getString("TypeName"),
+                            rs.getString("ProductImg"),
+                            rs.getString("SupplierName")
+                    ));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return products;
+    }
+
+    public static ArrayList<String> getSerialsForProduct(String productID) {
+        ArrayList<String> serials = new ArrayList<>();
+        String query = "SELECT Series FROM product_detail WHERE ProductID = ?";
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, productID);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    serials.add(rs.getString("Series"));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi lấy danh sách serial: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return serials;
     }
 }

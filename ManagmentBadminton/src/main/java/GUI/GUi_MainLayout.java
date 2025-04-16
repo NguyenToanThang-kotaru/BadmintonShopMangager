@@ -34,6 +34,8 @@ public class GUI_MainLayout extends JFrame {
         Sidebar.productPanel = new JPanel();
         Sidebar.productPanel.setBackground(Color.GREEN);
         Sidebar.productPanel.add(new JLabel("Danh sách sản phẩm"));
+        
+        Sidebar.productPanel = new GUI_Product();
 
         Sidebar.orderPanel = new JPanel();
         Sidebar.orderPanel.setBackground(Color.ORANGE);

@@ -6,9 +6,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class CustomButton extends JButton {
+
     private Color normalColor = new Color(0, 150, 255);
-    private Color hoverColor = new Color(0, 170, 255);
-    private Color pressedColor = new Color(0, 120, 220);
     private int cornerRadius = 15;
 
     public CustomButton(String text) {
@@ -20,26 +19,25 @@ public class CustomButton extends JButton {
         setBorderPainted(false);
         setOpaque(false);
 
-        // Xử lý sự kiện hover và click
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                setBackground(hoverColor);
+                repaint();
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                setBackground(normalColor);
+                repaint();
             }
 
             @Override
             public void mousePressed(MouseEvent e) {
-                setBackground(pressedColor);
+                repaint();
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                setBackground(hoverColor);
+                repaint();
             }
         });
     }
@@ -48,20 +46,35 @@ public class CustomButton extends JButton {
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g.create();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        
-        // Chọn màu dựa vào trạng thái
+
+        // Chọn màu dựa trên trạng thái
         if (getModel().isPressed()) {
-            g2.setColor(pressedColor);
+            g2.setColor(getPressedColor());
         } else if (getModel().isRollover()) {
-            g2.setColor(hoverColor);
+            g2.setColor(getHoverColor());
         } else {
             g2.setColor(normalColor);
         }
-        
+
         // Vẽ nền bo góc
         g2.fillRoundRect(0, 0, getWidth(), getHeight(), cornerRadius, cornerRadius);
         g2.dispose();
-        
+
         super.paintComponent(g);
+    }
+
+    public void setCustomColor(Color color) {
+        this.normalColor = color;
+        repaint();
+    }
+
+    // ✅ **Hàm linh hoạt để lấy màu hover dựa trên màu nền**
+    public Color getHoverColor() {
+        return normalColor.brighter(); // Làm sáng màu hiện tại
+    }
+
+    // ✅ **Hàm linh hoạt để lấy màu pressed dựa trên màu nền**
+    public Color getPressedColor() {
+        return normalColor.darker(); // Làm tối màu hiện tại
     }
 }
