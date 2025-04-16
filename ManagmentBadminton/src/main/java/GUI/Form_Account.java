@@ -125,7 +125,7 @@ public class Form_Account extends JDialog {
                     char[] passwordChars = txtPassword.getPassword();
                     String username = txtUsername.getText();
                     String password = new String(passwordChars);
-                    EmployeeDTO emp = EmployeeBUS.getEmployeeByPhone(cbEmployeeName.getSelectedItem().toString());
+                    EmployeeDTO emp = EmployeeBUS.getEmployeeByID(cbEmployeeName.getSelectedItem().toString());
                     PermissionDTO role = PermissionDAO.getPermissionByName(cbRole.getSelectedItem().toString());
                     AccountDTO a = new AccountDTO(username, password,emp.getEmployeeID(),emp.getFullName(), role);
                     if (AccountBUS.addAccount(a))  {
@@ -136,9 +136,11 @@ public class Form_Account extends JDialog {
                 } else {
                     String username = txtAccount.getText();
                     String password = txtEditPassword.getText();
-                    String role = cbRole.getSelectedItem().toString();
+                    PermissionDTO role = PermissionDAO.getPermissionByName(cbRole.getSelectedItem().toString());
+                    String empID = account.getEmployeeID();
+                    String empFullName = account.getFullName();
                     System.out.println(username + password + role);
-                    AccountDTO a = AccountBUS.getAccountByUsername(username);
+                    AccountDTO a = new AccountDTO(username, password,empID,empFullName, role);
                     if (AccountBUS.updateAccount(a) == true) {
                         System.out.println("Thanh cong");
                         dispose();

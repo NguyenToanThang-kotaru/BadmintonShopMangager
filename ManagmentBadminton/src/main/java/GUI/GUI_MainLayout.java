@@ -1,9 +1,14 @@
 package GUI;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.sql.SQLException;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 
 public class GUI_MainLayout extends JFrame {
@@ -43,11 +48,9 @@ public class GUI_MainLayout extends JFrame {
         Sidebar.employeePanel = new GUI_Employee();
 
 
-        Sidebar.supplierPanel = new JPanel();
+        Sidebar.supplierPanel = new GUI_Supplier();
 
-        Sidebar.importPanel = new JPanel();
-        Sidebar.importPanel.setBackground(Color.PINK);
-        Sidebar.importPanel.add(new JLabel("Hóa đơn nhập"));
+        Sidebar.importPanel = new GUI_Import();
 
         Sidebar.promotionPanel = new JPanel();
         Sidebar.promotionPanel.setBackground(Color.BLUE);
@@ -83,7 +86,6 @@ public class GUI_MainLayout extends JFrame {
                                 contentPanel.add(Sidebar.employeePanel, BorderLayout.CENTER);
                                 break;
                             case "Nhà Cung Cấp" :
-                                new GUI_SupplierGUI(Sidebar.supplierPanel);
                                 contentPanel.add(Sidebar.supplierPanel, BorderLayout.CENTER);
                                 break;
                             case "Hóa Đơn Nhập" :
