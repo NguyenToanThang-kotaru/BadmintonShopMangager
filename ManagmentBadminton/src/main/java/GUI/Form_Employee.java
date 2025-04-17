@@ -105,19 +105,23 @@ public class Form_Employee extends JDialog {
                 JOptionPane.showMessageDialog(this, "Thêm nhân viên thất bại!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             }
         } // Nếu là cập nhật nhân viên
-//        else {
-//
-//            // Cập nhật thông tin nhân viên
-//            employee.setFullName(name);
-//            employee.setAddress(address);
-//            employee.setPhone(phone);
-//            boolean success = EmployeeDAO.updateEmployee(employee);
-//
-//            if (success) {
-//                JOptionPane.showMessageDialog(this, "Cập nhật nhân viên thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-//                dispose();
-//            }
-//        }
+        else {
+
+            // Cập nhật thông tin nhân viên
+            employee.setFullName(name);
+            employee.setAddress(address);
+            employee.setPhone(phone);
+            employee.setAge(age);
+            employee.setEmail(email);
+            employee.setGender(gender);
+            boolean success = EmployeeDAO.updateEmployee(employee);
+
+            if (success) {
+                JOptionPane.showMessageDialog(this, "Cập nhật nhân viên thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                parent.loadEmployees();
+                dispose();
+            }
+        }
     }
     // Thêm component vào form  
     private void addComponent(String label, JComponent component, GridBagConstraints gbc) {

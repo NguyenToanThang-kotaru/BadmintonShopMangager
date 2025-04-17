@@ -17,7 +17,7 @@ public class GUI_Employee extends JPanel {
     private JPanel midPanel, topPanel, botPanel;
     private JTable employeeTable;
     private DefaultTableModel tableModel;
-//    private JComboBox<String> roleComboBox;
+    private JLabel nameLabel,addressLabel,phoneLabel,genderLabel,ageLabel;
     private CustomButton deleteButton, addButton, editButton, reloadButton;
     private CustomSearch searchField;
     private EmployeeBUS employeeBUS;
@@ -73,35 +73,35 @@ public class GUI_Employee extends JPanel {
         gbc.gridy = 0;
         botPanel.add(new JLabel("Tên Nhân Viên: "), gbc);
         gbc.gridx = 1;
-        JLabel nameLabel = new JLabel("Chọn nhân viên");
+        nameLabel = new JLabel("Chọn nhân viên");
         botPanel.add(nameLabel, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 1;
         botPanel.add(new JLabel("Địa chỉ: "), gbc);
         gbc.gridx = 1;
-        JLabel addressLabel = new JLabel("");
+        addressLabel = new JLabel("");
         botPanel.add(addressLabel, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 2;
         botPanel.add(new JLabel("Số điện thoại: "), gbc);
         gbc.gridx = 1;
-        JLabel phoneLabel = new JLabel("");
+        phoneLabel = new JLabel("");
         botPanel.add(phoneLabel, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 3;
         botPanel.add(new JLabel("Tuổi: "), gbc);
         gbc.gridx = 1;
-        JLabel ageLabel = new JLabel("");
+        ageLabel = new JLabel("");
         botPanel.add(ageLabel, gbc);
-        
+
         gbc.gridx = 0;
         gbc.gridy = 4;
         botPanel.add(new JLabel("Giới tính: "), gbc);
         gbc.gridx = 1;
-        JLabel genderLabel = new JLabel("");
+        genderLabel = new JLabel("");
         botPanel.add(genderLabel, gbc);
         // Tạo panel chứa hai nút
         JPanel buttonPanel = new JPanel(new BorderLayout());
@@ -156,7 +156,6 @@ public class GUI_Employee extends JPanel {
 
         addButton.addActionListener(e -> {
 
-        
 //                    JOptionPane.showMessageDialog(this, "Chức năng thêm nhân viên chưa được triển khai!");
             Form_Employee FE = new Form_Employee(this, null);
             FE.setVisible(true);
@@ -199,13 +198,18 @@ public class GUI_Employee extends JPanel {
     }
 
     // Phương thức tải danh sách tài khoản từ database lên bảng
-   public void loadEmployees() {
+    public void loadEmployees() {
         ArrayList<EmployeeDTO> employees = EmployeeBUS.getAllEmployees(); // Lấy danh sách tài khoản
         tableModel.setRowCount(0); // Xóa dữ liệu cũ trước khi cập nhật
         int index = 1;
         for (EmployeeDTO emp : employees) {
             tableModel.addRow(new Object[]{index++, emp.getFullName(), emp.getAddress(), emp.getPhone(), emp.getGender()});
         }
+        nameLabel.setText("");
+        addressLabel.setText("");
+        phoneLabel.setText("");
+        ageLabel.setText("");
+        genderLabel.setText("");
     }
 
 }

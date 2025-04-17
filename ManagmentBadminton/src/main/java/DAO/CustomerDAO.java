@@ -11,7 +11,7 @@ import DTO.CustomerDTO;
 
 public class CustomerDAO {
     public static ArrayList<CustomerDTO> getAll() {
-        String sql = "select * from customer where is_deleted = 0;";
+        String sql = "select * from customer where IsDeleted = 0;";
         ArrayList <CustomerDTO> customers = new ArrayList<>();
         try {
             Connection conn = DatabaseConnection.getConnection();
@@ -34,7 +34,7 @@ public class CustomerDAO {
     }
 
     public static CustomerDTO getById(String id) {
-        String sql = "select * from customer where CustomerID = ? and is_deleted = 0;";
+        String sql = "select * from customer where CustomerID = ? and IsDeleted = 0;";
         try {
             Connection conn = DatabaseConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -55,7 +55,7 @@ public class CustomerDAO {
     }
 
     public static CustomerDTO getByName(String name) {
-        String sql = "select * from customer where FullName = ? and is_deleted = 0;";
+        String sql = "select * from customer where FullName = ? and IsDeleted = 0;";
         try {
             Connection conn = DatabaseConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -76,7 +76,7 @@ public class CustomerDAO {
     }
 
     public static CustomerDTO getByPhone(String phone) {
-        String sql = "select * from customer where Phone = ? and is_deleted = 0;";
+        String sql = "select * from customer where Phone = ? and IsDeleted = 0;";
         try {
             Connection conn = DatabaseConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -98,7 +98,7 @@ public class CustomerDAO {
     }
 
     public static boolean add(CustomerDTO customer) {
-        String sql = "insert into customer(CustomerID, FullName, Phone, TotalSpending, is_deleted) values (?, ?, ?, ?, 0);";
+        String sql = "insert into customer(CustomerID, FullName, Phone, TotalSpending, IsDeleted) values (?, ?, ?, ?, 0);";
         try {
             Connection conn = DatabaseConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -132,7 +132,7 @@ public class CustomerDAO {
     }
 
     public static boolean delete(String id) {
-        String sql = "update customer set is_deleted = true where CustomerID = ?;";
+        String sql = "update customer set IsDeleted = true where CustomerID = ?;";
         try {
             Connection conn = DatabaseConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
