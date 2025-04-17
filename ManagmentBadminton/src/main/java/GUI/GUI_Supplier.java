@@ -122,7 +122,7 @@ public class GUI_Supplier extends JPanel {
         addButton = new CustomButton("+ Thêm Nhà Cung Cấp");
         topPanel.add(addButton, BorderLayout.EAST);
 
-        addButton.addActionListener(e -> new GUI_Form_Supplier(this).setVisible(true));
+        addButton.addActionListener(e -> new Form_Supplier(this).setVisible(true));
 
         editButton.addActionListener(e -> {
             int selectedRow = supplierTable.getSelectedRow();

@@ -4,6 +4,7 @@
  */
 package BUS;
 
+import DAO.AccountDAO;
 import DAO.EmployeeDAO;
 import DTO.EmployeeDTO;
 import java.util.ArrayList;
@@ -23,6 +24,15 @@ public class EmployeeBUS {
         return EmployeeDAO.getAllEmployees();
     }
     public static Boolean deletedEmployee(String ID){
-        return EmployeeDAO.delete_Employee(ID);
+        if(EmployeeDAO.delete_Employee(ID) == true)
+            return AccountDAO.delete_AccountByEmployee(ID);
+        else
+            return false;
+    }
+    public static Boolean addEmployee(EmployeeDTO emp){
+        return EmployeeDAO.addEmployee(emp);
+    }
+    public static Boolean updateEmployee(EmployeeDTO emp){
+        return EmployeeDAO.updateEmployee(emp);
     }
 }

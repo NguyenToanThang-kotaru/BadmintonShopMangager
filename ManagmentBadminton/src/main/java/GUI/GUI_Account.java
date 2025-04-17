@@ -15,6 +15,8 @@ public class GUI_Account extends JPanel {
     // Khai báo các thành phần giao diện
     private JPanel midPanel, topPanel, botPanel;
     private JTable accountTable;
+    private JLabel employeeLabel, usernameLabel,
+            passwordLabel, roleComboBox;
     private DefaultTableModel tableModel;
 //    private JComboBox<String> roleComboBox;
     private CustomButton deleteButton, addButton, editButton, reloadButton;
@@ -72,28 +74,28 @@ public class GUI_Account extends JPanel {
         gbc.gridy = 0;
         botPanel.add(new JLabel("Tên Nhân Viên: "), gbc);
         gbc.gridx = 1;
-        JLabel employeeLabel = new JLabel("Chọn Tài Khoản");
+        employeeLabel = new JLabel("Chọn Tài Khoản");
         botPanel.add(employeeLabel, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 1;
         botPanel.add(new JLabel("Tài Khoản: "), gbc);
         gbc.gridx = 1;
-        JLabel usernameLabel = new JLabel("");
+        usernameLabel = new JLabel("");
         botPanel.add(usernameLabel, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 2;
         botPanel.add(new JLabel("Mật Khẩu: "), gbc);
         gbc.gridx = 1;
-        JLabel passwordLabel = new JLabel("");
+        passwordLabel = new JLabel("");
         botPanel.add(passwordLabel, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 3;
         botPanel.add(new JLabel("Quyền Tài Khoản: "), gbc);
         gbc.gridx = 1;
-        JLabel roleComboBox = new JLabel("");
+        roleComboBox = new JLabel("");
         botPanel.add(roleComboBox, gbc);
         // Tạo panel chứa hai nút
         JPanel buttonPanel = new JPanel(new BorderLayout());
@@ -189,15 +191,18 @@ public class GUI_Account extends JPanel {
     }
 
     // Phương thức tải danh sách tài khoản từ database lên bảng
-    private void loadAccounts() {
+    public void loadAccounts() {
         List<AccountDTO> accounts = AccountDAO.getAllAccounts(); // Lấy danh sách tài khoản
         tableModel.setRowCount(0); // Xóa dữ liệu cũ trước khi cập nhật
         int index = 1;
         for (AccountDTO acc : accounts) {
             tableModel.addRow(new Object[]{index++, acc.getFullName(),
                 acc.getUsername(), acc.getPassword(), acc.getRankID().getName()});
-
         }
+        employeeLabel.setText("Chọn nhân viên");
+        usernameLabel.setText("");
+        passwordLabel.setText("");
+        roleComboBox.setText("");
     }
 
 }

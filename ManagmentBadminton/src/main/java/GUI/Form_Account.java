@@ -21,7 +21,7 @@ public class Form_Account extends JDialog {
     private CustomCombobox<String> cbRole, cbEmployeeName;
     private CustomButton btnSave, btnCancel;
 
-    public Form_Account(JPanel parent, AccountDTO account) {
+    public Form_Account(GUI_Account parent, AccountDTO account) {
         super((Frame) SwingUtilities.getWindowAncestor(parent), account == null ? "Thêm Tài Khoản" : "Sửa Tài Khoản", true);
         setSize(500, 400);
         setLocationRelativeTo(parent);
@@ -130,6 +130,8 @@ public class Form_Account extends JDialog {
                     AccountDTO a = new AccountDTO(username, password,emp.getEmployeeID(),emp.getFullName(), role);
                     if (AccountBUS.addAccount(a))  {
                         System.out.println("Thanh cong");
+                        parent.loadAccounts();
+                        dispose();
                     } else {
                         System.out.println("That bai");
                     }
@@ -143,6 +145,7 @@ public class Form_Account extends JDialog {
                     AccountDTO a = new AccountDTO(username, password,empID,empFullName, role);
                     if (AccountBUS.updateAccount(a) == true) {
                         System.out.println("Thanh cong");
+                        parent.loadAccounts();
                         dispose();
 
                     } else {

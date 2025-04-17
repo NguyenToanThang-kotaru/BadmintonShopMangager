@@ -157,14 +157,14 @@ public class GUI_Employee extends JPanel {
         addButton.addActionListener(e -> {
 
         
-        ////            JOptionPane.showMessageDialog(this, "Chức năng thêm nhân viên chưa được triển khai!");
-//            GUI_Form_Employee GFA = new GUI_Form_Employee(this, null);
-//            GFA.setVisible(true);
+//                    JOptionPane.showMessageDialog(this, "Chức năng thêm nhân viên chưa được triển khai!");
+            Form_Employee FE = new Form_Employee(this, null);
+            FE.setVisible(true);
         });
 
         editButton.addActionListener(e -> {
-//            GUI_Form_Employee GFA = new GUI_Form_Employee(this, employeeChoosing);
-//            GFA.setVisible(true);
+            Form_Employee FE = new Form_Employee(this, employeeChoosing);
+            FE.setVisible(true);
         });
 
         reloadButton.addActionListener(e -> {
@@ -199,7 +199,7 @@ public class GUI_Employee extends JPanel {
     }
 
     // Phương thức tải danh sách tài khoản từ database lên bảng
-    private void loadEmployees() {
+   public void loadEmployees() {
         ArrayList<EmployeeDTO> employees = EmployeeBUS.getAllEmployees(); // Lấy danh sách tài khoản
         tableModel.setRowCount(0); // Xóa dữ liệu cũ trước khi cập nhật
         int index = 1;
