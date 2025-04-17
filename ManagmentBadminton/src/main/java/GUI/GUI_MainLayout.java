@@ -1,0 +1,126 @@
+package GUI;
+
+import GUI.Promotion.GUI_Promotion;
+import GUI.Statistics.StatisticsPanel;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+
+public class GUI_MainLayout extends JFrame {
+
+    private GUI_Sidebar Sidebar;
+    private GUI_TittleBar tittleBar;
+    
+    public GUI_MainLayout(JFrame login) {
+        setTitle("Quản Lý Kho Hàng");
+        setSize(1500, 800);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout(0, 0));
+        setUndecorated(true);
+        
+        // ================================ Title Bar ================================
+        tittleBar = new GUI_TittleBar(this);
+
+        // ================================ GUI_Sidebar ================================
+        Sidebar = new GUI_Sidebar(login,this);
+
+        // ================================ Content ================================
+        JPanel contentPanel = new JPanel(new BorderLayout());
+
+        Sidebar.statisticsPanel = new StatisticsPanel();
+
+        Sidebar.productPanel = new JPanel();
+        Sidebar.productPanel.setBackground(Color.GREEN);
+        Sidebar.productPanel.add(new JLabel("Danh sách sản phẩm"));
+
+        Sidebar.orderPanel = new JPanel();
+        Sidebar.orderPanel.setBackground(Color.ORANGE);
+        Sidebar.orderPanel.add(new JLabel("Danh sách đơn hàng"));
+
+        Sidebar.employeePanel = new JPanel();
+        Sidebar.employeePanel.setBackground(Color.MAGENTA);
+        Sidebar.employeePanel.add(new JLabel("Nhân viên"));
+
+
+        Sidebar.supplierPanel = new JPanel();
+
+        Sidebar.importPanel = new JPanel();
+        Sidebar.importPanel.setBackground(Color.PINK);
+        Sidebar.importPanel.add(new JLabel("Hóa đơn nhập"));
+
+        Sidebar.promotionPanel = new GUI_Promotion();
+
+        Sidebar.customerPanel = new JPanel();
+        Sidebar.customerPanel.setBackground(Color.RED);
+        Sidebar.customerPanel.add(new JLabel("Khách hàng"));
+
+        Sidebar.accountPanel = new GUI_Account();
+
+        Sidebar.repairPanel = new JPanel();
+        Sidebar.repairPanel.setBackground(Color.DARK_GRAY);
+        Sidebar.repairPanel.add(new JLabel("Bảo hành"));
+
+        Sidebar.rolePanel = new JPanel();
+        Sidebar.rolePanel.setBackground(Color.LIGHT_GRAY);
+        Sidebar.rolePanel.add(new JLabel("Phân quyền"));
+        for (Component comp : Sidebar.panel2.getComponents()) {
+            if (comp instanceof JLabel menuLabel) {
+                menuLabel.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        contentPanel.removeAll(); // Xóa nội dung cũ
+
+                        switch (menuLabel.getText()) {
+                            case "Thống kê":
+                                contentPanel.add(Sidebar.statisticsPanel, BorderLayout.CENTER);
+                                break;
+                            case "Sản Phẩm" :
+                                contentPanel.add(Sidebar.productPanel, BorderLayout.CENTER);
+                                break;
+                            case "Đơn Hàng" :
+                                contentPanel.add(Sidebar.orderPanel, BorderLayout.CENTER);
+                                break;
+                            case "Nhân Viên" :
+                                contentPanel.add(Sidebar.employeePanel, BorderLayout.CENTER);
+                                break;
+                            case "Nhà Cung Cấp" :
+                                new GUI_SupplierGUI(Sidebar.supplierPanel);
+                                contentPanel.add(Sidebar.supplierPanel, BorderLayout.CENTER);
+                                break;
+                            case "Hóa Đơn Nhập" :
+                                contentPanel.add(Sidebar.importPanel, BorderLayout.CENTER);
+                                break;
+                            case "Khuyến Mãi" :
+                                contentPanel.add(Sidebar.promotionPanel, BorderLayout.CENTER);
+                                break;
+                            case "Khách Hàng" :
+                                contentPanel.add(Sidebar.customerPanel, BorderLayout.CENTER);
+                                break;
+                            case "Tài Khoản" :
+                                contentPanel.add(Sidebar.accountPanel, BorderLayout.CENTER);
+                                break;
+                            case "Bảo Hành" :
+                                contentPanel.add(Sidebar.repairPanel, BorderLayout.CENTER);
+                                break;
+                            case "Phân Quyền" :
+                                contentPanel.add(Sidebar.rolePanel, BorderLayout.CENTER);
+                                break;
+                            default :
+                                contentPanel.add(new JLabel("Chưa có nội dung"), BorderLayout.CENTER);
+                        }
+
+                        contentPanel.revalidate();
+                        contentPanel.repaint();
+                    }
+                });
+            }
+        }
+
+        add(tittleBar, BorderLayout.NORTH);
+        add(Sidebar, BorderLayout.WEST);
+        add(contentPanel, BorderLayout.CENTER);
+    }
+    
+}
