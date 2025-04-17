@@ -78,17 +78,37 @@ public class AccountDAO {
                 }
             }
         } catch (Exception e) {
+            System.out.print("DDjt me bij looix goafi nhaayr doo hamf catch luoon goif fack");
             e.printStackTrace();
         }
         return null; // Không tìm thấy tài khoản
     }
 
     public static Boolean delete_Account(String username) {
-        String query = "UPDATE `account` SET `IsDeleted`=1 WHERE Username = ?;";
+        String query = "DELETE FROM `account` WHERE Username = ?;";
         try {
             Connection conn = DatabaseConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setString(1, username);
+            int row = stmt.executeUpdate();
+            if (row > 0) {
+                return true;
+            } else {
+                return false;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+        public static Boolean delete_AccountByEmployee(String id) {
+        String query = "DELETE FROM `account` WHERE EmployeeID = ?;";
+        try {
+            Connection conn = DatabaseConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setString(1, id);
             int row = stmt.executeUpdate();
             if (row > 0) {
                 return true;

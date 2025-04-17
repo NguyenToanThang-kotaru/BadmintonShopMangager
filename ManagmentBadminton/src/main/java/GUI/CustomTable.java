@@ -98,6 +98,7 @@ public class CustomTable extends JPanel {
     }
     
     public JTable getSupplierTable() {
+
         return CustomTable;
     }
     

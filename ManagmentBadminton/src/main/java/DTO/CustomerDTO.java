@@ -1,49 +1,63 @@
 package DTO;
 
 public class CustomerDTO {
-    private String customerID;
-    private String fullname;
+
+    private String id;
+    private String name;
     private String phone;
-    private double totalSpending;
+    private double spending;
+    private int is_deleted;
 
     public CustomerDTO() {}
 
-    public CustomerDTO(String customerID, String fullname, String phone, double totalSpending) {
-        this.customerID = customerID;
-        this.fullname = fullname;
+    public CustomerDTO(String id, String name, String phone, double spending) {
+        this.id = id;
+        this.name = name;
         this.phone = phone;
-        this.totalSpending = totalSpending;
+        this.spending = spending;
+        this.is_deleted = 0;
     }
 
-    public String getCustomerID() {
-        return this.customerID;
+    public String getId() {
+        return id;
     }
 
-    public void setCustomerID(String customerID) {
-        this.customerID = customerID;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public String getFullname() {
-        return this.fullname;
+    public String getName() {
+        return name;
     }
 
-    public void setFullname(String fullname) {
-        this.fullname = fullname;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getPhone() {
-        return this.phone;
+        return phone;
     }
 
     public void setPhone(String phone) {
         this.phone = phone;
     }
 
-    public double getTotalSpending() {
-        return this.totalSpending;
+    public double getSpending() {
+        return spending;
     }
 
-    public void setTotalSpending(double spending) {
-        this.totalSpending = spending;
+    public void setSpending(double spending) {
+        this.spending = spending;
+    }
+
+    // toString (tùy chọn)
+    @Override
+    public String toString() {
+        return "CustomerDTO{" +
+                "CustomerID='" + id + '\'' +
+                ", fullName='" + name + '\'' +
+                ", phone='" + phone + '\'' +
+                ", totalSpending=" + spending +
+                '}';
     }
 }

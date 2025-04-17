@@ -16,7 +16,7 @@ public class EmployeeDTO {
 
     // Constructor đầy đủ
     public EmployeeDTO(String employeeID, String fullName, String age, String phone, String email,
-                       String address, String gender, Date startDate) {
+                       String address, String gender) {
         this.employeeID = employeeID;
         this.fullName = fullName;
         this.age = age;
@@ -24,7 +24,6 @@ public class EmployeeDTO {
         this.email = email;
         this.address = address;
         this.gender = gender;
-        this.startDate = startDate;
     }
 
     // Getter & Setter

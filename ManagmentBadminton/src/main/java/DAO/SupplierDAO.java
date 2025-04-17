@@ -10,6 +10,7 @@ import Connection.DatabaseConnection;
 import DTO.SupplierDTO;
 
 public class SupplierDAO {
+
     public static ArrayList<SupplierDTO> getAllSupplier() {
         ArrayList<SupplierDTO> supplierList = new ArrayList<>();
         String query = "SELECT * FROM supplier WHERE IsDeleted = 0";
@@ -40,7 +41,7 @@ public class SupplierDAO {
             PreparedStatement pst = conn.prepareStatement(sql)){
             pst.setString(1, id);
             ResultSet rs = pst.executeQuery();
-            if(rs.next()){
+            if (rs.next()) {
                 SupplierDTO supplier = new SupplierDTO();
                 supplier.setSupplierID(rs.getString("SupplierID"));
                 supplier.setSupplierName(rs.getString("SupplierName"));
@@ -50,13 +51,13 @@ public class SupplierDAO {
                 supplier.setIsDeleted(rs.getInt("IsDeleted"));
                 return supplier;
             }
-        }catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
     }
-    
-    public boolean insert(SupplierDTO supplier){
+
+    public boolean insert(SupplierDTO supplier) {
         boolean result = false;
         String sql = "Insert into supplier(SupplierID, SupplierName, Phone, Email, Address, IsDeleted) values(?,?,?,?,?,?)";
         try(Connection conn = DatabaseConnection.getConnection();
@@ -70,36 +71,37 @@ public class SupplierDAO {
             
             if(pst.executeUpdate()>=1)
                 result = true;
-        }catch(SQLException e){
+            }
+        catch (SQLException e) {
             e.printStackTrace();
         }
         return result;
     }
 
-    public boolean update(SupplierDTO supplier){
+    public boolean update(SupplierDTO supplier) {
         boolean result = false;
         String sql = "Update supplier Set "
-        + "SupplierName=?, "
-        + "Phone=?, "
-        + "Email=?, "
-        + "Address=? "
-        + "Where SupplierID=?";
-        try(Connection conn = DatabaseConnection.getConnection();
-            PreparedStatement pst = conn.prepareStatement(sql)){
-                pst.setString(1, supplier.getSupplierName());
-                pst.setString(2, supplier.getPhone());
-                pst.setString(3, supplier.getEmail());
-                pst.setString(4, supplier.getAddress());
-                pst.setString(5, supplier.getSupplierID());
-                if(pst.executeUpdate()>=1)
-                    result = true;
-        }catch(SQLException e){
+                + "SupplierName=?, "
+                + "Phone=?, "
+                + "Email=?, "
+                + "Address=? "
+                + "Where SupplierID=?";
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement pst = conn.prepareStatement(sql)) {
+            pst.setString(1, supplier.getSupplierName());
+            pst.setString(2, supplier.getPhone());
+            pst.setString(3, supplier.getEmail());
+            pst.setString(4, supplier.getAddress());
+            pst.setString(5, supplier.getSupplierID());
+            if (pst.executeUpdate() >= 1) {
+                result = true;
+            }
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return result;
     }
 
-    public boolean remove(SupplierDTO supplier){
+    public boolean remove(SupplierDTO supplier) {
         boolean result = false;
         String sql = "Update supplier Set "
         + "IsDeleted=? "
@@ -116,6 +118,21 @@ public class SupplierDAO {
         return result;
     }
 
+    public static ArrayList<String> getAllNCCNames() {
+        ArrayList<String> NCCList = new ArrayList<>();
+        String query = "SELECT SupplierName FROM supplier";
+
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                NCCList.add(rs.getString("SupplierName"));  // Lưu tên loại vào danh sách
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi lấy danh sách nhà cung cấp: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return NCCList;
+    }
     public String generateSupplierID() {
         String newID = "S01";
         try (Connection conn = DatabaseConnection.getConnection();
