@@ -1,8 +1,18 @@
 package GUI;
 
-import javax.swing.*;
-import javax.swing.table.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 
 public class CustomTable extends JPanel {
 
@@ -41,8 +51,11 @@ public class CustomTable extends JPanel {
         // Căn giữa nội dung các cột (trừ cột có index 2 và 3)
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+
         for (int i = 0; i < CustomTable.getColumnCount(); i++) {
-                CustomTable.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);          
+
+            CustomTable.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+
         }
 
         // Tùy chỉnh UI phần tiêu đề bảng
@@ -82,7 +95,8 @@ public class CustomTable extends JPanel {
         return CustomTable;
     }
     
-    public JTable getSuppliersTable() {
+    public JTable getSupplierTable() {
+
         return CustomTable;
     }
     
