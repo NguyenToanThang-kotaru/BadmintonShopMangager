@@ -1,14 +1,9 @@
 package BUS;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 
-import Connection.DatabaseConnection;
 import DAO.ImportInvoiceDetailDAO;
 import DTO.ImportInvoiceDetailDTO;
-import GUI.Utils;
 
 public class ImportInvoiceDetailBUS {
     private final ImportInvoiceDetailDAO importDetailDAO = new ImportInvoiceDetailDAO();

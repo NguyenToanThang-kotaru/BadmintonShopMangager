@@ -10,12 +10,14 @@ import java.awt.*;
 public class AllProductsPanel extends JPanel {
     private JTable allProductsTable;
     private DefaultTableModel productTableModel;
+    private JButton btnNewProduct;
 
     public AllProductsPanel() {
         setLayout(new BorderLayout());
         setBorder(new CompoundBorder(new TitledBorder("Danh sách sản phẩm"), new EmptyBorder(5, 5, 5, 5)));
         setBackground(Color.WHITE);
 
+        // Tạo bảng
         String[] columns = {"Mã SP", "Tên SP", "Đơn giá"};
         productTableModel = new DefaultTableModel(columns, 0) {
             @Override public boolean isCellEditable(int row, int column) { return false; }
@@ -25,6 +27,7 @@ public class AllProductsPanel extends JPanel {
         allProductsTable.setRowHeight(30);
         allProductsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
+        // Căn giữa cột
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         TableColumnModel columnModel = allProductsTable.getColumnModel();
@@ -37,6 +40,13 @@ public class AllProductsPanel extends JPanel {
 
         JScrollPane scrollPane = new JScrollPane(allProductsTable);
         add(scrollPane, BorderLayout.CENTER);
+
+        // Panel chứa nút
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        bottomPanel.setBackground(Color.WHITE);
+        btnNewProduct = new CustomButton("Sản phẩm mới");
+        bottomPanel.add(btnNewProduct);
+        add(bottomPanel, BorderLayout.SOUTH);
     }
 
     public JTable getAllProductsTable() {
@@ -45,5 +55,9 @@ public class AllProductsPanel extends JPanel {
 
     public DefaultTableModel getProductTableModel() {
         return productTableModel;
+    }
+
+    public JButton getBtnNewProduct() {
+        return btnNewProduct;
     }
 }

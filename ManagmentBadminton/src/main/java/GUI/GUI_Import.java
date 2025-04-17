@@ -15,15 +15,13 @@ public class GUI_Import extends JPanel {
     private final CustomSearch searchField;
     private final JLabel importIdLabel;
     private final JLabel employeeIdLabel;
-    private final JLabel supplierIdLabel;
     private final JLabel totalMoneyLabel;
     private final JLabel receiptDateLabel;
     private ImportInvoiceDTO selectedImport;
 
     public GUI_Import() {
         this.importBUS = new ImportInvoiceBUS();
-        // String currentUsername = GUI_Login.getCurrentUsername();
-        String currentUsername = "admin";
+        String currentUsername = GUI_MainLayout.username;
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -42,13 +40,13 @@ public class GUI_Import extends JPanel {
 
         CustomButton addButton = new CustomButton("+ Thêm Phiếu Nhập");
         addButton.addActionListener(e -> {
-            Form_Import form = new Form_Import(this, currentUsername);
+            GUI_Form_Import form = new GUI_Form_Import(this, currentUsername);
             form.setVisible(true);
         });
         topPanel.add(addButton, BorderLayout.EAST);
 
         // Bảng hiển thị danh sách phiếu nhập
-        String[] columnNames = {"Mã PN", "Mã NV", "Mã NCC", "Tổng Tiền", "Ngày Nhập"};
+        String[] columnNames = {"Mã HDN", "Mã NV", "Tổng Tiền", "Ngày Nhập"};
         CustomTable customTable = new CustomTable(columnNames);
         importTable = customTable.getImportTable();
         tableModel = customTable.getTableModel();
@@ -82,20 +80,13 @@ public class GUI_Import extends JPanel {
 
         gbc.gridx = 0;
         gbc.gridy = 2;
-        botPanel.add(new JLabel("Mã Nhà Cung Cấp: "), gbc);
-        gbc.gridx = 1;
-        supplierIdLabel = new JLabel("");
-        botPanel.add(supplierIdLabel, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 3;
         botPanel.add(new JLabel("Tổng Tiền: "), gbc);
         gbc.gridx = 1;
         totalMoneyLabel = new JLabel("");
         botPanel.add(totalMoneyLabel, gbc);
 
         gbc.gridx = 0;
-        gbc.gridy = 4;
+        gbc.gridy = 3;
         botPanel.add(new JLabel("Ngày Nhập: "), gbc);
         gbc.gridx = 1;
         receiptDateLabel = new JLabel("");
@@ -132,15 +123,13 @@ public class GUI_Import extends JPanel {
             if (selectedRow != -1) {
                 String importID = (String) importTable.getValueAt(selectedRow, 0);
                 String employeeID = (String) importTable.getValueAt(selectedRow, 1);
-                String supplierID = (String) importTable.getValueAt(selectedRow, 2);
-                String receiptDate = (String) importTable.getValueAt(selectedRow, 4);
+                String receiptDate = (String) importTable.getValueAt(selectedRow, 3);
 
                 double calculatedTotal = importBUS.calculateImportTotal(importID);
-                selectedImport = new ImportInvoiceDTO(importID, employeeID, supplierID, receiptDate, calculatedTotal);
+                selectedImport = new ImportInvoiceDTO(importID, employeeID, receiptDate, calculatedTotal);
 
                 importIdLabel.setText(importID);
                 employeeIdLabel.setText(employeeID);
-                supplierIdLabel.setText(supplierID);
                 totalMoneyLabel.setText(Utils.formatCurrency(calculatedTotal));
                 receiptDateLabel.setText(receiptDate);
             }
@@ -156,7 +145,6 @@ public class GUI_Import extends JPanel {
             tableModel.addRow(new Object[]{
                     importDTO.getImportID(),
                     importDTO.getEmployeeID(),
-                    importDTO.getSupplierID(),
                     Utils.formatCurrency(calculatedTotal),
                     importDTO.getDate()
             });
@@ -171,13 +159,11 @@ public class GUI_Import extends JPanel {
 
         for (ImportInvoiceDTO importDTO : importList) {
             if (importDTO.getImportID().toLowerCase().contains(keyword) ||
-                importDTO.getEmployeeID().toLowerCase().contains(keyword) ||
-                importDTO.getSupplierID().toLowerCase().contains(keyword)) {
+                importDTO.getEmployeeID().toLowerCase().contains(keyword)) {
                 double calculatedTotal = importBUS.calculateImportTotal(importDTO.getImportID());
                 tableModel.addRow(new Object[]{
                         importDTO.getImportID(),
                         importDTO.getEmployeeID(),
-                        importDTO.getSupplierID(),
                         Utils.formatCurrency(calculatedTotal),
                         importDTO.getDate()
                 });

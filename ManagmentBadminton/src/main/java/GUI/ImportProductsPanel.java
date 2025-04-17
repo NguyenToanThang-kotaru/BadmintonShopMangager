@@ -1,5 +1,6 @@
 package GUI;
 
+import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -10,6 +11,7 @@ import java.awt.*;
 public class ImportProductsPanel extends JPanel {
     private JTable productsTable;
     private DefaultTableModel importTableModel;
+    private CustomButton btnDeleteProduct;
 
     public ImportProductsPanel() {
         setLayout(new BorderLayout());
@@ -38,6 +40,14 @@ public class ImportProductsPanel extends JPanel {
 
         JScrollPane scrollPane = new JScrollPane(productsTable);
         add(scrollPane, BorderLayout.CENTER);
+
+        // Nút xóa sản phẩm
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        bottomPanel.setBackground(Color.WHITE);
+        btnDeleteProduct = new CustomButton("Xóa sản phẩm");
+        btnDeleteProduct.setCustomColor(new Color(220, 0, 0));
+        bottomPanel.add(btnDeleteProduct);
+        add(bottomPanel, BorderLayout.SOUTH);
     }
 
     public JTable getProductsTable() {
@@ -46,5 +56,20 @@ public class ImportProductsPanel extends JPanel {
 
     public DefaultTableModel getImportTableModel() {
         return importTableModel;
+    }
+
+    public JButton getBtnDeleteProduct() {
+        return btnDeleteProduct;
+    }
+
+    public ArrayList<String> getAllProductID() {
+        ArrayList<String> productIDs = new ArrayList<>();
+        for (int i = 0; i < importTableModel.getRowCount(); i++) {
+            Object value = importTableModel.getValueAt(i, 0); // Cột 0 là Mã SP
+            if (value != null) {
+                productIDs.add(value.toString());
+            }
+        }
+        return productIDs;
     }
 }

@@ -83,7 +83,7 @@ public class ProductDAO {
         return false;
     }
 
-    private static String generateNewProductID() {
+    public static String generateNewProductID() {
         String query = "SELECT ProductID FROM product ORDER BY ProductID DESC LIMIT 1";
 
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
@@ -94,7 +94,7 @@ public class ProductDAO {
                 int number = Integer.parseInt(lastID.substring(2));
 
                 // Tạo ID mới với định dạng SPXXX
-                return String.format("SP%03d", number + 1); // Ví dụ: "SP006"
+                return String.format("P%02d", number + 1); // Ví dụ: "SP006"
             }
 
         } catch (SQLException e) {
@@ -102,7 +102,7 @@ public class ProductDAO {
             e.printStackTrace();
         }
 
-        return "SP001"; // Nếu không có sản phẩm nào, bắt đầu từ "SP001"
+        return "P01"; // Nếu không có sản phẩm nào, bắt đầu từ "SP001"
     }
 
     // Lấy thông tin của một sản phẩm
@@ -349,4 +349,5 @@ public class ProductDAO {
         }
         return serials;
     }
+
 }

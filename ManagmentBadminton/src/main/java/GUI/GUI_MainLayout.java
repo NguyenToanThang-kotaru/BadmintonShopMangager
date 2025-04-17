@@ -15,8 +15,10 @@ public class GUI_MainLayout extends JFrame {
 
     private GUI_Sidebar Sidebar;
     private GUI_TittleBar tittleBar;
+    public static String username;
     
-    public GUI_MainLayout(JFrame login) {
+    public GUI_MainLayout(JFrame login, String username) {
+        GUI_MainLayout.username = username;
         setTitle("Quản Lý Kho Hàng");
         setSize(1000, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -123,5 +125,6 @@ public class GUI_MainLayout extends JFrame {
         add(Sidebar, BorderLayout.WEST);
         add(contentPanel, BorderLayout.CENTER);
     }
+
     
 }

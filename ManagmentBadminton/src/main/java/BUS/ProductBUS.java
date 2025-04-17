@@ -91,4 +91,8 @@ public class ProductBUS {
         ProductDAO dao = new ProductDAO();
         return dao.getProduct(id);
     }
+
+    public String generateNewProductID() {
+        return ProductDAO.generateNewProductID();
+    }
 }
