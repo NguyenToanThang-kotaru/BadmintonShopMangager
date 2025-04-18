@@ -16,11 +16,7 @@ public class SupplierBUS {
         supplierList = SupplierDAO.getAllSupplier();
     }
 
-<<<<<<< HEAD
-    public ArrayList<SupplierDTO> getAllSupplier() {
-=======
     public static ArrayList<SupplierDTO> getAllSupplier(){
->>>>>>> 5b17068a03ef6cebb86e94f083390133a3567487
         return SupplierDAO.getAllSupplier();
     }
 
@@ -71,13 +67,8 @@ public class SupplierBUS {
         return -1;
     }
 
-<<<<<<< HEAD
-    public SupplierDTO getSupplierByID(String id) {
-        return supplierDAO.getSupplierByID(id);
-=======
     public static SupplierDTO getSupplierByID(String id){
         return SupplierDAO.getSupplierByID(id);
->>>>>>> 5b17068a03ef6cebb86e94f083390133a3567487
     }
 
     public String generateSupplierID(){

@@ -37,7 +37,7 @@ public class GUI_Import extends JPanel {
 
     public GUI_Import() {
         this.importBUS = new ImportInvoiceBUS();
-        String currentUsername = GUI_MainLayout.username;
+//        String currentUsername = GUI_MainLayout.username;
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(new EmptyBorder(10, 10, 10, 10));

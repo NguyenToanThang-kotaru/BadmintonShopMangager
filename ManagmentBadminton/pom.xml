@@ -17,20 +17,17 @@
             <version>8.0.33</version>
         </dependency>
         <dependency>
-<<<<<<< HEAD
-=======
+
             <groupId>com.itextpdf</groupId>
             <artifactId>itextpdf</artifactId>
             <version>5.5.13.3</version> <!-- phiên bản ổn định -->
         </dependency>
         <dependency>
->>>>>>> 5b17068a03ef6cebb86e94f083390133a3567487
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.12.0</version>
         </dependency>
-<<<<<<< HEAD
-=======
+
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
@@ -41,6 +38,5 @@
             <artifactId>poi-ooxml-schemas</artifactId>
             <version>4.1.2</version>
         </dependency>
->>>>>>> 5b17068a03ef6cebb86e94f083390133a3567487
     </dependencies>
 </project>
