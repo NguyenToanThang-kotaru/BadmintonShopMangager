@@ -34,6 +34,7 @@ public class GUI_Import extends JPanel {
     private final JLabel employeeIdLabel;
     private final JLabel totalMoneyLabel;
     private final JLabel receiptDateLabel;
+    private final CustomButton reloadButton;
     private ImportInvoiceDTO selectedImport;
 
     public GUI_Import(AccountDTO username) {
@@ -49,6 +50,12 @@ public class GUI_Import extends JPanel {
         topPanel.setPreferredSize(new Dimension(0, 60));
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         topPanel.setBackground(Color.WHITE);
+
+        reloadButton = new CustomButton("Tải lại trang");
+        topPanel.add(reloadButton, BorderLayout.WEST);
+        reloadButton.addActionListener(e -> {
+            loadImport();
+        });
 
         searchField = new CustomSearch(275, 20);
         searchField.setBackground(Color.WHITE);

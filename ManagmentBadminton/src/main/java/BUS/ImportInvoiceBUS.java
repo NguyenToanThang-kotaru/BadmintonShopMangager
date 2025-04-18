@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import DAO.ImportInvoiceDAO;
 import DAO.ImportInvoiceDetailDAO;
 import DAO.ProductDAO;
+import DAO.ProductDetailDAO;
 import DAO.SupplierDAO;
 import DTO.ImportInvoiceDTO;
 import DTO.ImportInvoiceDetailDTO;
 import DTO.ProductDTO;
+import DTO.ProductDetailDTO;
 import GUI.Utils;
 
 public class ImportInvoiceBUS {
@@ -16,6 +18,7 @@ public class ImportInvoiceBUS {
     private final ImportInvoiceDetailDAO importDetailDAO = new ImportInvoiceDetailDAO();
     private final SupplierDAO supplierDAO = new SupplierDAO();
     private final ProductDAO productDAO = new ProductDAO();
+    private final ProductDetailDAO productDetailDAO = new ProductDetailDAO();
     public static ArrayList<ImportInvoiceDTO> getAllImportInvoice() {
         return ImportInvoiceDAO.getAllImportInvoice();
     }
@@ -42,16 +45,39 @@ public class ImportInvoiceBUS {
                 if(productBUS.getProductByID(productID) == null){
                     productBUS.insert(new ProductDTO(productID, productName, String.valueOf(price) , String.valueOf(quantity), supplierID, typeID, "", image,""));
                 }
+                else {
+                    productDAO.updateProductQuantity(productID, quantity);
+                }
                 ImportInvoiceDetailDTO importDetail = new ImportInvoiceDetailDTO(importInvoice.getImportID(), productID, supplierID, quantity, price, totalPrice);
                 if (!importDetailDAO.insert(importDetail)) {
                     result = false;
                     break;
+                }
+                ArrayList<String> newSeriesList = new ArrayList<>();
+                for (int i = 0; i < quantity; i++) {
+                    String lastSeries = (newSeriesList.isEmpty()) 
+                        ? productDetailDAO.getLastSeries() 
+                        : newSeriesList.get(newSeriesList.size() - 1);
+                    String nextSeries = generateNextSeriesFrom(lastSeries);
+                    newSeriesList.add(nextSeries);
+                }
+                for (String newSeries : newSeriesList) {
+                    ProductDetailDTO productDetail = new ProductDetailDTO(newSeries, productID, importInvoice.getDate(), "Hiện");
+                    if (!productDetailDAO.insert(productDetail)) {
+                        result = false;
+                        break;
+                    }
                 }
             }
         } else {
             result = false;
         }
         return result;
+    }
+
+    public String generateNextSeriesFrom(String lastID) {
+        int num = Integer.parseInt(lastID.substring(2)) + 1;
+        return String.format("SE%08d", num);
     }
 
     public double calculateImportTotal(String importID){

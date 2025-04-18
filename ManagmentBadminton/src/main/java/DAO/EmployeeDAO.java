@@ -5,10 +5,8 @@
 package DAO;
 
 import Connection.DatabaseConnection;
-import DTO.AccountDTO;
 import java.util.ArrayList;
 import DTO.EmployeeDTO;
-import com.mysql.cj.xdevapi.PreparableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
