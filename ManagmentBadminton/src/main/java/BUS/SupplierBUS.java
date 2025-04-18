@@ -2,7 +2,9 @@ package BUS;
 
 import java.util.ArrayList;
 
+import DAO.ProductDAO;
 import DAO.SupplierDAO;
+import DTO.ProductDTO;
 import DTO.SupplierDTO;
 
 public class SupplierBUS {
@@ -14,7 +16,11 @@ public class SupplierBUS {
         supplierList = SupplierDAO.getAllSupplier();
     }
 
+<<<<<<< HEAD
     public ArrayList<SupplierDTO> getAllSupplier() {
+=======
+    public static ArrayList<SupplierDTO> getAllSupplier(){
+>>>>>>> 5b17068a03ef6cebb86e94f083390133a3567487
         return SupplierDAO.getAllSupplier();
     }
 
@@ -65,11 +71,27 @@ public class SupplierBUS {
         return -1;
     }
 
+<<<<<<< HEAD
     public SupplierDTO getSupplierByID(String id) {
         return supplierDAO.getSupplierByID(id);
+=======
+    public static SupplierDTO getSupplierByID(String id){
+        return SupplierDAO.getSupplierByID(id);
+>>>>>>> 5b17068a03ef6cebb86e94f083390133a3567487
     }
 
     public String generateSupplierID(){
         return supplierDAO.generateSupplierID();
+    }
+
+        public ArrayList<ProductDTO> getProductsBySupplier(String supplierID) {
+        ArrayList<ProductDTO> allProducts = ProductDAO.getAllProducts();
+        ArrayList<ProductDTO> supplierProducts = new ArrayList<>();
+        for (ProductDTO product : allProducts) {
+            if (product.getMaNCC().equals(supplierID)) {
+                supplierProducts.add(product);
+            }
+        }
+        return supplierProducts;
     }
 }

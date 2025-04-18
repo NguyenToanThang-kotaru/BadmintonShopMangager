@@ -51,8 +51,6 @@ public class GUI_Import_Detail extends JDialog {
         addDetailRow(mainPanel, gbc, "Ngày nhập:", importDTO.getDate());
         gbc.gridy++;
         addDetailRow(mainPanel, gbc, "Nhân viên nhập:", importBUS.getEmployeeNameByImportID(importDTO.getImportID()));
-        gbc.gridy++;
-        addDetailRow(mainPanel, gbc, "Nhà cung cấp:", importBUS.getSupplierNameByImportID(importDTO.getImportID()));
 
         // Tạo bảng sản phẩm
         gbc.gridy++;
@@ -83,14 +81,14 @@ public class GUI_Import_Detail extends JDialog {
         mainPanel.add(scrollPane, gbc);
 
         // Tải chi tiết phiếu nhập và tính tổng tiền
-        int calculatedTotal = loadImportDetails(importDTO.getImportID(), model);
+        loadImportDetails(importDTO.getImportID(), model);
 
         // Hiển thị tổng tiền (chỉ thêm một lần)
         gbc.gridy++;
         gbc.gridwidth = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weighty = 0;
-        addDetailRow(mainPanel, gbc, "Tổng tiền:", Utils.formatCurrency(calculatedTotal));
+        addDetailRow(mainPanel, gbc, "Tổng tiền:", Utils.formatCurrency(importDTO.getTotalPrice()));
 
         // Thêm nút Đóng
         gbc.gridy++;
@@ -119,16 +117,21 @@ public class GUI_Import_Detail extends JDialog {
         panel.add(valueLbl, gbc);
     }
 
-    // Tải chi tiết phiếu nhập và tính tổng tiền
-    private int loadImportDetails(String importID, DefaultTableModel model) {
+    // Tải chi tiết phiếu nhập 
+    private void loadImportDetails(String importID, DefaultTableModel model) {
         ArrayList<Object[]> details = bus.loadImportDetails(importID);
-        int total = 0;
-        model.setRowCount(0);
-
+        model.setRowCount(0);  // Xóa dữ liệu cũ
+    
         if (details.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Không tìm thấy sản phẩm nào cho phiếu nhập " + importID,
                     "Thông báo", JOptionPane.WARNING_MESSAGE);
         } else {
+            // Thêm dữ liệu mới vào model
+            for (Object[] row : details) {
+                model.addRow(row);
+            }
+    
+            // Cập nhật lại giao diện
             SwingUtilities.invokeLater(() -> {
                 model.fireTableDataChanged();
                 productsTable.revalidate();
@@ -137,6 +140,6 @@ public class GUI_Import_Detail extends JDialog {
                 scrollPane.repaint();
             });
         }
-        return total;
     }
+    
 }
