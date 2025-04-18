@@ -20,7 +20,7 @@ public class GUI_Product extends JPanel {
     private JTable productTable;
     private DefaultTableModel tableModel;
     private JComboBox<String> roleComboBox;
-    private CustomButton fixButton, saveButton, deleteButton, addButton, ShowSEButton;
+    private CustomButton fixButton, saveButton, deleteButton, addButton, ShowSEButton, reloadButton;
     private CustomSearch searchField;
     private ProductDTO productChoosing;
 
@@ -40,6 +40,8 @@ public class GUI_Product extends JPanel {
         searchField.setBackground(Color.WHITE);
 //        searchField.setPreferredSize(new Dimension(0, 30));d
         topPanel.add(searchField, BorderLayout.CENTER);
+        reloadButton = new CustomButton("Tải Lại Trang");
+        topPanel.add(reloadButton, BorderLayout.WEST);
 
         addButton = new CustomButton("+ Thêm sản phẩm");
         addButton.setFont(new Font("Arial", Font.BOLD, 14));
@@ -253,6 +255,11 @@ public class GUI_Product extends JPanel {
                 SEForm.setVisible(true);
 
             }
+        });
+        
+        reloadButton.addActionListener(e -> {
+            loadProductData();
+            tableModel.fireTableDataChanged();
         });
 
         addButton.addActionListener(e -> {

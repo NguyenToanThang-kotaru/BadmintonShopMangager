@@ -1,29 +1,31 @@
 package DAO;
 
-import Connection.DatabaseConnection;
-import DTO.SupplierDTO;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import Connection.DatabaseConnection;
+import DTO.SupplierDTO;
+
 public class SupplierDAO {
 
     public static ArrayList<SupplierDTO> getAllSupplier() {
         ArrayList<SupplierDTO> supplierList = new ArrayList<>();
-        String query = "SELECT * FROM supplier";
-        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+        String query = "SELECT * FROM supplier WHERE IsDeleted = 0";
+        try(Connection conn = DatabaseConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(query)) {
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     supplierList.add(new SupplierDTO(
-                            rs.getString("SupplierID"),
-                            rs.getString("SupplierName"),
-                            rs.getString("Phone"),
-                            rs.getString("Email"),
-                            rs.getString("Address"),
-                            rs.getString("Status")
-                    )
+                        rs.getString("SupplierID"),
+                        rs.getString("SupplierName"),
+                        rs.getString("Phone"),
+                        rs.getString("Email"),
+                        rs.getString("Address"),
+                        rs.getInt("IsDeleted")
+                         )
                     );
                 }
             }
@@ -33,9 +35,10 @@ public class SupplierDAO {
         return supplierList;
     }
 
-    public SupplierDTO getSupplierByID(String id) {
-        String sql = "SELECT * FROM supplier WHERE SupplierID = ?";
-        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement pst = conn.prepareStatement(sql)) {
+    public SupplierDTO getSupplierByID(String id){
+        String sql = "SELECT * FROM supplier WHERE SupplierID = ? AND IsDeleted = 0";
+        try(Connection conn = DatabaseConnection.getConnection();
+            PreparedStatement pst = conn.prepareStatement(sql)){
             pst.setString(1, id);
             ResultSet rs = pst.executeQuery();
             if (rs.next()) {
@@ -45,7 +48,7 @@ public class SupplierDAO {
                 supplier.setPhone(rs.getString("Phone"));
                 supplier.setEmail(rs.getString("Email"));
                 supplier.setAddress(rs.getString("Address"));
-                supplier.setStatus(rs.getString("Status"));
+                supplier.setIsDeleted(rs.getInt("IsDeleted"));
                 return supplier;
             }
         } catch (SQLException e) {
@@ -56,19 +59,20 @@ public class SupplierDAO {
 
     public boolean insert(SupplierDTO supplier) {
         boolean result = false;
-        String sql = "Insert into supplier(SupplierID, SupplierName, Phone, Email, Address, Status) values(?,?,?,?,?,?)";
-        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement pst = conn.prepareStatement(sql)) {
+        String sql = "Insert into supplier(SupplierID, SupplierName, Phone, Email, Address, IsDeleted) values(?,?,?,?,?,?)";
+        try(Connection conn = DatabaseConnection.getConnection();
+            PreparedStatement pst = conn.prepareStatement(sql)){
             pst.setString(1, supplier.getSupplierID());
             pst.setString(2, supplier.getSupplierName());
             pst.setString(3, supplier.getPhone());
             pst.setString(4, supplier.getEmail());
             pst.setString(5, supplier.getAddress());
-            pst.setString(6, supplier.getStatus());
-
-            if (pst.executeUpdate() >= 1) {
+            pst.setInt(6, supplier.getIsDeleted());
+            
+            if(pst.executeUpdate()>=1)
                 result = true;
             }
-        } catch (SQLException e) {
+        catch (SQLException e) {
             e.printStackTrace();
         }
         return result;
@@ -100,15 +104,15 @@ public class SupplierDAO {
     public boolean remove(SupplierDTO supplier) {
         boolean result = false;
         String sql = "Update supplier Set "
-                + "Status=? "
-                + "Where SupplierID=?";
-        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement pst = conn.prepareStatement(sql)) {
-            pst.setString(1, "Ẩn");
-            pst.setString(2, supplier.getSupplierID());
-            if (pst.executeUpdate() >= 1) {
-                result = true;
-            }
-        } catch (SQLException e) {
+        + "IsDeleted=? "
+        + "Where SupplierID=?";
+        try(Connection conn = DatabaseConnection.getConnection();
+            PreparedStatement pst = conn.prepareStatement(sql)){
+                pst.setInt(1, 1);
+                pst.setString(2, supplier.getSupplierID());
+                if(pst.executeUpdate()>=1)
+                    result = true;
+        }catch(SQLException e){
             e.printStackTrace();
         }
         return result;
@@ -128,5 +132,22 @@ public class SupplierDAO {
             e.printStackTrace();
         }
         return NCCList;
+    }
+    public String generateSupplierID() {
+        String newID = "S01";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement("SELECT MAX(SupplierID) AS maxID FROM supplier")) {
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                String maxID = rs.getString("maxID");
+                if (maxID != null) {
+                    int number = Integer.parseInt(maxID.replaceAll("[^0-9]", "")) + 1;
+                    newID = String.format("S%02d", number);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return newID;
     }
 }

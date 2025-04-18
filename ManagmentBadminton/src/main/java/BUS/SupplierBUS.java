@@ -1,12 +1,13 @@
 package BUS;
 
+import java.util.ArrayList;
+
 import DAO.SupplierDAO;
 import DTO.SupplierDTO;
-import java.util.ArrayList;
 
 public class SupplierBUS {
 
-    private SupplierDAO supplierDAO = new SupplierDAO();
+    private final SupplierDAO supplierDAO = new SupplierDAO();
     private ArrayList<SupplierDTO> supplierList = new ArrayList<>();
 
     public SupplierBUS() {
@@ -66,5 +67,9 @@ public class SupplierBUS {
 
     public SupplierDTO getSupplierByID(String id) {
         return supplierDAO.getSupplierByID(id);
+    }
+
+    public String generateSupplierID(){
+        return supplierDAO.generateSupplierID();
     }
 }
