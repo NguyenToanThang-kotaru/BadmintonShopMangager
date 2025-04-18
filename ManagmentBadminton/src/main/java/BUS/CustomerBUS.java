@@ -1,9 +1,9 @@
 package BUS;
 
+import java.util.ArrayList;
+
 import DAO.CustomerDAO;
 import DTO.CustomerDTO;
-
-import java.util.ArrayList;
 
 public class CustomerBUS {
     public CustomerDTO getById(String id) {
