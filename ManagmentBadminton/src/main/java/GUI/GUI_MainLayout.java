@@ -17,11 +17,8 @@ public class GUI_MainLayout extends JFrame {
 
     private GUI_Sidebar Sidebar;
     private GUI_TittleBar tittleBar;
-    public static String username;
-
     public GUI_MainLayout(JFrame login, AccountDTO logined) {
 
-        GUI_MainLayout.username = logined.getUsername();
         setTitle("Quản Lý Kho Hàng");
         setSize(1000, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -55,7 +52,7 @@ public class GUI_MainLayout extends JFrame {
 
         Sidebar.supplierPanel = new GUI_Supplier();
 
-        Sidebar.importPanel = new GUI_Import();
+        Sidebar.importPanel = new GUI_Import(logined);
 
         Sidebar.promotionPanel = new JPanel();
         Sidebar.promotionPanel.setBackground(Color.BLUE);

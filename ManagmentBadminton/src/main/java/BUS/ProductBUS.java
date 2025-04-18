@@ -10,14 +10,13 @@ import java.util.List;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
+
 public class ProductBUS {
 
     public static List<ProductDTO> getAllProducts() {
         return ProductDAO.getAllProducts();
     }
-
     public static void updateProduct(ProductDTO product) {
-
         ProductDAO dao = new ProductDAO();
         dao.updateProduct(product);
     }
