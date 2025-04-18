@@ -1,11 +1,21 @@
 package GUI;
 
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.table.*;
-import java.awt.*;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 
 public class AllProductsPanel extends JPanel {
     private JTable allProductsTable;
@@ -18,7 +28,7 @@ public class AllProductsPanel extends JPanel {
         setBackground(Color.WHITE);
 
         // Tạo bảng
-        String[] columns = {"Mã SP", "Tên SP", "Đơn giá"};
+        String[] columns = {"Mã SP", "Tên SP", "Giá nhập", "Kho"};
         productTableModel = new DefaultTableModel(columns, 0) {
             @Override public boolean isCellEditable(int row, int column) { return false; }
         };
@@ -32,8 +42,9 @@ public class AllProductsPanel extends JPanel {
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         TableColumnModel columnModel = allProductsTable.getColumnModel();
         columnModel.getColumn(0).setPreferredWidth(100);
-        columnModel.getColumn(1).setPreferredWidth(350);
+        columnModel.getColumn(1).setPreferredWidth(150);
         columnModel.getColumn(2).setPreferredWidth(150);
+        columnModel.getColumn(3).setPreferredWidth(50);
         for (int i = 0; i < columnModel.getColumnCount(); i++) {
             columnModel.getColumn(i).setCellRenderer(centerRenderer);
         }

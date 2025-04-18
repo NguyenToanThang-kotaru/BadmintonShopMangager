@@ -1,12 +1,28 @@
 package GUI;
 
-import BUS.ImportInvoiceBUS;
-import DTO.ImportInvoiceDTO;
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.util.ArrayList;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
-import java.util.ArrayList;
+
+import BUS.ImportInvoiceBUS;
+import DTO.ImportInvoiceDTO;
 
 public class GUI_Import extends JPanel {
     private final ImportInvoiceBUS importBUS;
@@ -92,14 +108,19 @@ public class GUI_Import extends JPanel {
         receiptDateLabel = new JLabel("");
         botPanel.add(receiptDateLabel, gbc);
 
-        // Panel chứa các nút Xóa và Xem Chi Tiết
+        // Panel chứa các nút Nhập xuất excel, in hóa đơn và Xem Chi Tiết
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 5));
         buttonPanel.setOpaque(false);
 
-        CustomButton detailButton = new CustomButton("Xem Chi Tiết Hóa Đơn Nhập");
+        CustomButton detailButton = new CustomButton("Xem Chi Tiết");
         detailButton.setCustomColor(new Color(0, 120, 215));
         detailButton.addActionListener(e -> showImportDetail());
         buttonPanel.add(detailButton);
+
+        CustomButton printPdfButton = new CustomButton("In PDF");
+        printPdfButton.setCustomColor(new Color(192, 0, 0)); // Đỏ đậm - màu thường thấy với PDF
+        printPdfButton.addActionListener(e -> printInvoiceAsPDF());
+        buttonPanel.add(printPdfButton);
 
         gbc.gridx = 0;
         gbc.gridy = 5;
@@ -184,5 +205,17 @@ public class GUI_Import extends JPanel {
                 selectedImport
         );
         detailDialog.setVisible(true);
+    }
+
+    private void printInvoiceAsPDF() {
+        if (selectedImport == null) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn một phiếu nhập để in PDF!");
+            return;
+        }
+        
+
+        new CustomImportInvoicePDF().export(
+            selectedImport                 // Tổng tiền
+        );
     }
 }

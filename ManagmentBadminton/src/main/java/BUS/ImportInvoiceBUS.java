@@ -30,10 +30,18 @@ public class ImportInvoiceBUS {
             for (Object[] detail : importDetails) {
                 System.out.println("Detail: " + detail[0] + ", " + detail[1] + ", " + detail[2] + ", " + detail[3] + ", " + detail[4]);
                 String productID = (String) detail[0];
-                int quantity = Integer.parseInt((String) detail[1]);
-                String supplierID = (String) detail[2];
-                double price = (Double) detail[3]; // không cần parse lại từ String
-                double totalPrice = (Double) detail[4]; // không cần parse lại từ String
+                String productName = (String) detail[1];
+                int quantity = Integer.parseInt((String) detail[2]);
+                String supplierID = (String) detail[3];
+                double price = (Double) detail[4]; // không cần parse lại từ String
+                double totalPrice = (Double) detail[5]; // không cần parse lại từ String
+                String typeID = (String) detail[6];
+                String image = (String) detail[7];
+                ProductBUS productBUS = new ProductBUS();
+                //Theem sản phẩm vào danh sách sản phẩm nếu chưa có trong danh sách
+                if(productBUS.getProductByID(productID) == null){
+                    productBUS.insert(new ProductDTO(productID, productName, String.valueOf(price) , String.valueOf(quantity), supplierID, typeID, "", image,""));
+                }
                 ImportInvoiceDetailDTO importDetail = new ImportInvoiceDetailDTO(importInvoice.getImportID(), productID, supplierID, quantity, price, totalPrice);
                 if (!importDetailDAO.insert(importDetail)) {
                     result = false;
@@ -95,7 +103,8 @@ public class ImportInvoiceBUS {
             products.add(new Object[]{
                 product.getProductID(),
                 product.getProductName(),
-                Utils.formatCurrency(Double.parseDouble(product.getGia()))
+                Utils.formatCurrency(Double.parseDouble(product.getGia())),
+                product.getSoluong()
             });
         }
         return products;

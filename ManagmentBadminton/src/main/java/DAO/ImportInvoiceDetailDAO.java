@@ -34,7 +34,7 @@ public class ImportInvoiceDetailDAO {
         return importInvoiceDetailList;
     }
 
-    public ArrayList<ImportInvoiceDetailDTO> getImportInvoiceDetailByImportID(String id){
+    public static ArrayList<ImportInvoiceDetailDTO> getImportInvoiceDetailByImportID(String id){
         ArrayList<ImportInvoiceDetailDTO> importInvoiceDetailList = new ArrayList<>();
         String query = "SELECT * FROM import_invoice_detail where ImportID = ?";
         try(Connection conn = DatabaseConnection.getConnection();

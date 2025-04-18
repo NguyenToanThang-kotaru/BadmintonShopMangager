@@ -11,8 +11,8 @@ public class ImportInvoiceDetailBUS {
         return ImportInvoiceDetailDAO.getAllImportInvoiceDetail();
     }
 
-    public ArrayList<ImportInvoiceDetailDTO> getImportInvoiceDetailByImportID(String id){
-        return importDetailDAO.getImportInvoiceDetailByImportID(id);
+    public static ArrayList<ImportInvoiceDetailDTO> getImportInvoiceDetailByImportID(String id){
+        return ImportInvoiceDetailDAO.getImportInvoiceDetailByImportID(id);
     }
     
     public boolean insert(ImportInvoiceDetailDTO importInvoice){

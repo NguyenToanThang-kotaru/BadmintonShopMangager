@@ -1,16 +1,25 @@
 package GUI;
 
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
-
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.Image;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+
 import BUS.AccountBUS;
-import BUS.EmployeeBUS;
 import BUS.ImportInvoiceBUS;
 import BUS.ProductBUS;
 import BUS.SupplierBUS;
@@ -60,11 +69,11 @@ public class GUI_Form_Import extends JDialog {
         centerPanel.setBackground(Color.WHITE);
 
         allProductsPanel = new AllProductsPanel();
-        allProductsPanel.setPreferredSize(new Dimension(600, 300));
+        allProductsPanel.setPreferredSize(new Dimension(400, 300));
         centerPanel.add(allProductsPanel, BorderLayout.WEST);
         
         importProductsPanel = new ImportProductsPanel();
-        importProductsPanel.setPreferredSize(new Dimension(400, 300));
+        importProductsPanel.setPreferredSize(new Dimension(600, 300));
         importProductsPanel.getProductsTable().getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting() && importProductsPanel.getProductsTable().getSelectedRow() >= 0) {
                 int row = importProductsPanel.getProductsTable().getSelectedRow();
@@ -101,21 +110,24 @@ public class GUI_Form_Import extends JDialog {
 
             // Nếu tồn tại mã này trong bảng import thì tăng lên
             while (importProductsPanel.getAllProductID().contains(newProductId)) {
-                String prefix = newProductId.substring(0, 3); // P01
+                // Tách prefix là phần chữ cái đầu, suffix là phần số ở cuối
+                String prefix = newProductId.replaceAll("\\d+$", ""); // bỏ phần số ở cuối
+                String numberPart = newProductId.replaceAll("\\D+", ""); // chỉ lấy phần số
             
-                String suffix = newProductId.length() > 3 ? newProductId.substring(3) : "00";
                 int number = 0;
                 try {
-                    number = Integer.parseInt(suffix);
+                    number = Integer.parseInt(numberPart);
                 } catch (NumberFormatException ex) {
-                    number = 0; // hoặc gán giá trị mặc định
+                    number = 0;
                 }
             
                 number++;
-                newProductId = prefix + String.format("%02d", number);
+                newProductId = prefix + String.format("%02d", number); // định dạng 2 chữ số
             }
             // Gán mã sản phẩm sau khi xử lý xong
             productDetailPanel.getTxtProductId().setText(newProductId);
+            productDetailPanel.getTxtProductTypeId().setText("T01");
+            productDetailPanel.getTxtSupplierId().setText("S01");
             productDetailPanel.setEditableFields(true);
         });
 
@@ -163,6 +175,7 @@ public class GUI_Form_Import extends JDialog {
             productDetailPanel.getTxtProductTypeId().setText(TypeProductBUS.getTypeProductByName((String) details[4]).getTypeID());
             productDetailPanel.getCmbProductType().setSelectedItem((String) details[4]);
             loadProductImage((String) details[5]);
+            productDetailPanel.getTxtImageFilename().setText((String) details[5]);
             productDetailPanel.getTxtQuantity().setText("");
             productDetailPanel.getLblTotal().setText("0");
         }
@@ -181,8 +194,11 @@ public class GUI_Form_Import extends JDialog {
     private void addProductToImport() {
         try {
             String productId = productDetailPanel.getTxtProductId().getText();
+            String supplierID = productDetailPanel.getTxtSupplierId().getText();
+            String productTypeID = productDetailPanel.getTxtProductTypeId().getText();
             String quantityText = productDetailPanel.getTxtQuantity().getText().trim();
             String validationError = bus.validateProductToAdd(productId, quantityText);
+            String productImg = productDetailPanel.getTxtImageFilename().getText();
             if (validationError != null) {
                 JOptionPane.showMessageDialog(this, validationError, "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
@@ -216,16 +232,14 @@ public class GUI_Form_Import extends JDialog {
             if (!found) {
                 // Thêm mới nếu chưa có
                 model.addRow(new Object[]{
-                    productId, productName, quantity, Utils.formatCurrency(price), Utils.formatCurrency(total)
+                    productId, productName, quantity, Utils.formatCurrency(price), Utils.formatCurrency(total), supplierID, productTypeID, productImg
                 });
             }
 
             totalAmount += total;
             infoPanel.getLblTongTien().setText(Utils.formatCurrency(totalAmount));
 
-            if (bus.updateProductQuantity(productId, quantity)) loadAllProducts();
-                else JOptionPane.showMessageDialog(this, "Lỗi khi cập nhật số lượng sản phẩm", "Lỗi", JOptionPane.ERROR_MESSAGE);
-
+            
             resetProductDetail();
         } catch (Exception e) {
             e.printStackTrace();
@@ -294,16 +308,22 @@ public class GUI_Form_Import extends JDialog {
         ArrayList<Object[]> productData = new ArrayList<>();
         for (int i = 0; i < importProductsPanel.getImportTableModel().getRowCount(); i++) {
             String productId = importProductsPanel.getImportTableModel().getValueAt(i, 0).toString();
+            String productName = importProductsPanel.getImportTableModel().getValueAt(i, 1).toString();
             String quantityStr = importProductsPanel.getImportTableModel().getValueAt(i, 2).toString().replaceAll("[^0-9]", "");
-            String supplierID = bus.getSupplierIDByProduct(productId);
             String priceStr = importProductsPanel.getImportTableModel().getValueAt(i, 3).toString().replaceAll("[^0-9]", "");
             String totalPriceStr = importProductsPanel.getImportTableModel().getValueAt(i, 4).toString().replaceAll("[^0-9]", "");
+            String supplierID = importProductsPanel.getImportTableModel().getValueAt(i, 5).toString();
+            String typeID = importProductsPanel.getImportTableModel().getValueAt(i, 6).toString();
+            String productImg = importProductsPanel.getImportTableModel().getValueAt(i, 7).toString();
             productData.add(new Object[]{
                 productId,
+                productName,
                 quantityStr,
                 supplierID,
                 Double.parseDouble(priceStr),
-                Double.parseDouble(totalPriceStr)
+                Double.parseDouble(totalPriceStr),
+                typeID,
+                productImg
             });
             System.out.println("Product ID: " + productId + ", Quantity: " + quantityStr + ", Supplier ID: " + supplierID);
         }
@@ -329,6 +349,7 @@ public class GUI_Form_Import extends JDialog {
         productDetailPanel.getTxtProductTypeId().setText("");
         productDetailPanel.getTxtPrice().setText("");
         productDetailPanel.getLblProductImage().setIcon(null);
+        productDetailPanel.getTxtImageFilename().setText("");
         productDetailPanel.getTxtQuantity().setText("");
         productDetailPanel.getLblTotal().setText("0");
     }

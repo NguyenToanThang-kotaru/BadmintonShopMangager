@@ -1,16 +1,34 @@
 package GUI;
 
-import javax.swing.*;
-import javax.swing.border.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
+
 import BUS.ImportInvoiceBUS;
 import BUS.SupplierBUS;
 import BUS.TypeProductBUS;
 import DTO.SupplierDTO;
 import DTO.TypeProductDTO;
-
-import java.awt.*;
-import java.awt.event.*;
-import java.util.ArrayList;
 
 public class ProductDetailPanel extends JPanel {
     private JLabel lblProductImage;
@@ -66,7 +84,7 @@ public class ProductDetailPanel extends JPanel {
 
                 try {
                     // Thư mục đích để lưu ảnh
-                    String destinationDir = "ManagmentBadminton/src/main/resources/images/";
+                    String destinationDir = "images/";
                     java.io.File destinationFolder = new java.io.File(destinationDir);
                     if (!destinationFolder.exists()) {
                         destinationFolder.mkdirs();
@@ -173,7 +191,7 @@ public class ProductDetailPanel extends JPanel {
     }
 
     private void loadDefaultImage() {
-        java.net.URL imageUrl = getClass().getResource("/images/default_product.png");
+        java.net.URL imageUrl = getClass().getResource("images/default_product.png");
         ImageIcon icon = (imageUrl != null) ? new ImageIcon(imageUrl) : null;
         if (icon != null) {
             lblProductImage.setIcon(new ImageIcon(icon.getImage().getScaledInstance(140, 140, Image.SCALE_SMOOTH)));

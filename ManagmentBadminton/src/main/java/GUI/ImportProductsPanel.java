@@ -1,12 +1,21 @@
 package GUI;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
 import java.util.ArrayList;
-import javax.swing.*;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.table.*;
-import java.awt.*;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 
 public class ImportProductsPanel extends JPanel {
     private JTable productsTable;
@@ -18,7 +27,7 @@ public class ImportProductsPanel extends JPanel {
         setBorder(new CompoundBorder(new TitledBorder("Danh sách sản phẩm nhập"), new EmptyBorder(5, 5, 5, 5)));
         setBackground(Color.WHITE);
 
-        String[] columns = {"Mã SP", "Tên SP", "Số lượng", "Đơn giá", "Thành tiền"};
+        String[] columns = {"Mã SP", "Tên SP", "Số lượng", "Đơn giá", "Thành tiền", "Mã NCC", "Mã loại", "Hình ảnh"};
         importTableModel = new DefaultTableModel(columns, 0) {
             @Override public boolean isCellEditable(int row, int column) { return false; }
         };
@@ -37,6 +46,19 @@ public class ImportProductsPanel extends JPanel {
         for (int i = 0; i < columnModel.getColumnCount(); i++) {
             columnModel.getColumn(i).setCellRenderer(centerRenderer);
         }
+        // Ẩn cột "Mã NCC" và "Mã loại"
+        TableColumnModel tcm = productsTable.getColumnModel();
+        tcm.getColumn(5).setMinWidth(0);
+        tcm.getColumn(5).setMaxWidth(0);
+        tcm.getColumn(5).setPreferredWidth(0);
+
+        tcm.getColumn(6).setMinWidth(0);
+        tcm.getColumn(6).setMaxWidth(0);
+        tcm.getColumn(6).setPreferredWidth(0);
+
+        tcm.getColumn(7).setMinWidth(0);
+        tcm.getColumn(7).setMaxWidth(0);
+        tcm.getColumn(7).setPreferredWidth(0);
 
         JScrollPane scrollPane = new JScrollPane(productsTable);
         add(scrollPane, BorderLayout.CENTER);

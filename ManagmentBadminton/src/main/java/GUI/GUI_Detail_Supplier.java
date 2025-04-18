@@ -1,18 +1,34 @@
 package GUI;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Insets;
+import java.net.URL;
+import java.util.ArrayList;
+
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.SwingUtilities;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
+
 import BUS.SupplierBUS;
 import DAO.ProductDAO;
 import DTO.ProductDTO;
-// import DAO.ProductDAO;
-// import DTO.ProductDTO;
 import DTO.SupplierDTO;
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumnModel;
-import java.awt.*;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 public class GUI_Detail_Supplier extends JDialog {
     
@@ -192,7 +208,7 @@ public class GUI_Detail_Supplier extends JDialog {
 
                         // Cập nhật hình ảnh
                         String imageFileName = product.getAnh();
-                        String imagePath = "/images/" + (imageFileName != null ? imageFileName : "default_product.png");
+                        String imagePath = "images/" + (imageFileName != null ? imageFileName : "default_product.png");
                         URL imageUrl = getClass().getResource(imagePath);
                         ImageIcon icon = (imageUrl != null) ? new ImageIcon(imageUrl) : null;
                         imageLabel.setIcon(

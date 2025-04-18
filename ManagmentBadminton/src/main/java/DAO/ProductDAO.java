@@ -1,12 +1,13 @@
 package DAO;
 
-import Connection.DatabaseConnection;
-import DTO.ProductDTO;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+
+import Connection.DatabaseConnection;
+import DTO.ProductDTO;
 
 // Lớp này dùng để kết nối database và lấy dữ liệu sản phẩm
 public class ProductDAO {
@@ -348,6 +349,30 @@ public class ProductDAO {
             e.printStackTrace();
         }
         return serials;
+    }
+
+    public boolean insert(ProductDTO product){
+        boolean result = false;
+        String sql = "Insert into product(ProductID, ProductName, ProductImg, Quantity, SupplierID, TypeID, Price, IsDeleted) values(?,?,?,?,?,?,?,?)";
+        try(Connection conn = DatabaseConnection.getConnection();
+            PreparedStatement pst = conn.prepareStatement(sql)){
+            pst.setString(1, product.getProductID());
+            pst.setString(2, product.getProductName());
+            pst.setString(3, product.getAnh());
+            pst.setInt(4, Integer.parseInt(product.getSoluong()));
+            pst.setString(5, product.getMaNCC());
+            pst.setString(6, product.getML());
+            pst.setDouble(7, Double.parseDouble(product.getGia()));
+            pst.setInt(8, 0);
+            // In thu cau truy van de kiem tra
+            System.out.println(pst.toString());
+
+            if(pst.executeUpdate()>=1)
+                result = true;
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        return result;
     }
 
 }
