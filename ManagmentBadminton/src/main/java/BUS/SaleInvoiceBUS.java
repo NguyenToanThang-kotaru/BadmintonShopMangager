@@ -3,7 +3,7 @@ package BUS;
 import java.util.ArrayList;
 
 import DAO.SaleInvoiceDAO;
-import GUI.SaleInvoiceDTO;
+import DTO.SaleInvoiceDTO;
 
 public class SaleInvoiceBUS {
     public ArrayList<SaleInvoiceDTO> getAll() {
@@ -18,7 +18,7 @@ public class SaleInvoiceBUS {
     public ArrayList<SaleInvoiceDTO> getByEmployeeId(String employeeId) {
         return SaleInvoiceDAO.getByEmployeeId(employeeId);
     }
-    public ArrayList<SaleInvoiceDTO> getByDate(java.util.Date date) {
+    public ArrayList<SaleInvoiceDTO> getByDate(java.time.LocalDate date) {
         return SaleInvoiceDAO.getByDate(date);
     }
     public boolean add(SaleInvoiceDTO saleInvoice) {
@@ -26,5 +26,5 @@ public class SaleInvoiceBUS {
     }
     public boolean update(SaleInvoiceDTO saleInvoice) {
         return SaleInvoiceDAO.update(saleInvoice);
-    }    
+    }
 }

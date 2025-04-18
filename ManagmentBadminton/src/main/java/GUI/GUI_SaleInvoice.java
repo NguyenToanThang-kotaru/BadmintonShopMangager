@@ -25,6 +25,7 @@ import BUS.SaleInvoiceBUS;
 import DTO.AccountDTO;
 import DTO.CustomerDTO;
 import DTO.EmployeeDTO;
+import DTO.SaleInvoiceDTO;
 
 public class GUI_SaleInvoice extends JPanel {
     private JPanel topPanel, midPanel, botPanel;
@@ -35,13 +36,12 @@ public class GUI_SaleInvoice extends JPanel {
     private SaleInvoiceBUS saleInvoiceBUS;
     JLabel[] array_label = new JLabel[5];
 
-    public GUI_SaleInvoice(AccountDTO cn, List<String> t) {
+    public GUI_SaleInvoice(AccountDTO cn) {
         saleInvoiceBUS = new SaleInvoiceBUS();
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(new EmptyBorder(10, 10, 10, 10));
         setBackground(new Color(200, 200, 200));
-        
         // ========== PANEL TRÊN CÙNG (Thanh tìm kiếm & nút thêm) ==========
         topPanel = new JPanel(new BorderLayout(10, 10));
         topPanel.setPreferredSize(new Dimension(0, 60));
@@ -58,16 +58,16 @@ public class GUI_SaleInvoice extends JPanel {
         // ========== BẢNG HIỂN THỊ DANH SÁCH HÓA ĐƠN ==========
         midPanel = new JPanel(new BorderLayout());
         midPanel.setBackground(Color.WHITE);
-        
+
         // Định nghĩa tiêu đề cột
         String[] columnNames = {"Mã HĐ", "Mã NV", "Mã KH", "Tổng Tiền", "Ngày Xuất"};
         CustomTable customTable = new CustomTable(columnNames);
-        orderTable = customTable.getOrderTable(); 
-        tableModel = customTable.getTableModel(); 
+        orderTable = customTable.getOrderTable();
+        tableModel = customTable.getTableModel();
 
         CustomScrollPane scrollPane = new CustomScrollPane(orderTable);
         midPanel.add(scrollPane, BorderLayout.CENTER);
-        
+
         // ========== PANEL CHI TIẾT HÓA ĐƠN ==========
         botPanel = new JPanel(new GridBagLayout());
         botPanel.setBackground(Color.WHITE);
@@ -78,7 +78,6 @@ public class GUI_SaleInvoice extends JPanel {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.anchor = GridBagConstraints.WEST;
-        
         for (int i = 0; i < txt_label.length; i++) {
             // Nhãn hiển thị thông tin hóa đơn
             gbc.gridx = 0;
@@ -92,7 +91,6 @@ public class GUI_SaleInvoice extends JPanel {
         // ========== PANEL BUTTON ==========
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 5));
         buttonPanel.setOpaque(false);
-        
         detailorderButton = new CustomButton("Chi Tiết");
         detailorderButton.setCustomColor(new Color(0, 120, 215));
         buttonPanel.add(detailorderButton, BorderLayout.EAST);
@@ -104,21 +102,20 @@ public class GUI_SaleInvoice extends JPanel {
 
         orderTable.getSelectionModel().addListSelectionListener(e -> {
             int selectedRow = orderTable.getSelectedRow();
-            if (selectedRow != -1) {             
+            if (selectedRow != -1) {
                 // Hiển thị dữ liệu trên giao diện
                 for (int i = 0; i < txt_label.length; i++) {
                     array_label[i].setText((String) orderTable.getValueAt(selectedRow, i));
                 }
                 botPanel.add(buttonPanel, gbc);
-            }   
+            }
         });
-        
+
         addButton.addActionListener(e -> {
 //            JOptionPane.showMessageDialog(this, "Chức năng thêm nhân viên chưa được triển khai!");
             GUI_Form_Order GFO = new GUI_Form_Order(this, null, cn);
             GFO.setVisible(true);
         });
-        
         // Thêm các panel vào giao diện chính
         add(topPanel);
         add(Box.createVerticalStrut(10));

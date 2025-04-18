@@ -5,14 +5,11 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import BUS.PermissionBUS;
-import DAO.AccountDAO;
 import DTO.AccountDTO;
 
 
@@ -20,17 +17,15 @@ public class GUI_MainLayout extends JFrame {
 
     private GUI_Sidebar Sidebar;
     private GUI_TittleBar tittleBar;
-    
-    public GUI_MainLayout(JFrame login, String username, String password) {
-        AccountDTO logined = AccountDAO.getAccount(username, password);
-        List<String> permissions = PermissionBUS.convertName(logined.getPermission().getTotalFunction());
+
+    public GUI_MainLayout(JFrame login, AccountDTO logined) {
         setTitle("Quản Lý Kho Hàng");
         setSize(1000, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(0, 0));
         setUndecorated(true);
-        
+
         // ================================ Title Bar ================================
         tittleBar = new GUI_TittleBar(this);
 
@@ -47,10 +42,10 @@ public class GUI_MainLayout extends JFrame {
         Sidebar.productPanel = new JPanel();
         Sidebar.productPanel.setBackground(Color.GREEN);
         Sidebar.productPanel.add(new JLabel("Danh sách sản phẩm"));
-        
+
         Sidebar.productPanel = new GUI_Product();
 
-        Sidebar.orderPanel = new GUI_SaleInvoice(logined, );
+        Sidebar.orderPanel = new GUI_SaleInvoice(logined);
 
         Sidebar.employeePanel = new GUI_Employee();
 
@@ -128,5 +123,5 @@ public class GUI_MainLayout extends JFrame {
         add(Sidebar, BorderLayout.WEST);
         add(contentPanel, BorderLayout.CENTER);
     }
-    
+
 }

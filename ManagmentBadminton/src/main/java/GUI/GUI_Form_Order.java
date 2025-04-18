@@ -49,6 +49,7 @@ import DTO.CustomerDTO;
 import DTO.DetailSaleInvoiceDTO;
 import DTO.EmployeeDTO;
 import DTO.ProductDTO;
+import DTO.SaleInvoiceDTO;
 
 public class GUI_Form_Order extends JDialog {
     private JLabel lblMaHoaDon, lblNgayXuat, lblNhanVien, lblTongTien;
@@ -322,7 +323,6 @@ public class GUI_Form_Order extends JDialog {
         panel.add(bottomPanel, BorderLayout.SOUTH);
         return panel;
     }
-    
     private JPanel createButtonPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         panel.setBackground(Color.WHITE);
@@ -352,7 +352,6 @@ public class GUI_Form_Order extends JDialog {
             lblProductImage.setText("Không có ảnh");
         }
     }
-    
     private void updateQuantityInOrder() {
         try {
             int selectedRow = productsTable.getSelectedRow();
@@ -411,7 +410,6 @@ public class GUI_Form_Order extends JDialog {
                 JOptionPane.showMessageDialog(this, "Số lượng vượt quá tồn kho!");
                 return;
             }
-            
             String productId = lblProductId.getText();
             String productName = lblProductName.getText();
             String category = lblCategory.getText();
@@ -514,7 +512,7 @@ public class GUI_Form_Order extends JDialog {
         dto.setEmployeeId(currentAccount.getUsername());
         dto.setCustomerId(maKH);
         dto.setTotalPrice(totalAmount);
-        dto.setDate(java.sql.Date.valueOf(LocalDate.now()));
+        dto.setDate(LocalDate.now());
 
         orderBUS.add(dto);
 
@@ -523,6 +521,9 @@ public class GUI_Form_Order extends JDialog {
         // if (currentOrder != null) {
         //     detailOrderBUS.deleteByOrderID(orderID);
         // }
+
+        // _______________________________________ Xem xét lại đoạn này _______________________________________
+
         // int baseNumber = DetailOrderDAO.getMaxDetailOrderNumber() + 1;
 
         // for (int i = 0; i < orderTableModel.getRowCount(); i++) {
@@ -539,7 +540,8 @@ public class GUI_Form_Order extends JDialog {
 
         //     detailOrderBUS.addDetailOrder(detail);
         // }
-        
+
+        // _______________________________________ Xem xét lại đoạn này _______________________________________
         JOptionPane.showMessageDialog(this, "Lưu hóa đơn thành công!");
         dispose();
     }
@@ -550,12 +552,12 @@ public class GUI_Form_Order extends JDialog {
 
     private String getNextOrderID() {
         ArrayList<SaleInvoiceDTO> orderIDs = orderBUS.getAll();
-        if (orderIDs.isEmpty()) {
+        if (orderIDs == null) {
             return "SI01";
         }
-            String lastID = orderIDs.get(orderIDs.size() - 1).getId();
-            int number = Integer.parseInt(lastID.substring(2));
-            return String.format("SI%02d", number + 1);
+        String lastID = orderIDs.get(orderIDs.size() - 1).getId();
+        int number = Integer.parseInt(lastID.substring(2));
+        return String.format("SI%02d", number + 1);
     }
 
     private String getEmployeeNameByID(String employeeID) {

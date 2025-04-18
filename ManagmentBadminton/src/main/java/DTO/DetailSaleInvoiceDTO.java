@@ -11,16 +11,18 @@ public class DetailSaleInvoiceDTO {
     private String product_id;
     private int quantity;
     private double price;
+    private double total_price;
 
     public DetailSaleInvoiceDTO() {
     }
 
-    public DetailSaleInvoiceDTO(String detail_sale_id, String sale_id, String product_id, int quantity, double price) {
+    public DetailSaleInvoiceDTO(String detail_sale_id, String sale_id, String product_id, int quantity, double price, double total_price) {
         this.detail_sale_id = detail_sale_id;
         this.sale_id = sale_id;
         this.product_id = product_id;
         this.quantity = quantity;
         this.price = price;
+        this.total_price = total_price;
     }
 
     public String getDetail_sale_id() {
@@ -61,5 +63,13 @@ public class DetailSaleInvoiceDTO {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public double getTotalPrice() {
+        return total_price;
+    }
+
+    public void setTotalPrice(double total_price) {
+        this.total_price = total_price;
     }
 }

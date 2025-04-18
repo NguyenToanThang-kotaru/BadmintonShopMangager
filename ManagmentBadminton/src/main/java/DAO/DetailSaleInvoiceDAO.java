@@ -19,11 +19,12 @@ public class DetailSaleInvoiceDAO {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 DetailSaleInvoiceDTO detailSaleInvoice = new DetailSaleInvoiceDTO();
-                detailSaleInvoice.setDetail_sale_id(rs.getString("DetailSaleDetailID"));
+                detailSaleInvoice.setDetail_sale_id(rs.getString("SalesDetailID"));
                 detailSaleInvoice.setSale_id(rs.getString("SalesID"));
                 detailSaleInvoice.setProduct_id(rs.getString("ProductID"));
                 detailSaleInvoice.setQuantity(rs.getInt("Quantity"));
                 detailSaleInvoice.setPrice(rs.getDouble("Price"));
+                detailSaleInvoice.setTotalPrice(rs.getDouble("TotalPrice"));
                 detailSaleInvoices.add(detailSaleInvoice);
             }
         } catch (SQLException e) {
@@ -43,11 +44,12 @@ public class DetailSaleInvoiceDAO {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 DetailSaleInvoiceDTO detailSaleInvoice = new DetailSaleInvoiceDTO();
-                detailSaleInvoice.setDetail_sale_id(rs.getString("DetailSaleDetailID"));
+                detailSaleInvoice.setDetail_sale_id(rs.getString("SalesDetailID"));
                 detailSaleInvoice.setSale_id(rs.getString("SalesID"));
                 detailSaleInvoice.setProduct_id(rs.getString("ProductID"));
                 detailSaleInvoice.setQuantity(rs.getInt("Quantity"));
                 detailSaleInvoice.setPrice(rs.getDouble("Price"));
+                detailSaleInvoice.setTotalPrice(rs.getDouble("TotalPrice"));
                 detailSaleInvoices.add(detailSaleInvoice);
             }
         } catch (SQLException e) {
@@ -58,7 +60,7 @@ public class DetailSaleInvoiceDAO {
     }
 
     public static boolean add(DetailSaleInvoiceDTO detailSaleInvoice) {
-        String sql = "insert into sales_invoice_detail (DetailSaleDetailID, SalesID, ProductID, Quantity, Price) values (?, ?, ?, ?, ?);";
+        String sql = "insert into sales_invoice_detail (SalesDetailID, SalesID, ProductID, Quantity, Price, TotalPrice) values (?, ?, ?, ?, ?, ?);";
         try {
             Connection conn = DatabaseConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -67,6 +69,7 @@ public class DetailSaleInvoiceDAO {
             stmt.setString(3, detailSaleInvoice.getProduct_id());
             stmt.setInt(4, detailSaleInvoice.getQuantity());
             stmt.setDouble(5, detailSaleInvoice.getPrice());
+            stmt.setDouble(6, detailSaleInvoice.getTotalPrice());
             int rowsInserted = stmt.executeUpdate();
             return rowsInserted > 0;
         } catch (SQLException e) {
