@@ -1,8 +1,24 @@
 package GUI;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+
 import DAO.AccountDAO;
 import DTO.AccountDTO;
 
@@ -60,7 +76,7 @@ public class GUI_Login extends JFrame {
 
         JPanel textPanel = new JPanel(new GridLayout(2, 1));
         textPanel.add(title);
-
+        
         textPanel.add(subtitle);
         textPanel.setOpaque(false);
 
@@ -101,7 +117,11 @@ public class GUI_Login extends JFrame {
         loginButton.setFocusPainted(false);
 
         loginButton.addActionListener((ActionEvent e) -> {
-            checkLogin(userField, passField); // Gọi hàm check khi bấm nút
+            try {
+                checkLogin(userField, passField); // Gọi hàm check khi bấm nút
+            } catch (SQLException ex) {
+                Logger.getLogger(GUI_Login.class.getName()).log(Level.SEVERE, null, ex);
+            }
         });
 
         rightPanel.add(loginButton);
@@ -111,7 +131,7 @@ public class GUI_Login extends JFrame {
 
     }
 
-    private void checkLogin(JTextField userField, JTextField passField) {
+    private void checkLogin(JTextField userField, JTextField passField) throws SQLException {
         String username = userField.getText();
         String password = passField.getText();
         if (username.isEmpty() || password.isEmpty()) {
@@ -122,7 +142,8 @@ public class GUI_Login extends JFrame {
             if (account != null) {
                 //Chay vao frame GUI_MainLayout
                 this.setVisible(false);
-                GUI_MainLayout mainLayout = new GUI_MainLayout(this);
+                GUI_MainLayout mainLayout = new GUI_MainLayout(this, account);
+
                 mainLayout.setVisible(true);
             }
             else{
@@ -132,8 +153,4 @@ public class GUI_Login extends JFrame {
 
     }
 
-    public static void main(String[] args) {
-        GUI_Login a = new GUI_Login();
-        a.setVisible(true);
-    }
 }

@@ -6,18 +6,18 @@ public class SupplierDTO {
     private String phone;
     private String email;
     private String address;
-    private String status;
+    private int isDeleted;
 
     public SupplierDTO() {
     }
 
-    public SupplierDTO(String supplierID, String supplierName, String phone, String email, String address, String status) {
+    public SupplierDTO(String supplierID, String supplierName, String phone, String email, String address, int isDeleted) {
         this.supplierID = supplierID;
         this.supplierName = supplierName;
         this.phone = phone;
         this.email = email;
         this.address = address;
-        this.status = status;
+        this.isDeleted = isDeleted;
     }
 
     public String getSupplierID() {
@@ -39,8 +39,8 @@ public class SupplierDTO {
     public String getAddress() {
         return address;
     }
-    public String getStatus() {
-        return status;
+    public int getIsDeleted() {
+        return isDeleted;
     }
 
     public void setSupplierID(String supplierID) {
@@ -62,13 +62,13 @@ public class SupplierDTO {
     public void setAddress(String address) {
         this.address = address;
     }
-    public void setStatus(String status) {
-        this.status = status;
+    public void setIsDeleted(int isDeleted) {
+        this.isDeleted = isDeleted;
     }
 
     @Override
     public String toString() {
-        return "SupplierDTO{" + "supplierID=" + supplierID + ", supplierName=" + supplierName + ", phone=" + phone + ", email=" + email + ", address=" + address + ", status=" + status + '}';
+        return "SupplierDTO{" + "supplierID=" + supplierID + ", supplierName=" + supplierName + ", phone=" + phone + ", email=" + email + ", address=" + address + ", isDeleted=" + isDeleted + '}';
     }
     
 }
