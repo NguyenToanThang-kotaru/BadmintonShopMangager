@@ -11,7 +11,7 @@ import DTO.SaleInvoiceDTO;
 
 public class SaleInvoiceDAO {
     public static ArrayList<SaleInvoiceDTO> getAll() {
-        String sql = "select * from sale_invoice;";
+        String sql = "select * from sales_invoice;";
         ArrayList <SaleInvoiceDTO> saleInvoices = new ArrayList<>();
         try {
             Connection conn = DatabaseConnection.getConnection();
@@ -34,7 +34,7 @@ public class SaleInvoiceDAO {
     }
 
     public static ArrayList<SaleInvoiceDTO> getById(String id) {
-        String sql = "select * from sale_invoice where SalesID = ?;";
+        String sql = "select * from sales_invoice where SalesID = ?;";
         ArrayList <SaleInvoiceDTO> saleInvoices = new ArrayList<>();
         try {
             Connection conn = DatabaseConnection.getConnection();
@@ -58,7 +58,7 @@ public class SaleInvoiceDAO {
     }
 
     public static ArrayList<SaleInvoiceDTO> getByCustomerId(String customerId) {
-        String sql = "select * from sale_invoice where CustomerID = ?;";
+        String sql = "select * from sales_invoice where CustomerID = ?;";
         ArrayList <SaleInvoiceDTO> saleInvoices = new ArrayList<>();
         try {
             Connection conn = DatabaseConnection.getConnection();
@@ -82,7 +82,7 @@ public class SaleInvoiceDAO {
     }
     
     public static ArrayList<SaleInvoiceDTO> getByEmployeeId(String employeeId) {
-        String sql = "select * from sale_invoice where EmployeeID = ?;";
+        String sql = "select * from sales_invoice where EmployeeID = ?;";
         ArrayList <SaleInvoiceDTO> saleInvoices = new ArrayList<>();
         try {
             Connection conn = DatabaseConnection.getConnection();
@@ -106,7 +106,7 @@ public class SaleInvoiceDAO {
     }
     
     public static ArrayList<SaleInvoiceDTO> getByDate(java.time.LocalDate date) {
-        String sql = "select * from sale_invoice where Date = ?;";
+        String sql = "select * from sales_invoice where Date = ?;";
         ArrayList <SaleInvoiceDTO> saleInvoices = new ArrayList<>();
         try {
             Connection conn = DatabaseConnection.getConnection();
@@ -130,7 +130,7 @@ public class SaleInvoiceDAO {
     }
 
     public static boolean add(SaleInvoiceDTO saleInvoice) {
-        String sql = "insert into sale_invoice (SalesID, CustomerID, EmployeeID, Date) values (?, ?, ?, ?);";
+        String sql = "insert into sales_invoice (SalesID, CustomerID, EmployeeID, Date) values (?, ?, ?, ?);";
         try {
             Connection conn = DatabaseConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -148,7 +148,7 @@ public class SaleInvoiceDAO {
     }
     // check lại, hình như không được update hóa đơn bán
     public static boolean update(SaleInvoiceDTO saleInvoice) {
-        String sql = "update sale_invoice set CustomerID = ?, EmployeeID = ?, Date = ? where SalesID = ?;";
+        String sql = "update sales_invoice set CustomerID = ?, EmployeeID = ?, Date = ? where SalesID = ?;";
         try {
             Connection conn = DatabaseConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
