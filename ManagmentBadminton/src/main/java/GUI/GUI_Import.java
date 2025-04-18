@@ -23,6 +23,7 @@ import javax.swing.table.DefaultTableModel;
 
 import BUS.ImportInvoiceBUS;
 import DTO.ImportInvoiceDTO;
+import DTO.AccountDTO;
 
 public class GUI_Import extends JPanel {
     private final ImportInvoiceBUS importBUS;
@@ -35,9 +36,9 @@ public class GUI_Import extends JPanel {
     private final JLabel receiptDateLabel;
     private ImportInvoiceDTO selectedImport;
 
-    public GUI_Import() {
+    public GUI_Import(AccountDTO username) {
         this.importBUS = new ImportInvoiceBUS();
-        String currentUsername = GUI_MainLayout.username;
+        String currentUsername =username.getUsername() ;
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(new EmptyBorder(10, 10, 10, 10));
