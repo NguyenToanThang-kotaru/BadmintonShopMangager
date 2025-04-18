@@ -1,8 +1,24 @@
 package DTO;
 
+import java.sql.Date;
+
 public class PromotionAllProductDTO extends PromotionDTO{
  
     private double reductionRate;
+
+    public PromotionAllProductDTO(int id, String name, Date startDate, Date endDate, double reductionRate) {
+        super(id, name, startDate, endDate);
+        this.reductionRate = reductionRate;
+    }
+
+    public double getReductionRate() {
+        return reductionRate;
+    }
+
+    public void setReductionRate(double reductionRate) {
+        this.reductionRate = reductionRate;
+    }
+
 
 //    @Override
 //    public boolean apDung(SanPham sanPham, HoaDon hoaDon) {
@@ -16,6 +32,9 @@ public class PromotionAllProductDTO extends PromotionDTO{
 //            sp.setGia(sp.getGia() - giaGiam);
 //        }
 //    }
+
+    public PromotionAllProductDTO() {
+    }
     
 
 }
