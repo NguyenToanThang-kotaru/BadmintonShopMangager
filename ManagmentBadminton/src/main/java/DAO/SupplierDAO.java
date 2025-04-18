@@ -116,7 +116,7 @@ public class SupplierDAO {
 
     public static ArrayList<String> getAllNCCNames() {
         ArrayList<String> NCCList = new ArrayList<>();
-        String query = "SELECT SupplierName FROM supplier";
+        String query = "SELECT SupplierName FROM supplier WHERE IsDeleted = 0";
 
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
 

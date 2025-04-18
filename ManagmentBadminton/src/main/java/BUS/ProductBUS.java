@@ -3,17 +3,44 @@ package BUS;
 import DAO.ProductDAO;
 import DTO.ProductDTO;
 import java.util.List;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 public class ProductBUS {
 
-    public List<ProductDTO> getAllProducts() {
+    public static List<ProductDTO> getAllProducts() {
         return ProductDAO.getAllProducts();
     }
 
-    public void updateProduct(ProductDTO product) {
+    public static void updateProduct(ProductDTO product) {
         ProductDAO dao = new ProductDAO();
         dao.updateProduct(product);
+    }
+
+    public static Boolean addProduct(ProductDTO product) {
+        return ProductDAO.addProduct(product);
+    }
+
+    public static ProductDTO getProduct(String ProductID) {
+        ProductDAO dao = new ProductDAO();
+        return dao.getProduct(ProductID); // Trả về đối tượng lấy được từ DAO
+    }
+
+    public static ArrayList<ProductDTO> searchProducts(String keyword) {
+        return ProductDAO.searchProducts(keyword);
+    }
+
+    public static ArrayList<String> getSerialsForProduct(String productID) {
+        return ProductDAO.getSerialsForProduct(productID);
+    }
+
+    public static ArrayList<String> getAllCategoryNames() {
+        return ProductDAO.getAllCategoryNames();
+    }
+
+    // Xóa sản phẩm theo mã
+    public static boolean deleteProduct(String productID) {
+        return ProductDAO.deleteProduct(productID);
     }
 
     public boolean validateProduct(ProductDTO product) {
@@ -81,12 +108,12 @@ public class ProductBUS {
             return false;
         }
     }
-    
+
     //Chỗ Tiến sử dụng để làm:
     public String getProductImage(String productID) {
         return ProductDAO.getProductImage(productID);
     }
-    
+
     public ProductDTO getProductByID(String id) {
         ProductDAO dao = new ProductDAO();
         return dao.getProduct(id);

@@ -38,8 +38,28 @@ public class ProductDAO {
                 return false; // Dừng lại nếu không tìm thấy mã NCC
             }
 
+            //Kiểm tra sản phẩm trùng tên đã bị xóa mềm ớ ớ á á
+            String checkDeletedSQL = "SELECT ProductID FROM product WHERE ProductName = ? AND IsDeleted = 1";
+            try (PreparedStatement checkStmt = conn.prepareStatement(checkDeletedSQL)) {
+                checkStmt.setString(1, product.getProductName());
+                ResultSet checkRS = checkStmt.executeQuery();
+                if (checkRS.next()) {
+                    String existingID = checkRS.getString("ProductID");
+
+                    // Lật cờ IsDeleted thành 0
+                    String restoreSQL = "UPDATE product SET IsDeleted = 0 WHERE ProductID = ?";
+                    try (PreparedStatement restoreStmt = conn.prepareStatement(restoreSQL)) {
+                        restoreStmt.setString(1, existingID);
+                        restoreStmt.executeUpdate();
+                    }
+
+                    System.out.println("Khôi phục sản phẩm đã bị xóa mềm với ID: " + existingID);
+                    return true;
+                }
+            }
+
             // Tiếp tục thêm sản phẩm...
-            String sql = "INSERT INTO product (ProductID, ProductName, Price, Quantity, SupplierID, TypeID, ProductImg) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO product (ProductID, ProductName, Price, Quantity, SupplierID, TypeID, ProductImg, IsDeleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
 
                 String newID = generateNewProductID(); // Tạo ID mới
@@ -51,6 +71,7 @@ public class ProductDAO {
                 stmt.setString(5, maNCC);
                 stmt.setString(6, maLoai);
                 stmt.setString(7, product.getAnh());
+                stmt.setInt(8, 0); // Gán mặc định là 0
 
                 stmt.executeUpdate();
                 System.out.println("Thêm sản phẩm thành công với ID: " + newID);
