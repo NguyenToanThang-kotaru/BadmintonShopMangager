@@ -1,13 +1,26 @@
 package GUI;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
-import DAO.AccountDAO;
-import DTO.AccountDTO;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+
+import DAO.AccountDAO;
+import DTO.AccountDTO;
 
 public class GUI_Login extends JFrame {
 
@@ -129,7 +142,7 @@ public class GUI_Login extends JFrame {
             if (account != null) {
                 //Chay vao frame GUI_MainLayout
                 this.setVisible(false);
-                GUI_MainLayout mainLayout = new GUI_MainLayout(this);
+                GUI_MainLayout mainLayout = new GUI_MainLayout(this, account);
                 mainLayout.setVisible(true);
             }
             else{
