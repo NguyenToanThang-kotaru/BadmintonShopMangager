@@ -33,7 +33,7 @@ public class ProductDetailDAO {
 
     public static ArrayList<ProductDetailDTO> getProductDetailByProductID(String id){
         ArrayList<ProductDetailDTO> importInvoiceDetailList = new ArrayList<>();
-        String query = "SELECT * FROM product_detail where ProductID = ?";
+        String query = "SELECT * FROM product_detail where ProductID = ? and Status = 'Hiện'";
         try(Connection conn = DatabaseConnection.getConnection();
             PreparedStatement pst = conn.prepareStatement(query)){
             pst.setString(1, id);
@@ -102,4 +102,18 @@ public class ProductDetailDAO {
         return "SE00000001";
     }
     
+    // Update status of product detail
+    public static boolean delete(String series) {
+        boolean result = false;
+        String sql = "UPDATE product_detail SET Status = 'Ấn' WHERE Series = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pst = conn.prepareStatement(sql)) {
+            pst.setString(1, series);
+            if (pst.executeUpdate() >= 1)
+                result = true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
 }

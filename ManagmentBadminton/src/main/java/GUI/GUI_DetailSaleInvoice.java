@@ -115,6 +115,16 @@ public class GUI_DetailSaleInvoice extends JFrame {
         closeButton.addActionListener(e -> dispose());
 
         buttonPanel.add(closeButton);
+
+        JButton serialButton = new JButton("Mã serial");
+        serialButton.setFont(new Font("Arial", Font.BOLD, 14));
+        serialButton.setBackground(new Color(30, 144, 255));
+        serialButton.setForeground(Color.WHITE);
+        serialButton.setPreferredSize(new Dimension(100, 35));
+        serialButton.addActionListener(e -> openSerialGUI());    
+
+        buttonPanel.add(serialButton);
+
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         add(mainPanel);
@@ -123,6 +133,20 @@ public class GUI_DetailSaleInvoice extends JFrame {
 
     }
 
+    // when the button is clicked and a row is choose on the table, it will open the serial GUI
+    private void openSerialGUI() {
+        int selectedRow = detailTable.getSelectedRow();
+        if (selectedRow != -1) {
+            String productID = (String) detailTable.getValueAt(selectedRow, 1);
+            String detailSaleInvoiceID = (String) detailTable.getValueAt(selectedRow, 0);
+            GUI_SerialNumber serialGUI = new GUI_SerialNumber(productID, detailSaleInvoiceID);
+            serialGUI.setVisible(true);
+        } else {
+            // Show a message dialog if no row is selected
+            javax.swing.JOptionPane.showMessageDialog(this, "Vui lòng chọn một sản phẩm để xem mã serial.", "Thông báo", javax.swing.JOptionPane.WARNING_MESSAGE);
+        }
+    }
+    
     private void loadDetailOrder() {
         List<DetailSaleInvoiceDTO> details = detailOrderBUS.getBySalesID(id);
         tableModel.setRowCount(0);

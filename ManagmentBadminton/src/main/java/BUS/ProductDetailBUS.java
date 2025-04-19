@@ -16,6 +16,9 @@ public class ProductDetailBUS {
     public boolean insert(ProductDetailDTO productDetail) {
         return productDetailDAO.insert(productDetail);
     }
+    public boolean delete(String series) {
+        return productDetailDAO.delete(series);
+    }
     public String generateNewSeries() {
         return productDetailDAO.generateNextSeries();
     }

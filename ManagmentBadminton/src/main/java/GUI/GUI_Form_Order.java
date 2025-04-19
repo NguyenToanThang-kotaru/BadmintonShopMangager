@@ -42,6 +42,8 @@ import BUS.CustomerBUS;
 import BUS.DetailSaleInvoiceBUS;
 import BUS.EmployeeBUS;
 import BUS.ProductBUS;
+import BUS.ProductDetailBUS;
+import BUS.ProductSoldBUS;
 import BUS.SaleInvoiceBUS;
 import DAO.ProductDAO;
 import DTO.AccountDTO;
@@ -49,6 +51,8 @@ import DTO.CustomerDTO;
 import DTO.DetailSaleInvoiceDTO;
 import DTO.EmployeeDTO;
 import DTO.ProductDTO;
+import DTO.ProductDetailDTO;
+import DTO.ProductSoldDTO;
 import DTO.SaleInvoiceDTO;
 
 public class GUI_Form_Order extends JDialog {
@@ -543,15 +547,33 @@ public class GUI_Form_Order extends JDialog {
             detail.setDetailSaleInvoiceID(getNextDetailOrderID());
             detail.setSale_id(orderID);
             detail.setProduct_id(orderTableModel.getValueAt(i, 0).toString());
-            // detail.setserialID("");
             detail.setQuantity(Integer.parseInt(String.valueOf(orderTableModel.getValueAt(i, 3))));
             String priceStr = orderTableModel.getValueAt(i, 4).toString().replaceAll("[^0-9]", "");
             detail.setPrice(Double.parseDouble(priceStr));
 
             detailOrderBUS.add(detail);
+
+            // 4. Lưu sản phẩm đã bán
+            ProductSoldBUS productSoldBUS = new ProductSoldBUS();
+            ProductDetailBUS productDetailBUS = new ProductDetailBUS();
+
+            String productId = orderTableModel.getValueAt(i, 0).toString();
+            int quantity = Integer.parseInt(orderTableModel.getValueAt(i, 3).toString());
+            // Lấy danh sách chi tiết sản phẩm theo mã sản phẩm và số lượng sản phẩm
+
+            List<ProductDetailDTO> productDetails = productDetailBUS.getProductDetailByProductID(productId);
+            for (int j = 0; j < quantity; j++) {
+                ProductDetailDTO productDetail = productDetails.get(i);
+                ProductSoldDTO productSold = new ProductSoldDTO();
+                productSold.setDetailSaleInvoiceID(detail.getDetailSaleInvoiceID());
+                productSold.setProductId(productId);
+                productSold.setSeries(productDetail.getSeries());
+                productSoldBUS.add(productSold);
+                productDetailBUS.delete(productDetail.getSeries());
+            }
         }
 
-        // 4. Cập nhật lại số lượng tồn kho
+        // 5. Cập nhật lại số lượng tồn kho
         for (int i = 0; i < orderTableModel.getRowCount(); i++) {
             String productId = orderTableModel.getValueAt(i, 0).toString();
             int quantity = Integer.parseInt(orderTableModel.getValueAt(i, 3).toString());
