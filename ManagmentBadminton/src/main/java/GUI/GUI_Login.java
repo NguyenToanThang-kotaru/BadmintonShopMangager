@@ -98,6 +98,7 @@ public class GUI_Login extends JFrame {
         rightPanel.add(userLabel);
 
         JTextField userField = new JTextField();
+        userField.setText("admin"); // Do mac cong nhap username
         userField.setBounds(150, 190, 180, 25);
         rightPanel.add(userField);
 
@@ -106,6 +107,7 @@ public class GUI_Login extends JFrame {
         rightPanel.add(passLabel);
 
         JPasswordField passField = new JPasswordField();
+        passField.setText("admin123"); // Do mac cong nhap password
         passField.setBounds(150, 230, 180, 25);
         rightPanel.add(passField);
 
@@ -143,7 +145,6 @@ public class GUI_Login extends JFrame {
                 //Chay vao frame GUI_MainLayout
                 this.setVisible(false);
                 GUI_MainLayout mainLayout = new GUI_MainLayout(this, account);
-
                 mainLayout.setVisible(true);
             }
             else{

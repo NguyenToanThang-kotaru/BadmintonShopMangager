@@ -1,5 +1,4 @@
 package BUS;
-
 import java.util.ArrayList;
 
 import DAO.ProductDAO;

@@ -82,7 +82,7 @@ public class CustomerDAO {
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, phone);
             ResultSet rs = stmt.executeQuery();
-            while (rs.next() && rs.getString("FullName").equals(phone)) {
+            while (rs.next() && rs.getString("Phone").equals(phone)) {
                 CustomerDTO customer = new CustomerDTO();
                 customer.setId(rs.getString("CustomerID"));
                 customer.setName(rs.getString("FullName"));

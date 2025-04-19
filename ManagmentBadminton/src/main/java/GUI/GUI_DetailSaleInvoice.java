@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.text.DecimalFormat;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -37,6 +38,7 @@ public class GUI_DetailSaleInvoice extends JFrame {
     private String date;
     private String totalMoney;
 
+
     public GUI_DetailSaleInvoice(String id, String employeeName, String customerName, String date, String totalMoney) {
         this.id = id;
         this.employeeName = employeeName;
@@ -44,6 +46,7 @@ public class GUI_DetailSaleInvoice extends JFrame {
         this.date = date;
         this.totalMoney = totalMoney;
         detailOrderBUS = new DetailSaleInvoiceBUS();
+        productBUS = new ProductBUS();
 
         setTitle("Chi Tiết Hóa Đơn");
         setSize(650, 500);
@@ -86,7 +89,7 @@ public class GUI_DetailSaleInvoice extends JFrame {
         centerPanel.add(infoPanel, BorderLayout.NORTH);
 
         // Panel bảng chi tiết
-        String [] columnNames = {"Mã SP", "Tên SP", "Số Lượng", "Giá"};
+        String [] columnNames = {"Mã CTHĐ", "Mã SP", "Tên SP", "Số Lượng", "Giá", "Thành Tiền"};
         tableModel = new DefaultTableModel(columnNames, 0);
         detailTable = new JTable(tableModel);
         detailTable.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -124,16 +127,22 @@ public class GUI_DetailSaleInvoice extends JFrame {
         List<DetailSaleInvoiceDTO> details = detailOrderBUS.getBySalesID(id);
         tableModel.setRowCount(0);
         for (DetailSaleInvoiceDTO detail : details) {
+            DecimalFormat decimalFormat = new DecimalFormat("#,##0.00");
+            String formattedPrice = decimalFormat.format(detail.getPrice());
+            String formattedTotalPrice = decimalFormat.format(detail.getTotalPrice());
+
+
             ProductDTO product = productBUS.getProductByID(detail.getProduct_id());
             tableModel.addRow(new Object[]{
+                detail.getDetailSaleInvoiceID(),
                 product.getProductID(),
                 product.getProductName(),
                 detail.getQuantity(),
-                detail.getPrice()
+                formattedPrice,
+                formattedTotalPrice
             });
         }
     }
-
 
     private JPanel createInfoRow(String label, String value) {
         JPanel rowPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));

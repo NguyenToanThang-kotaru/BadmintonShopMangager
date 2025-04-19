@@ -11,24 +11,22 @@ import DTO.SaleInvoiceDTO;
 
 public class SaleInvoiceDAO {
     public static ArrayList<SaleInvoiceDTO> getAll() {
-        String sql = "select * from sales_invoice;";
-        ArrayList <SaleInvoiceDTO> saleInvoices = new ArrayList<>();
-        try {
-            Connection conn = DatabaseConnection.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            ResultSet rs = stmt.executeQuery();
+        String sql = "SELECT * FROM sales_invoice;";
+        ArrayList<SaleInvoiceDTO> saleInvoices = new ArrayList<>();
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
                 SaleInvoiceDTO saleInvoice = new SaleInvoiceDTO();
                 saleInvoice.setId(rs.getString("SalesID"));
                 saleInvoice.setCustomerId(rs.getString("CustomerID"));
                 saleInvoice.setEmployeeId(rs.getString("EmployeeID"));
-                saleInvoice.setDate(rs.getDate("Date").toLocalDate()); // java.sql.Date to java.time.LocalDate
-                saleInvoice.setTotalPrice(Double.parseDouble(rs.getString("TotalPrice")));
+                saleInvoice.setDate(rs.getDate("Date").toLocalDate()); // Convert java.sql.Date to java.time.LocalDate
+                saleInvoice.setTotalPrice(rs.getDouble("TotalPrice")); // Use getDouble for numeric columns
                 saleInvoices.add(saleInvoice);
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            return null;
         }
         return saleInvoices;
     }
@@ -130,7 +128,7 @@ public class SaleInvoiceDAO {
     }
 
     public static boolean add(SaleInvoiceDTO saleInvoice) {
-        String sql = "insert into sales_invoice (SalesID, CustomerID, EmployeeID, Date) values (?, ?, ?, ?);";
+        String sql = "insert into sales_invoice (SalesID, CustomerID, EmployeeID, Date, TotalPrice) values (?, ?, ?, ?, ?);";
         try {
             Connection conn = DatabaseConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);

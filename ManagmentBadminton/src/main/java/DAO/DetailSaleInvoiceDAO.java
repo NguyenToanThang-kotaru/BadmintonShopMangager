@@ -19,7 +19,7 @@ public class DetailSaleInvoiceDAO {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 DetailSaleInvoiceDTO detailSaleInvoice = new DetailSaleInvoiceDTO();
-                detailSaleInvoice.setDetail_sale_id(rs.getString("SalesDetailID"));
+                detailSaleInvoice.setDetailSaleInvoiceID(rs.getString("SalesDetailID"));
                 detailSaleInvoice.setSale_id(rs.getString("SalesID"));
                 detailSaleInvoice.setProduct_id(rs.getString("ProductID"));
                 detailSaleInvoice.setQuantity(rs.getInt("Quantity"));
@@ -44,7 +44,7 @@ public class DetailSaleInvoiceDAO {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 DetailSaleInvoiceDTO detailSaleInvoice = new DetailSaleInvoiceDTO();
-                detailSaleInvoice.setDetail_sale_id(rs.getString("SalesDetailID"));
+                detailSaleInvoice.setDetailSaleInvoiceID(rs.getString("SalesDetailID"));
                 detailSaleInvoice.setSale_id(rs.getString("SalesID"));
                 detailSaleInvoice.setProduct_id(rs.getString("ProductID"));
                 detailSaleInvoice.setQuantity(rs.getInt("Quantity"));
@@ -64,7 +64,7 @@ public class DetailSaleInvoiceDAO {
         try {
             Connection conn = DatabaseConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setString(1, detailSaleInvoice.getDetail_sale_id());
+            stmt.setString(1, detailSaleInvoice.getDetailSaleInvoiceID());
             stmt.setString(2, detailSaleInvoice.getSale_id());
             stmt.setString(3, detailSaleInvoice.getProduct_id());
             stmt.setInt(4, detailSaleInvoice.getQuantity());

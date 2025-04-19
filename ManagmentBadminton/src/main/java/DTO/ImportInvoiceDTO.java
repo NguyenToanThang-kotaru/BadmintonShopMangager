@@ -1,6 +1,5 @@
 package DTO;
 
-
 public class ImportInvoiceDTO {
     private String importID;
     private String employeeID;
@@ -9,6 +8,7 @@ public class ImportInvoiceDTO {
 
     public ImportInvoiceDTO() {
     }
+
 
     public ImportInvoiceDTO(String importID, String employeeID,  String date, double totalPrice) {
         this.importID = importID;

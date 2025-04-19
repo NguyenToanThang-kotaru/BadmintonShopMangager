@@ -67,6 +67,7 @@ public class SupplierDAO {
             pst.setString(3, supplier.getPhone());
             pst.setString(4, supplier.getEmail());
             pst.setString(5, supplier.getAddress());
+
             pst.setInt(6, supplier.getIsDeleted());
             
             if(pst.executeUpdate()>=1)
@@ -77,7 +78,6 @@ public class SupplierDAO {
         }
         return result;
     }
-
     public boolean update(SupplierDTO supplier) {
         boolean result = false;
         String sql = "Update supplier Set "
@@ -167,4 +167,5 @@ public class SupplierDAO {
         }
         return newID;
     }
+
 }
