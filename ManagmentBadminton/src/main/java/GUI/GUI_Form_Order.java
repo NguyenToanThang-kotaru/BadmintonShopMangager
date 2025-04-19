@@ -413,7 +413,6 @@ public class GUI_Form_Order extends JDialog {
                 JOptionPane.showMessageDialog(this, "Số lượng phải lớn hơn 0.");
                 return;
             }
-
             int tonKho = Integer.parseInt(productTableModel.getValueAt(selectedRow, 4).toString());
             if (quantity > tonKho) {
                 JOptionPane.showMessageDialog(this, "Số lượng vượt quá tồn kho!");
@@ -550,6 +549,17 @@ public class GUI_Form_Order extends JDialog {
             detail.setPrice(Double.parseDouble(priceStr));
 
             detailOrderBUS.add(detail);
+        }
+
+        // 4. Cập nhật lại số lượng tồn kho
+        for (int i = 0; i < orderTableModel.getRowCount(); i++) {
+            String productId = orderTableModel.getValueAt(i, 0).toString();
+            int quantity = Integer.parseInt(orderTableModel.getValueAt(i, 3).toString());
+            ProductDTO product = productBUS.getProductByID(productId);
+            if (product != null) {
+                product.setSoluong(String.valueOf(Integer.parseInt(product.getSoluong()) - quantity));
+                productBUS.updateProduct(product);
+            }
         }
 
         JOptionPane.showMessageDialog(this, "Lưu hóa đơn thành công!");
