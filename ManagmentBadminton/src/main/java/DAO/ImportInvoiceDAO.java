@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+
 import Connection.DatabaseConnection;
 import DTO.ImportInvoiceDTO;
 
@@ -58,6 +59,7 @@ public class ImportInvoiceDAO {
             PreparedStatement pst = conn.prepareStatement(sql)){
             pst.setString(1, importInvoice.getImportID());
             pst.setString(2, importInvoice.getEmployeeID());
+
             pst.setString(3, importInvoice.getDate());
             pst.setDouble(4, importInvoice.getTotalPrice());
             
@@ -68,6 +70,7 @@ public class ImportInvoiceDAO {
         }
         return result;
     }
+
 
     public String generateNextImportID() {
         String query = "SELECT ImportID FROM import_invoice ORDER BY ImportID DESC LIMIT 1";

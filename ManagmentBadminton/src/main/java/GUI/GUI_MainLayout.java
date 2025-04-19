@@ -11,6 +11,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import DTO.AccountDTO;
+import GUI.Promotion.GUI_Promotion;
+import GUI.Statistics.StatisticsPanel;
 
 
 public class GUI_MainLayout extends JFrame {
@@ -19,7 +21,6 @@ public class GUI_MainLayout extends JFrame {
     private GUI_TittleBar tittleBar;
     
     public GUI_MainLayout(JFrame login, AccountDTO logined) {
-
         setTitle("Quản Lý Kho Hàng");
         setSize(1000, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -36,9 +37,8 @@ public class GUI_MainLayout extends JFrame {
         // ================================ Content ================================
         JPanel contentPanel = new JPanel(new BorderLayout());
 
-        Sidebar.statisticsPanel = new JPanel();
-        Sidebar.statisticsPanel.setBackground(Color.CYAN);
-        Sidebar.statisticsPanel.add(new JLabel("Thống kê doanh thu"));
+        Sidebar.statisticsPanel = new StatisticsPanel();
+
 
         Sidebar.productPanel = new JPanel();
         Sidebar.productPanel.setBackground(Color.GREEN);
@@ -55,9 +55,7 @@ public class GUI_MainLayout extends JFrame {
 
         Sidebar.importPanel = new GUI_Import(logined);
 
-        Sidebar.promotionPanel = new JPanel();
-        Sidebar.promotionPanel.setBackground(Color.BLUE);
-        Sidebar.promotionPanel.add(new JLabel("Khuyến mãi"));
+        Sidebar.promotionPanel = new GUI_Promotion();
 
         Sidebar.customerPanel = new GUI_Customer();
 

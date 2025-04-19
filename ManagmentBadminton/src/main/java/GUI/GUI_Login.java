@@ -145,7 +145,6 @@ public class GUI_Login extends JFrame {
                 //Chay vao frame GUI_MainLayout
                 this.setVisible(false);
                 GUI_MainLayout mainLayout = new GUI_MainLayout(this, account);
-
                 mainLayout.setVisible(true);
             }
             else{
