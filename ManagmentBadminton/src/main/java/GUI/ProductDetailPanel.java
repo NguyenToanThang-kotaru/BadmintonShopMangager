@@ -1,26 +1,57 @@
 package GUI;
 
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
 import BUS.ImportInvoiceBUS;
-
-import java.awt.*;
-import java.awt.event.*;
+import BUS.SupplierBUS;
+import BUS.TypeProductBUS;
+import DTO.SupplierDTO;
+import DTO.TypeProductDTO;
 
 public class ProductDetailPanel extends JPanel {
-    private JLabel lblProductImage, lblProductId, lblProductName, lblSupplier, lblPrice, lblTotal;
-    private JTextField txtQuantity;
+    private JLabel lblProductImage;
+    private JTextField txtProductId, txtProductName, txtPrice, txtQuantity;
+    private JComboBox<String> cmbSupplier, cmbProductType;
+    private JLabel lblTotal;
     private CustomButton btnThemSP;
+    private JTextField txtSupplierId, txtProductTypeId;
+    private JTextField txtImageFilename; // Ảnh được chọn
+    CustomButton btnUpload;
+
+    ArrayList<SupplierDTO> suppliers;
+    ArrayList<TypeProductDTO> typeList;
 
     public ProductDetailPanel(ActionListener addProductListener, ImportInvoiceBUS bus) {
         setLayout(new BorderLayout(15, 15));
         setBorder(new CompoundBorder(new TitledBorder("Thông tin sản phẩm đang chọn"), new EmptyBorder(10, 10, 10, 10)));
         setBackground(Color.WHITE);
 
+        suppliers = SupplierBUS.getAllSupplier();
+        typeList = TypeProductBUS.getAllTypeProduct();
+
+        // Ảnh sản phẩm
         lblProductImage = new JLabel("", JLabel.CENTER);
         lblProductImage.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.LIGHT_GRAY, 1), new EmptyBorder(5, 5, 5, 5)));
         loadDefaultImage();
@@ -30,6 +61,59 @@ public class ProductDetailPanel extends JPanel {
         imagePanel.setBackground(Color.WHITE);
         imagePanel.add(lblProductImage, BorderLayout.CENTER);
 
+        // Nút Upload ảnh
+        btnUpload = new CustomButton("Upload");
+        btnUpload.setBackground(new Color(0, 123, 255));
+        btnUpload.setForeground(Color.WHITE);
+        btnUpload.setFocusPainted(false);
+        btnUpload.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btnUpload.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        btnUpload.setEnabled(false);
+        imagePanel.add(btnUpload, BorderLayout.SOUTH);
+
+        // Sự kiện upload
+        btnUpload.addActionListener(e -> {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            int result = fileChooser.showOpenDialog(this);
+
+            if (result == JFileChooser.APPROVE_OPTION) {
+                java.io.File selectedFile = fileChooser.getSelectedFile();
+                String fileName = selectedFile.getName();
+                txtImageFilename.setText(fileName);
+
+                try {
+                    // Thư mục đích để lưu ảnh
+                    String destinationDir = "images/";
+                    java.io.File destinationFolder = new java.io.File(destinationDir);
+                    if (!destinationFolder.exists()) {
+                        destinationFolder.mkdirs();
+                    }
+
+                    // Tạo đường dẫn đích
+                    java.io.File destFile = new java.io.File(destinationDir + fileName);
+
+                    // Sao chép file
+                    java.nio.file.Files.copy(
+                        selectedFile.toPath(),
+                        destFile.toPath(),
+                        java.nio.file.StandardCopyOption.REPLACE_EXISTING
+                    );
+
+                    // Hiển thị ảnh
+                    ImageIcon icon = new ImageIcon(destFile.getAbsolutePath());
+                    Image scaledImage = icon.getImage().getScaledInstance(140, 140, Image.SCALE_SMOOTH);
+                    lblProductImage.setIcon(new ImageIcon(scaledImage));
+                    lblProductImage.setText("");
+
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(this, "Không thể sao chép ảnh!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        // Thông tin chi tiết sản phẩm
         JPanel detailPanel = new JPanel(new GridBagLayout());
         detailPanel.setBackground(Color.WHITE);
         GridBagConstraints gbc = new GridBagConstraints();
@@ -37,19 +121,44 @@ public class ProductDetailPanel extends JPanel {
         gbc.anchor = GridBagConstraints.WEST;
 
         gbc.gridx = 0; gbc.gridy = 0; detailPanel.add(new JLabel("Mã sản phẩm:"), gbc);
-        gbc.gridx = 1; lblProductId = new JLabel("Chọn sản phẩm từ danh sách"); detailPanel.add(lblProductId, gbc);
+        gbc.gridx = 1; txtProductId = new JTextField(15); txtProductId.setEditable(false); detailPanel.add(txtProductId, gbc);
 
         gbc.gridx = 0; gbc.gridy = 1; detailPanel.add(new JLabel("Tên sản phẩm:"), gbc);
-        gbc.gridx = 1; lblProductName = new JLabel(); detailPanel.add(lblProductName, gbc);
+        gbc.gridx = 1; txtProductName = new JTextField(15); txtProductName.setEditable(false); detailPanel.add(txtProductName, gbc);
 
         gbc.gridx = 0; gbc.gridy = 2; detailPanel.add(new JLabel("Nhà cung cấp:"), gbc);
-        gbc.gridx = 1; lblSupplier = new JLabel(); detailPanel.add(lblSupplier, gbc);
+        gbc.gridx = 1;
+        cmbSupplier = new JComboBox<>();
+        cmbSupplier.setEnabled(false);
+        detailPanel.add(cmbSupplier, gbc);
 
-        gbc.gridx = 0; gbc.gridy = 3; detailPanel.add(new JLabel("Đơn giá:"), gbc);
-        gbc.gridx = 1; lblPrice = new JLabel(); detailPanel.add(lblPrice, gbc);
+        txtSupplierId = new JTextField(15);
+        txtSupplierId.setEditable(false);
+        txtSupplierId.setVisible(false);
+        detailPanel.add(txtSupplierId, gbc);
 
-        gbc.gridx = 0; gbc.gridy = 4; detailPanel.add(new JLabel("Số lượng:"), gbc);
-        gbc.gridx = 1; txtQuantity = new JTextField(5); txtQuantity.setHorizontalAlignment(JTextField.RIGHT); detailPanel.add(txtQuantity, gbc);
+        gbc.gridx = 0; gbc.gridy = 3; detailPanel.add(new JLabel("Loại sản phẩm:"), gbc);
+        gbc.gridx = 1;
+        cmbProductType = new JComboBox<>();
+        cmbProductType.setEnabled(false);
+        detailPanel.add(cmbProductType, gbc);
+
+        txtProductTypeId = new JTextField(15);
+        txtProductTypeId.setEditable(false);
+        txtProductTypeId.setVisible(false);
+        detailPanel.add(txtProductTypeId, gbc);
+
+        // Trường ẩn lưu tên file ảnh
+        txtImageFilename = new JTextField(15);
+        txtImageFilename.setEditable(false);
+        txtImageFilename.setVisible(false);
+        detailPanel.add(txtImageFilename, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 4; detailPanel.add(new JLabel("Đơn giá:"), gbc);
+        gbc.gridx = 1; txtPrice = new JTextField(15); txtPrice.setEditable(false); detailPanel.add(txtPrice, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 5; detailPanel.add(new JLabel("Số lượng:"), gbc);
+        gbc.gridx = 1; txtQuantity = new JTextField(5); detailPanel.add(txtQuantity, gbc);
 
         JPanel bottomPanel = new JPanel(new GridBagLayout());
         bottomPanel.setBackground(Color.WHITE);
@@ -74,10 +183,15 @@ public class ProductDetailPanel extends JPanel {
 
         add(imagePanel, BorderLayout.WEST);
         add(infoPanel, BorderLayout.CENTER);
+
+        cmbSupplier.addActionListener(e -> updateSupplierId());
+        cmbProductType.addActionListener(e -> updateProductTypeId());
+        loadSupplierList();
+        loadTypeList();
     }
 
     private void loadDefaultImage() {
-        java.net.URL imageUrl = getClass().getResource("/images/default_product.png");
+        java.net.URL imageUrl = getClass().getResource("images/default_product.png");
         ImageIcon icon = (imageUrl != null) ? new ImageIcon(imageUrl) : null;
         if (icon != null) {
             lblProductImage.setIcon(new ImageIcon(icon.getImage().getScaledInstance(140, 140, Image.SCALE_SMOOTH)));
@@ -87,16 +201,57 @@ public class ProductDetailPanel extends JPanel {
         }
     }
 
+    private void loadSupplierList() {
+        for (SupplierDTO supplier : suppliers) {
+            cmbSupplier.addItem(supplier.getSupplierName());
+        }
+    }
+
+    private void loadTypeList() {
+        for (TypeProductDTO type : typeList) {
+            cmbProductType.addItem(type.getTypeName());
+        }
+    }
+
     private void updateTotal(ImportInvoiceBUS bus) {
-        lblTotal.setText(bus.calculateTotal(lblPrice.getText(), txtQuantity.getText()));
+        lblTotal.setText(bus.calculateTotal(txtPrice.getText(), txtQuantity.getText()));
+    }
+
+    private void updateSupplierId() {
+        int selectedSupplier = cmbSupplier.getSelectedIndex();
+        if (selectedSupplier >= 0 && selectedSupplier < suppliers.size()) {
+            txtSupplierId.setText(suppliers.get(selectedSupplier).getSupplierID());
+        }
+    }
+
+    private void updateProductTypeId() {
+        int selectedType = cmbProductType.getSelectedIndex();
+        if (selectedType >= 0 && selectedType < typeList.size()) {
+            txtProductTypeId.setText(typeList.get(selectedType).getTypeID());
+        }
     }
 
     // Getters
     public JLabel getLblProductImage() { return lblProductImage; }
-    public JLabel getLblProductId() { return lblProductId; }
-    public JLabel getLblProductName() { return lblProductName; }
-    public JLabel getLblSupplier() { return lblSupplier; }
-    public JLabel getLblPrice() { return lblPrice; }
+    public JTextField getTxtProductId() { return txtProductId; }
+    public JTextField getTxtProductName() { return txtProductName; }
+    public JComboBox<String> getCmbSupplier() { return cmbSupplier; }
+    public JComboBox<String> getCmbProductType() { return cmbProductType; }
+    public JTextField getTxtSupplierId() { return txtSupplierId; }
+    public JTextField getTxtProductTypeId() { return txtProductTypeId; }
+    public JTextField getTxtPrice() { return txtPrice; }
     public JTextField getTxtQuantity() { return txtQuantity; }
     public JLabel getLblTotal() { return lblTotal; }
+    public CustomButton getBtnThemSP() { return btnThemSP; }
+    public JTextField getTxtImageFilename() { return txtImageFilename; }
+    public CustomButton getBtnUpload() { return btnUpload; }
+
+    // Enable/disable các trường (trừ số lượng)
+    public void setEditableFields(boolean enabled) {
+        txtProductName.setEditable(enabled);
+        btnUpload.setEnabled(enabled);
+        cmbSupplier.setEnabled(enabled);
+        cmbProductType.setEnabled(enabled);
+        txtPrice.setEditable(enabled);
+    }
 }

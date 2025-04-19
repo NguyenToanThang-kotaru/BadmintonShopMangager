@@ -35,7 +35,7 @@ public class SupplierDAO {
         return supplierList;
     }
 
-    public SupplierDTO getSupplierByID(String id){
+    public static SupplierDTO getSupplierByID(String id){
         String sql = "SELECT * FROM supplier WHERE SupplierID = ? AND IsDeleted = 0";
         try(Connection conn = DatabaseConnection.getConnection();
             PreparedStatement pst = conn.prepareStatement(sql)){
@@ -67,6 +67,7 @@ public class SupplierDAO {
             pst.setString(3, supplier.getPhone());
             pst.setString(4, supplier.getEmail());
             pst.setString(5, supplier.getAddress());
+
             pst.setInt(6, supplier.getIsDeleted());
             
             if(pst.executeUpdate()>=1)
@@ -77,7 +78,6 @@ public class SupplierDAO {
         }
         return result;
     }
-
     public boolean update(SupplierDTO supplier) {
         boolean result = false;
         String sql = "Update supplier Set "
@@ -101,6 +101,7 @@ public class SupplierDAO {
         return result;
     }
 
+
     public boolean remove(SupplierDTO supplier) {
         boolean result = false;
         String sql = "Update supplier Set "
@@ -118,9 +119,25 @@ public class SupplierDAO {
         return result;
     }
 
+    public String getSupplierIDByProduct(String productId) {
+        String query = "SELECT SupplierID FROM product WHERE ProductID = ? AND IsDeleted = 0";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, productId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getString("SupplierID");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+
     public static ArrayList<String> getAllNCCNames() {
         ArrayList<String> NCCList = new ArrayList<>();
-        String query = "SELECT SupplierName FROM supplier";
+        String query = "SELECT SupplierName FROM supplier WHERE IsDeleted = 0";
 
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
 
@@ -150,4 +167,5 @@ public class SupplierDAO {
         }
         return newID;
     }
+
 }
