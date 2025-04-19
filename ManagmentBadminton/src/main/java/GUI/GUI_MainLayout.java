@@ -11,6 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import DTO.AccountDTO;
+import GUI.Promotion.GUI_Promotion;
 import GUI.Statistics.StatisticsPanel;
 
 
@@ -54,9 +55,7 @@ public class GUI_MainLayout extends JFrame {
 
         Sidebar.importPanel = new GUI_Import(logined);
 
-        Sidebar.promotionPanel = new JPanel();
-        Sidebar.promotionPanel.setBackground(Color.BLUE);
-        Sidebar.promotionPanel.add(new JLabel("Khuyến mãi"));
+        Sidebar.promotionPanel = new GUI_Promotion();
 
         Sidebar.customerPanel = new GUI_Customer();
 
