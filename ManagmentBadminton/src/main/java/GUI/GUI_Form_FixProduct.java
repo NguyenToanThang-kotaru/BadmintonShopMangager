@@ -3,7 +3,8 @@ package GUI;
 import DTO.ProductDTO;
 import DAO.ProductDAO;
 import BUS.ProductBUS;
-import DAO.SupplierDAO;    
+import DAO.SupplierDAO;  
+import BUS.SupplierBUS;   
 import java.awt.*;
 import java.io.File;
 import java.nio.file.Files; 
@@ -58,7 +59,7 @@ public class GUI_Form_FixProduct extends JDialog {
         gbc.gridy = 6;
         add(new JLabel("Tên loại:"), gbc);
         gbc.gridx = 1;
-        ArrayList<String> categoryList = ProductDAO.getAllCategoryNames();
+        ArrayList<String> categoryList = ProductBUS.getAllCategoryNames();
         String[] categoryNames = categoryList.toArray(new String[0]);
         TLField = new CustomCombobox(categoryNames);
         TLField.setSelectedItem(product.getTL());
@@ -68,7 +69,7 @@ public class GUI_Form_FixProduct extends JDialog {
         gbc.gridy = 7;
         add(new JLabel("Nhà cung cấp:"), gbc);
         gbc.gridx = 1;
-        ArrayList<String> NCCList = SupplierDAO.getAllNCCNames();
+        ArrayList<String> NCCList = SupplierBUS.getAllNCCNames();
         String[] NCCNames = NCCList.toArray(new String[0]);
         NCCField = new CustomCombobox(NCCNames);
         NCCField.setSelectedItem(product.gettenNCC());
@@ -171,7 +172,7 @@ public class GUI_Form_FixProduct extends JDialog {
             return; // Nếu không hợp lệ thì không tiếp tục cập nhật
         }
 
-        ProductDAO.updateProduct(product);
+        ProductBUS.updateProduct(product);
         JOptionPane.showMessageDialog(this, "Cập nhật sản phẩm thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
         parentGUI.loadProductData();
         dispose();

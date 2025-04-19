@@ -11,6 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import DTO.AccountDTO;
+import GUI.Statistics.StatisticsPanel;
 
 
 public class GUI_MainLayout extends JFrame {
@@ -35,9 +36,8 @@ public class GUI_MainLayout extends JFrame {
         // ================================ Content ================================
         JPanel contentPanel = new JPanel(new BorderLayout());
 
-        Sidebar.statisticsPanel = new JPanel();
-        Sidebar.statisticsPanel.setBackground(Color.CYAN);
-        Sidebar.statisticsPanel.add(new JLabel("Thống kê doanh thu"));
+        Sidebar.statisticsPanel = new StatisticsPanel();
+
 
         Sidebar.productPanel = new JPanel();
         Sidebar.productPanel.setBackground(Color.GREEN);
@@ -52,7 +52,7 @@ public class GUI_MainLayout extends JFrame {
 
         Sidebar.supplierPanel = new GUI_Supplier();
 
-        Sidebar.importPanel = new GUI_Import();
+        Sidebar.importPanel = new GUI_Import(logined);
 
         Sidebar.promotionPanel = new JPanel();
         Sidebar.promotionPanel.setBackground(Color.BLUE);
