@@ -36,14 +36,14 @@ public class GUI_AddFormProduct extends JDialog {
 
         // Các trường nhập liệu
         addComponent("Tên sản phẩm:", nameField = new JTextField(20), gbc, 0);
-        addComponent("Giá:", priceField = new JTextField(20), gbc, 1);
+//        addComponent("Giá:", priceField = new JTextField(20), gbc, 1);
 //        addComponent("Mã NCC:", maNCCField = new JTextField(20), gbc, 2);
 //        addComponent("Số lượng:", soluongField = new JTextField(20), gbc, 3);
-        addComponent("Thông số kỹ thuật:", tsktField = new JTextField(20), gbc, 4);
+//        addComponent("Thông số kỹ thuật:", tsktField = new JTextField(20), gbc, 1);
 
         // Loại sản phẩm
         gbc.gridx = 0;
-        gbc.gridy = 5;
+        gbc.gridy = 4;
         add(new JLabel("Tên loại:"), gbc);
         gbc.gridx = 1;
         // Lấy danh sách các loại sản phẩm từ database
@@ -52,7 +52,7 @@ public class GUI_AddFormProduct extends JDialog {
         add(TLField, gbc);
 
         gbc.gridx = 0;
-        gbc.gridy = 6;
+        gbc.gridy = 5;
         add(new JLabel("Nhà cung cấp:"), gbc);
         gbc.gridx = 1;
         String[] NCCNames = SupplierBUS.getAllNCCNames().toArray(new String[0]);
@@ -61,7 +61,7 @@ public class GUI_AddFormProduct extends JDialog {
 
         // Ảnh sản phẩm
         gbc.gridx = 0;
-        gbc.gridy = 7;
+        gbc.gridy = 6;
         add(new JLabel("Ảnh sản phẩm:"), gbc);
         gbc.gridx = 1;
         imageLabel = new JLabel();
@@ -70,7 +70,7 @@ public class GUI_AddFormProduct extends JDialog {
         add(imageLabel, gbc);
 
         // Nút chọn ảnh
-        gbc.gridy = 8;
+        gbc.gridy = 7;
         btnChooseImage = new CustomButton("Chọn ảnh");
         btnChooseImage.addActionListener(e -> chooseImage());
         add(btnChooseImage, gbc);
@@ -82,7 +82,7 @@ public class GUI_AddFormProduct extends JDialog {
         buttonPanel.add(saveButton);
         buttonPanel.add(cancelButton);
 
-        gbc.gridy = 9;
+        gbc.gridy = 8;
         gbc.gridx = 1;
         add(buttonPanel, gbc);
 
@@ -124,14 +124,15 @@ public class GUI_AddFormProduct extends JDialog {
 
     private void saveProduct() {
         String name = nameField.getText().trim();
-        String price = priceField.getText().trim();
+        String price = "0";
         String soluong = "0";
-        String tskt = tsktField.getText().trim();
+//        String tskt = tsktField.getText().trim();
         String tenLoai = (String) TLField.getSelectedItem();
         String tenNCC = (String) NCCField.getSelectedItem();
+        String giaNhap = "0";
         String anh = null;
 
-        if (name.isEmpty() || price.isEmpty() || tskt.isEmpty()) {
+        if (name.isEmpty() || price.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -142,7 +143,7 @@ public class GUI_AddFormProduct extends JDialog {
         }
 
         // Tạo sản phẩm mới, truyền vào productID là null vì đây là sản phẩm mới (sẽ tự động sinh ID khi thêm vào DB)
-        ProductDTO newProduct = new ProductDTO(null, name, price, soluong, null, null, tenLoai, anh, tenNCC);
+        ProductDTO newProduct = new ProductDTO(null, name, price, soluong, null, null, tenLoai, anh, tenNCC, giaNhap);
         
           ProductBUS bus = new ProductBUS();
         if (!bus.validateProduct(newProduct)) {

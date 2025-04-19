@@ -141,6 +141,13 @@ public class GUI_Product extends JPanel {
         JLabel TypeName = new JLabel("");
         infoPanel.add(TypeName, gbcInfo);
 
+        gbcInfo.gridx = 0;
+        gbcInfo.gridy = 6;
+        infoPanel.add(new JLabel("Giá nhập: "), gbcInfo);
+        gbcInfo.gridx = 1;
+        JLabel ImportPrice = new JLabel("");
+        infoPanel.add(ImportPrice, gbcInfo);
+
 // Nút Lưu
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
         buttonPanel.setOpaque(false);
@@ -158,7 +165,7 @@ public class GUI_Product extends JPanel {
         buttonPanel.add(fixButton);
 
         gbcInfo.gridx = 0;
-        gbcInfo.gridy = 6;
+        gbcInfo.gridy = 7;
         gbcInfo.gridwidth = 2;
         gbcInfo.fill = GridBagConstraints.HORIZONTAL;
 
@@ -181,6 +188,7 @@ public class GUI_Product extends JPanel {
                     quantityLabel.setText(product.getSoluong());
                     NameNCC.setText(product.gettenNCC());
                     TypeName.setText(product.getTL());
+                    ImportPrice.setText(product.getgiaNhap());
 
                     infoPanel.add(buttonPanel, gbcInfo);
 
@@ -221,6 +229,7 @@ public class GUI_Product extends JPanel {
                     quantityLabel.setText("");
                     NameNCC.setText("");
                     TypeName.setText("");
+                    ImportPrice.setText("");
                     imageLabel.setIcon(null);
                     infoPanel.remove(buttonPanel); // Ẩn nút nếu không có sản phẩm
                     infoPanel.revalidate();
@@ -256,7 +265,7 @@ public class GUI_Product extends JPanel {
 
             }
         });
-        
+
         reloadButton.addActionListener(e -> {
             loadProductData();
             tableModel.fireTableDataChanged();
@@ -290,6 +299,7 @@ public class GUI_Product extends JPanel {
                 quantityLabel.setText("");
                 NameNCC.setText("");
                 TypeName.setText("");
+                ImportPrice.setText("");
 
                 String productImg = productChoosing.getAnh();
                 String imagePath = "images/noimage.png"; // Đường dẫn mặc định nếu không có ảnh sản phẩm
