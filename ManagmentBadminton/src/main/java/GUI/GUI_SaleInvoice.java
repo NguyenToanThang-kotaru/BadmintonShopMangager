@@ -7,6 +7,8 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.text.DecimalFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -69,6 +71,8 @@ public class GUI_SaleInvoice extends JPanel {
         CustomScrollPane scrollPane = new CustomScrollPane(orderTable);
         midPanel.add(scrollPane, BorderLayout.CENTER);
 
+        loadOrder();
+
         // ========== PANEL CHI TIẾT HÓA ĐƠN ==========
         botPanel = new JPanel(new GridBagLayout());
         botPanel.setBackground(Color.WHITE);
@@ -118,6 +122,10 @@ public class GUI_SaleInvoice extends JPanel {
 //            JOptionPane.showMessageDialog(this, "Chức năng thêm nhân viên chưa được triển khai!");
             GUI_Form_Order GFO = new GUI_Form_Order(this, null, cn);
             GFO.setVisible(true);
+
+            if (!GFO.isVisible()) {
+                loadOrder(); // Tải lại danh sách hóa đơn sau khi thêm
+            }
         });
 
         // Thêm các panel vào giao diện chính
@@ -156,8 +164,11 @@ public class GUI_SaleInvoice extends JPanel {
         tableModel.setRowCount(0); // Xóa dữ liệu cũ trong bảng
         List<SaleInvoiceDTO> orderList = saleInvoiceBUS.getAll();
         for (SaleInvoiceDTO order : orderList) {
-            String formattedDate = new java.text.SimpleDateFormat("dd-MM-yyyy").format(order.getDate());
-            String[] rowData = {order.getId(), order.getEmployeeId(), order.getCustomerId(), String.valueOf(order.getTotalPrice()), formattedDate};
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+            String formattedString = order.getDate().format(formatter);
+            DecimalFormat decimalFormat = new DecimalFormat("#,##0.00");
+            String formattedTotalPrice = decimalFormat.format(order.getTotalPrice());
+            String[] rowData = {order.getId(), order.getEmployeeId(), order.getCustomerId(), formattedTotalPrice, formattedString};
             tableModel.addRow(rowData);
         }
     }

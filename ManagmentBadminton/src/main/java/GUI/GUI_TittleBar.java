@@ -9,9 +9,21 @@ package GUI;
  * @author Thang Nguyen
  */
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Image;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 
 class GUI_TittleBar extends JPanel {
@@ -51,7 +63,7 @@ class GUI_TittleBar extends JPanel {
         appIcon = new ImageIcon(imgLogo);
 
         JLabel iconLabel = new JLabel(appIcon);
-        JLabel titleLabel = new JLabel(" Quản Lý Cửa Hàng Cầu Lông");
+        JLabel titleLabel = new JLabel(" Quản Lý Cửa Hàng Cầu Lông HTTN");
         titleLabel.setForeground(Color.WHITE);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
 

@@ -6,7 +6,7 @@ package DTO;
  */
 
 public class DetailSaleInvoiceDTO {
-    private String detail_sale_id;
+    private String DetailSaleInvoiceID;
     private String sale_id;
     private String product_id;
     private int quantity;
@@ -16,8 +16,8 @@ public class DetailSaleInvoiceDTO {
     public DetailSaleInvoiceDTO() {
     }
 
-    public DetailSaleInvoiceDTO(String detail_sale_id, String sale_id, String product_id, int quantity, double price, double total_price) {
-        this.detail_sale_id = detail_sale_id;
+    public DetailSaleInvoiceDTO(String DetailSaleInvoiceID, String sale_id, String product_id, int quantity, double price, double total_price) {
+        this.DetailSaleInvoiceID = DetailSaleInvoiceID;
         this.sale_id = sale_id;
         this.product_id = product_id;
         this.quantity = quantity;
@@ -25,12 +25,12 @@ public class DetailSaleInvoiceDTO {
         this.total_price = total_price;
     }
 
-    public String getDetail_sale_id() {
-        return detail_sale_id;
+    public String getDetailSaleInvoiceID() {
+        return DetailSaleInvoiceID;
     }
 
-    public void setDetail_sale_id(String detail_sale_id) {
-        this.detail_sale_id = detail_sale_id;
+    public void setDetailSaleInvoiceID(String detailSaleInvoiceID) {
+        DetailSaleInvoiceID = detailSaleInvoiceID;
     }
 
     public String getSale_id() {
