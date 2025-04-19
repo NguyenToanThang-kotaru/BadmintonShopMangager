@@ -141,11 +141,13 @@ public class GUI_Permission extends JPanel {
         });
 
         editButton.addActionListener(e -> {
-            System.out.println("Da luu");
+            Form_Permission FP = new Form_Permission(this,permissionChoosing);
+            FP.setVisible(true);
         });
 
         addButton.addActionListener(e -> {
-            System.out.println("Da them");
+            Form_Permission FP = new Form_Permission(this,null);
+            FP.setVisible(true);
         });
 
         // Thêm các panel vào giao diện chính

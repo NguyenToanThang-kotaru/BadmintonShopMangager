@@ -3,6 +3,7 @@ package DTO;
 public class ImportInvoiceDetailDTO {
     private String importID;
     private String productID;
+    private String supplierID;
     private int Quantity;
     private double price;
     private double totalPrice;
@@ -10,9 +11,10 @@ public class ImportInvoiceDetailDTO {
     public ImportInvoiceDetailDTO() {
     }
 
-    public ImportInvoiceDetailDTO(String importID, String productID, int Quantity, double price, double totalPrice) {
+    public ImportInvoiceDetailDTO(String importID, String productID, String supplierID, int Quantity, double price, double totalPrice) {
         this.importID = importID;
         this.productID = productID;
+        this.supplierID = supplierID;
         this.Quantity = Quantity;
         this.price = price;
         this.totalPrice = totalPrice;
@@ -32,6 +34,13 @@ public class ImportInvoiceDetailDTO {
 
     public void setProductID(String productID) {
         this.productID = productID;
+    }
+    public String getSupplierID() {
+        return supplierID;
+    }
+
+    public void setSupplierID(String supplierID) {
+        this.supplierID = supplierID;
     }
 
     public int getQuantity() {

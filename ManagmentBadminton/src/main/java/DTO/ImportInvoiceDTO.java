@@ -4,17 +4,15 @@ package DTO;
 public class ImportInvoiceDTO {
     private String importID;
     private String employeeID;
-    private String supplierID;
     private String date;
     private double totalPrice;
 
     public ImportInvoiceDTO() {
     }
 
-    public ImportInvoiceDTO(String importID, String employeeID, String supplierID, String date, double totalPrice) {
+    public ImportInvoiceDTO(String importID, String employeeID,  String date, double totalPrice) {
         this.importID = importID;
         this.employeeID = employeeID;
-        this.supplierID = supplierID;
         this.date = date;
         this.totalPrice = totalPrice;
     }
@@ -33,14 +31,6 @@ public class ImportInvoiceDTO {
 
     public void setEmployeeID(String employeeID) {
         this.employeeID = employeeID;
-    }
-
-    public String getSupplierID() {
-        return supplierID;
-    }
-
-    public void setSupplierID(String supplierID) {
-        this.supplierID = supplierID;
     }
 
     public String getDate() {

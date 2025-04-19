@@ -10,20 +10,22 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import DTO.AccountDTO;
+
 
 public class GUI_MainLayout extends JFrame {
 
     private GUI_Sidebar Sidebar;
     private GUI_TittleBar tittleBar;
-    
-    public GUI_MainLayout(JFrame login) {
+    public GUI_MainLayout(JFrame login, AccountDTO logined) {
+
         setTitle("Quản Lý Kho Hàng");
         setSize(1000, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(0, 0));
         setUndecorated(true);
-        
+
         // ================================ Title Bar ================================
         tittleBar = new GUI_TittleBar(this);
 
@@ -40,19 +42,17 @@ public class GUI_MainLayout extends JFrame {
         Sidebar.productPanel = new JPanel();
         Sidebar.productPanel.setBackground(Color.GREEN);
         Sidebar.productPanel.add(new JLabel("Danh sách sản phẩm"));
-        
+
         Sidebar.productPanel = new GUI_Product();
 
-        Sidebar.orderPanel = new JPanel();
-        Sidebar.orderPanel.setBackground(Color.ORANGE);
-        Sidebar.orderPanel.add(new JLabel("Danh sách đơn hàng"));
+        Sidebar.orderPanel = new GUI_SaleInvoice(logined);
 
         Sidebar.employeePanel = new GUI_Employee();
 
 
         Sidebar.supplierPanel = new GUI_Supplier();
 
-        Sidebar.importPanel = new GUI_Import();
+        Sidebar.importPanel = new GUI_Import(logined);
 
         Sidebar.promotionPanel = new JPanel();
         Sidebar.promotionPanel.setBackground(Color.BLUE);
@@ -123,5 +123,5 @@ public class GUI_MainLayout extends JFrame {
         add(Sidebar, BorderLayout.WEST);
         add(contentPanel, BorderLayout.CENTER);
     }
-    
+
 }

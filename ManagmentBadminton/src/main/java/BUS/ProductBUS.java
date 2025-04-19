@@ -1,17 +1,21 @@
 package BUS;
 
+import java.util.List;
+
+import javax.swing.JOptionPane;
+
 import DAO.ProductDAO;
 import DTO.ProductDTO;
 import java.util.List;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
+
 public class ProductBUS {
 
     public static List<ProductDTO> getAllProducts() {
         return ProductDAO.getAllProducts();
     }
-
     public static void updateProduct(ProductDTO product) {
         ProductDAO dao = new ProductDAO();
         dao.updateProduct(product);
@@ -117,5 +121,14 @@ public class ProductBUS {
     public ProductDTO getProductByID(String id) {
         ProductDAO dao = new ProductDAO();
         return dao.getProduct(id);
+    }
+
+    public String generateNewProductID() {
+        return ProductDAO.generateNewProductID();
+    }
+
+    public void insert(ProductDTO product) {
+        ProductDAO dao = new ProductDAO();
+        dao.insert(product);
     }
 }

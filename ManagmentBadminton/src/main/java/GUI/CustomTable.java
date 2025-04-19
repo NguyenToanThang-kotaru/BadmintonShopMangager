@@ -1,3 +1,5 @@
+// Create table design
+
 package GUI;
 
 import java.awt.BorderLayout;
