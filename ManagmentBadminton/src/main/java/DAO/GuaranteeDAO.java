@@ -53,7 +53,7 @@ public class GuaranteeDAO {
             while (rs.next()) {
                 String status = rs.getString("Status");
                 if (status == null || status.trim().isEmpty()) {
-                    status = "Chưa bảo hành";
+                    status = "Không";
                 }
 
                 warranties.add(new GuaranteeDTO(

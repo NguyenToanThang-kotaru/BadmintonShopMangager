@@ -63,7 +63,7 @@ public class Form_Guarantee extends JDialog {
         gbc.gridy = 2;
         add(new JLabel("Trạng thái: "), gbc);
         gbc.gridx = 1;
-        CustomCombobox statusBaohanh = new CustomCombobox(new String[]{"Chưa bảo hành", "Đang Bảo hành", "Đã bảo hành"});
+        CustomCombobox statusBaohanh = new CustomCombobox(new String[]{"Không", "Có"});
         statusBaohanh.setSelectedItem(guarantee.gettrangthai());
         
         gbc.fill = GridBagConstraints.NONE;
@@ -103,14 +103,14 @@ public class Form_Guarantee extends JDialog {
         add(reasonPanel, gbc);
 
         // Ẩn panel lý do bảo hành nếu không phải "Đang Bảo hành"
-        reasonPanel.setVisible("Đang Bảo hành".equals(statusBaohanh.getSelectedItem()));
+        reasonPanel.setVisible("Có".equals(statusBaohanh.getSelectedItem()));
 
         // Lắng nghe sự kiện thay đổi lựa chọn của ComboBox
         statusBaohanh.addItemListener(e -> {
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 String selected = (String) statusBaohanh.getSelectedItem();
-                reasonPanel.setVisible("Đang Bảo hành".equals(selected));
-                reasonField.setVisible("Đang Bảo hành".equals(selected));
+                reasonPanel.setVisible("Có".equals(selected));
+                reasonField.setVisible("Có".equals(selected));
                 revalidate();
                 repaint();
             }
