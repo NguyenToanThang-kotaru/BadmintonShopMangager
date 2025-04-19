@@ -27,7 +27,7 @@ public class GUI_Supplier extends JPanel {
     private JPanel topPanel, midPanel, botPanel;
     private JTable supplierTable;
     private DefaultTableModel tableModel;
-    private CustomButton editButton, deleteButton, productListButton;
+    private CustomButton editButton, deleteButton, productListButton, reloadButton;
     private CustomButton addButton;
     private CustomSearch searchField;
     private SupplierBUS supplierBUS;
@@ -45,6 +45,12 @@ public class GUI_Supplier extends JPanel {
         topPanel.setPreferredSize(new Dimension(0, 60));
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         topPanel.setBackground(Color.WHITE);
+
+        reloadButton = new CustomButton("Tải lại trang");
+        topPanel.add(reloadButton, BorderLayout.WEST);
+        reloadButton.addActionListener(e -> {
+            loadSupplier();
+        });
 
         searchField = new CustomSearch(275, 20);
         searchField.setBackground(Color.WHITE);

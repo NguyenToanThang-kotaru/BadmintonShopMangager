@@ -66,6 +66,7 @@ public class GUI_Form_Order extends JDialog {
     private CustomerBUS customerBUS = new CustomerBUS();
 
     public GUI_Form_Order(JPanel parent, SaleInvoiceDTO order, AccountDTO account) {
+        
         super((Frame) SwingUtilities.getWindowAncestor(parent), "Tạo Hóa Đơn", true);
         this.orderBUS = new SaleInvoiceBUS();
         this.currentOrder = order;
@@ -283,9 +284,15 @@ public class GUI_Form_Order extends JDialog {
             @Override
             public void keyReleased(KeyEvent e) {
                 String phone = txtSoDienThoai.getText().trim();
-                if (phone.length() >= 10) {
+                if (!phone.matches("(02|03|05|07|08|09)\\d{8}")) {
+                    txtMaKhachHang.setText("Số điện thoại không hợp lệ");
+                    txtTenKhachHang.setText("");
+                    txtTenKhachHang.setEditable(false); // cho nhập tên nếu không hợp lệ
+                } 
+                else {
                     CustomerDTO customer = customerBUS.getByPhone(phone);
                     if (customer != null) {
+                        System.out.println(customer.getName() + " - " + customer.getId());
                         txtMaKhachHang.setText(customer.getId());
                         txtTenKhachHang.setText(customer.getName());
                         txtTenKhachHang.setEditable(false); // khóa lại nếu tìm thấy
@@ -406,7 +413,6 @@ public class GUI_Form_Order extends JDialog {
                 JOptionPane.showMessageDialog(this, "Số lượng phải lớn hơn 0.");
                 return;
             }
-
             int tonKho = Integer.parseInt(productTableModel.getValueAt(selectedRow, 4).toString());
             if (quantity > tonKho) {
                 JOptionPane.showMessageDialog(this, "Số lượng vượt quá tồn kho!");
@@ -496,6 +502,9 @@ public class GUI_Form_Order extends JDialog {
     }
 
     private void saveOrder() {
+        if (currentAccount != null)
+            System.out.println(currentAccount.getEmployeeID() + currentAccount.getUsername());
+        else System.out.println("NV null");
         String orderID = lblMaHoaDon.getText();
         String maKH = txtMaKhachHang.getText().trim();
         String tenKH = txtTenKhachHang.getText().trim();
@@ -512,34 +521,46 @@ public class GUI_Form_Order extends JDialog {
         // 2. Lưu hóa đơn
         SaleInvoiceDTO dto = new SaleInvoiceDTO();
         dto.setId(orderID);
-        dto.setEmployeeId(currentAccount.getUsername());
+        dto.setEmployeeId(currentAccount.getEmployeeID());
         dto.setCustomerId(maKH);
         dto.setTotalPrice(totalAmount);
         dto.setDate(LocalDate.now());
 
         orderBUS.add(dto);
 
+        // Save detail invoice
+        // Nếu hóa đơn đã tồn tại thì xóa chi tiết cũ
+        // Nếu không thì thêm mới
+        // DetailSaleInvoiceBUS detailOrderBUS = new DetailSaleInvoiceBUS();
+        // detailOrderBUS.add(dto);
+
+
         // 3. Lưu chi tiết hóa đơn
         DetailSaleInvoiceBUS detailOrderBUS = new DetailSaleInvoiceBUS();
-        // if (currentOrder != null) {
-        //     detailOrderBUS.deleteByOrderID(orderID);
-        // }
-        // int baseNumber = DetailOrderDAO.getMaxDetailOrderNumber() + 1;
 
-        // for (int i = 0; i < orderTableModel.getRowCount(); i++) {
-        //     DetailOrderDTO detail = new DetailOrderDTO();
-        //     String detailID = String.format("CTHD%03d%03d", baseNumber, i + 1);
+        for (int i = 0; i < orderTableModel.getRowCount(); i++) {
+            DetailSaleInvoiceDTO detail = new DetailSaleInvoiceDTO();
+            detail.setDetailSaleInvoiceID(getNextDetailOrderID());
+            detail.setSale_id(orderID);
+            detail.setProduct_id(orderTableModel.getValueAt(i, 0).toString());
+            // detail.setserialID("");
+            detail.setQuantity(Integer.parseInt(String.valueOf(orderTableModel.getValueAt(i, 3))));
+            String priceStr = orderTableModel.getValueAt(i, 4).toString().replaceAll("[^0-9]", "");
+            detail.setPrice(Double.parseDouble(priceStr));
 
-        //     detail.setdetailorderID(detailID);
-        //     detail.setorderID(orderID);
-        //     detail.setproductID(orderTableModel.getValueAt(i, 0).toString());
-        //     detail.setserialID("");
-        //     detail.setamount(orderTableModel.getValueAt(i, 3).toString());
-        //     String priceStr = orderTableModel.getValueAt(i, 4).toString().replaceAll("[^0-9]", "");
-        //     detail.setprice(priceStr);
+            detailOrderBUS.add(detail);
+        }
 
-        //     detailOrderBUS.addDetailOrder(detail);
-        // }
+        // 4. Cập nhật lại số lượng tồn kho
+        for (int i = 0; i < orderTableModel.getRowCount(); i++) {
+            String productId = orderTableModel.getValueAt(i, 0).toString();
+            int quantity = Integer.parseInt(orderTableModel.getValueAt(i, 3).toString());
+            ProductDTO product = productBUS.getProductByID(productId);
+            if (product != null) {
+                product.setSoluong(String.valueOf(Integer.parseInt(product.getSoluong()) - quantity));
+                productBUS.updateProduct(product);
+            }
+        }
 
         JOptionPane.showMessageDialog(this, "Lưu hóa đơn thành công!");
         dispose();
@@ -547,6 +568,16 @@ public class GUI_Form_Order extends JDialog {
 
     private String formatCurrency(int amount) {
         return String.format("%,d VND", amount);
+    }
+
+    private String getNextDetailOrderID() {
+        ArrayList<DetailSaleInvoiceDTO> detailOrderIDs = new DetailSaleInvoiceBUS().getAll();
+        if (detailOrderIDs == null) {
+            return "SID01";
+        }
+        String lastID = detailOrderIDs.get(detailOrderIDs.size() - 1).getDetailSaleInvoiceID();
+        int number = Integer.parseInt(lastID.substring(3));
+        return String.format("SID%02d", number + 1);
     }
 
     private String getNextOrderID() {

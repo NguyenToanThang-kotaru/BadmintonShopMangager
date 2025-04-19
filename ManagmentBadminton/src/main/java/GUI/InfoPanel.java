@@ -5,6 +5,8 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
+import BUS.AccountBUS;
+import BUS.EmployeeBUS;
 import BUS.ImportInvoiceBUS;
 
 import java.awt.*;
@@ -30,8 +32,9 @@ public class InfoPanel extends JPanel {
         JPanel nhanVienPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         nhanVienPanel.setBackground(Color.WHITE);
         nhanVienPanel.add(new JLabel("Nhân viên:"));
-        // JLabel lblNhanVien = new JLabel(currentUser + " - " + bus.getEmployeeNameByImportID(currentUser));
-        JLabel lblNhanVien = new JLabel(currentUser + " - " + "Nguyen Van A");
+        String employeeId = AccountBUS.getAccountByUsername(currentUser).getEmployeeID();
+        String employeeName = EmployeeBUS.getEmployeeByID(employeeId).getFullName();
+        JLabel lblNhanVien = new JLabel(currentUser + " - " + employeeName);
         lblNhanVien.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         nhanVienPanel.add(lblNhanVien);
         add(nhanVienPanel);

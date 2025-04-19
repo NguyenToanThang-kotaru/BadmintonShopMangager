@@ -3,6 +3,7 @@ package GUI;
 import DTO.ProductDTO;
 import DAO.ProductDAO;
 import BUS.ProductBUS;
+import BUS.SupplierBUS;
 import DAO.SupplierDAO;
 import java.awt.*;
 import java.io.File;
@@ -46,7 +47,7 @@ public class GUI_AddFormProduct extends JDialog {
         add(new JLabel("Tên loại:"), gbc);
         gbc.gridx = 1;
         // Lấy danh sách các loại sản phẩm từ database
-        String[] categoryNames = ProductDAO.getAllCategoryNames().toArray(new String[0]);
+        String[] categoryNames = ProductBUS.getAllCategoryNames().toArray(new String[0]);
         TLField = new CustomCombobox(categoryNames);
         add(TLField, gbc);
 
@@ -54,7 +55,7 @@ public class GUI_AddFormProduct extends JDialog {
         gbc.gridy = 6;
         add(new JLabel("Nhà cung cấp:"), gbc);
         gbc.gridx = 1;
-        String[] NCCNames = SupplierDAO.getAllNCCNames().toArray(new String[0]);
+        String[] NCCNames = SupplierBUS.getAllNCCNames().toArray(new String[0]);
         NCCField = new CustomCombobox(NCCNames);
         add(NCCField, gbc);
 
@@ -148,7 +149,7 @@ public class GUI_AddFormProduct extends JDialog {
             return; // Dừng lại nếu không hợp lệ
         }
         
-        boolean success = ProductDAO.addProduct(newProduct);
+        boolean success = ProductBUS.addProduct(newProduct);
         if (success) {
             JOptionPane.showMessageDialog(this, "Thêm sản phẩm thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             dispose();
