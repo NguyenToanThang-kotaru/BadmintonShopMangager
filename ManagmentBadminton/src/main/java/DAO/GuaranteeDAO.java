@@ -1,7 +1,8 @@
 package DAO;
 
-import Connection.DatabaseConnection;
 import DTO.GuaranteeDTO;
+
+import Connection.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,20 +13,19 @@ import java.util.ArrayList;
 public class GuaranteeDAO {
 
     // Lấy thông tin của một sản phẩm
-    public static GuaranteeDTO getGuarantee(String BaohanhID) {
-        String query = "SELECT * FROM guarantee WHERE guaranteeID = ? ";
+    public static GuaranteeDTO getGuarantee(String warrantyID) {
+        String query = "SELECT * FROM warranty WHERE WarrantyID = ?";
 
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, BaohanhID);
+            stmt.setString(1, warrantyID);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return new GuaranteeDTO(
-                            rs.getString("guaranteeID"),
-                            rs.getString("serialID"),
-                            rs.getString("guaranteeReason"),
-                            String.valueOf(rs.getInt("guaranteeTime")),
-                            rs.getString("status")
+                            rs.getString("WarrantyID"),
+                            rs.getString("Series"),
+                            rs.getString("WarrantyReason"),
+                            rs.getString("Status")
                     );
                 }
             }
@@ -37,38 +37,44 @@ public class GuaranteeDAO {
 
     // Lấy danh sách tất cả sản phẩm
     public static ArrayList<GuaranteeDTO> getAllGuarantee() {
-        ArrayList<GuaranteeDTO> products = new ArrayList<>();
+        ArrayList<GuaranteeDTO> warranties = new ArrayList<>();
 
-        String query = "SELECT * FROM guarantee WHERE guaranteeTime < 50";
-        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
+        String query = """
+        SELECT w.*
+        FROM warranty w
+        JOIN product_sold ps ON w.Series = ps.Series
+        JOIN sales_invoice_detail sid ON ps.SalesInvoiceDetail = sid.SalesDetailID
+        JOIN sales_invoice si ON sid.SalesID = si.SalesID
+        WHERE DATEDIFF(CURDATE(), si.Date) <= 12
+    """;
 
+        try (
+                Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
-                String trangThai = rs.getString("status");
-                if (trangThai == null || trangThai.trim().isEmpty()) {
-                    trangThai = "Chưa bảo hành";
+                String status = rs.getString("Status");
+                if (status == null || status.trim().isEmpty()) {
+                    status = "Chưa bảo hành";
                 }
 
-                products.add(new GuaranteeDTO(
-                        rs.getString("guaranteeID"),
-                        rs.getString("serialID"),
-                        rs.getString("guaranteeReason"),
-                        String.valueOf(rs.getInt("guaranteeTime")),
-                        trangThai
+                warranties.add(new GuaranteeDTO(
+                        rs.getString("WarrantyID"),
+                        rs.getString("Series"),
+                        rs.getString("WarrantyReason"),
+                        status
                 ));
             }
-
-            System.out.println("Lấy danh sách sản phẩm bảo hành thành công.");
         } catch (Exception e) {
-            System.out.println("Lỗi lấy danh sách sản phẩm: " + e.getMessage());
+            System.out.println("Lỗi khi lấy danh sách bảo hành: " + e.getMessage());
             e.printStackTrace();
         }
-        return products;
+
+        return warranties;
     }
 
     // Cập nhật thông tin sản phẩm
     public static void updateGuarantee(GuaranteeDTO guarantee) {
-        String updateSql = "UPDATE guarantee SET serialID = ?, guaranteeReason = ?, guaranteeTime = ?, status = ? WHERE guaranteeID = ?";
-        String deleteSql = "DELETE FROM guarantee WHERE guaranteeID = ?";
+        String updateSql = "UPDATE warranty SET Series = ?, WarrantyReason = ?, Status = ? WHERE WarrantyID = ?";
+        String deleteSql = "DELETE FROM warranty WHERE WarrantyID = ?";
 
         try (Connection conn = DatabaseConnection.getConnection()) {
             if ("Đã bảo hành".equalsIgnoreCase(guarantee.gettrangthai())) {
@@ -87,9 +93,8 @@ public class GuaranteeDAO {
                 try (PreparedStatement stmt = conn.prepareStatement(updateSql)) {
                     stmt.setString(1, guarantee.getSerialID());
                     stmt.setString(2, guarantee.getLydo());
-                    stmt.setString(3, guarantee.getTGBH());
-                    stmt.setString(4, guarantee.gettrangthai());
-                    stmt.setString(5, guarantee.getBaohanhID());
+                    stmt.setString(3, guarantee.gettrangthai());
+                    stmt.setString(4, guarantee.getBaohanhID());
 
                     int rowsUpdated = stmt.executeUpdate();
                     if (rowsUpdated > 0) {
@@ -109,7 +114,7 @@ public class GuaranteeDAO {
 //    // Lấy đường dẫn ảnh sản phẩm
 //    public static String getProductImage(String productID) {
 //        String imagePath = null;
-//        String query = "SELECT hinh_anh_sp FROM san_pham WHERE guaranteeID = ?";
+//        String query = "SELECT hinh_anh_sp FROM san_pham WHERE ma_bao_hanh = ?";
 //
 //        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
 //            stmt.setString(1, productID);

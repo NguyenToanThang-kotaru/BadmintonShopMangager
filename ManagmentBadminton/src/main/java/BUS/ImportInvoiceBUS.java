@@ -42,12 +42,12 @@ public class ImportInvoiceBUS {
                 String image = (String) detail[7];
                 ProductBUS productBUS = new ProductBUS();
                 //Theem sản phẩm vào danh sách sản phẩm nếu chưa có trong danh sách
-                if(productBUS.getProductByID(productID) == null){
-                    productBUS.insert(new ProductDTO(productID, productName, String.valueOf(price) , String.valueOf(quantity), supplierID, typeID, "", image,""));
-                }
-                else {
-                    productDAO.updateProductQuantity(productID, quantity);
-                }
+//                if(productBUS.getProductByID(productID) == null){
+//                    productBUS.insert(new ProductDTO(productID, productName, String.valueOf(price) , String.valueOf(quantity), supplierID, typeID, "", image,""));
+//                }
+//                else {
+//                    productDAO.updateProductQuantity(productID, quantity);
+//                }
                 ImportInvoiceDetailDTO importDetail = new ImportInvoiceDetailDTO(importInvoice.getImportID(), productID, supplierID, quantity, price, totalPrice);
                 if (!importDetailDAO.insert(importDetail)) {
                     result = false;
