@@ -9,6 +9,7 @@ import java.util.List;
 import BUS.AccountBUS;
 import BUS.PermissionBUS;
 import DAO.AccountDAO;
+import java.util.ArrayList;
 
 public class GUI_Account extends JPanel {
 
@@ -34,9 +35,9 @@ public class GUI_Account extends JPanel {
 
         // ========== PANEL TRÊN CÙNG (Thanh tìm kiếm & nút thêm) ==========
         topPanel = new JPanel(new BorderLayout(10, 10));
-        topPanel.setPreferredSize(new Dimension(0, 60));
+        topPanel.setPreferredSize(new Dimension(0, 30));
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        topPanel.setBackground(Color.WHITE);
+        topPanel.setBackground(Color.WHITE);  
 
         reloadButton = new CustomButton("Tải lại trang");
         topPanel.add(reloadButton, BorderLayout.WEST);
@@ -183,9 +184,9 @@ public class GUI_Account extends JPanel {
         });
 
         searchField.setSearchListener(e -> {
-//            String keyword = searchField.getText();
-//            ArrayList<AccountDTO> ketQua = AccountDAO.searchAccounts(keyword);
-//            capNhatBangTaiKhoan(ketQua); // Hiển thị kết quả tìm được trên bảng
+            String keyword = searchField.getText();
+            ArrayList<AccountDTO> ketQua = AccountBUS.searchAccounts(keyword);
+            capNhatBangTaiKhoan(ketQua); // Hiển thị kết quả tìm được trên bảng
         });
 
     }
@@ -205,4 +206,12 @@ public class GUI_Account extends JPanel {
         roleComboBox.setText("");
     }
 
+    private void capNhatBangTaiKhoan(List<AccountDTO> accounts) {
+        tableModel.setRowCount(0); // Xóa dữ liệu cũ
+        int index = 1;
+        for (AccountDTO acc : accounts) {
+            tableModel.addRow(new Object[]{index++, acc.getFullName(),
+                acc.getUsername(), acc.getPassword(), acc.getRankID().getName()});
+        }
+    }
 }
