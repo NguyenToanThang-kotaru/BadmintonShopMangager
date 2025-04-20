@@ -131,12 +131,17 @@ public class Form_Permission extends JDialog {
 //            }
 
             if (!isEditMode) {
-                if (PermissionBUS.add_Permisison(newPermission)&& PermissionBUS.add_FunctionAction(newPermission)) {
+                if (PermissionBUS.add_Permisison(newPermission) && PermissionBUS.add_FunctionAction(newPermission)) {
                     System.out.println("them quyen thanh con");
-                    
+
                 }
             } else {
-//                PermissionDAO.editPermission(newPermission);
+                permission.setName(txtPermissionName.getText());
+                permission.setnameUnsinged(removeAccents(txtPermissionName.getText()));
+                permission.setTotalAccount("0");
+                permission.setFunction(getSelectedFunctionActions());
+                permission.setTotalFunction(Integer.toString(permission.getFunction().size()));
+                PermissionBUS.update_Permission(permission);
             }
             dispose(); // đóng form
         });

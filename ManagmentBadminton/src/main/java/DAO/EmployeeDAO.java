@@ -218,4 +218,37 @@ public class EmployeeDAO {
         return "E01"; // Nếu không có nhân viên nào, bắt đầu từ "NV001"
     }
 
+    public static ArrayList<EmployeeDTO> searchEmployee(String keyword) {
+        ArrayList<EmployeeDTO> employee = new ArrayList<>();
+        String query = "SELECT * FROM employee WHERE IsDeleted = 0 AND (`EmployeeID` LIKE ? OR `FullName` LIKE ? OR `Address` LIKE ? OR `Phone` LIKE ? OR Gender LIKE ?)";
+
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            String searchPattern = "%" + keyword + "%";
+            stmt.setString(1, searchPattern);
+            stmt.setString(2, searchPattern);
+            stmt.setString(3, searchPattern);
+            stmt.setString(4, searchPattern);
+            stmt.setString(5, searchPattern);
+            try (ResultSet rs = stmt.executeQuery()) {
+                int age = 0;
+                while (rs.next()) {
+                    EmployeeDTO employees = new EmployeeDTO();
+                    employees.setEmployeeID(rs.getString("EmployeeID"));
+                    employees.setFullName(rs.getString("FullName"));
+                    age=rs.getInt("Age");
+                    employees.setAge(Integer.toString(age));
+                    employees.setPhone(rs.getString("Phone"));
+                    employees.setEmail(rs.getString("Email"));
+                    employees.setAddress(rs.getString("Address"));
+                    employees.setGender(rs.getString("Gender"));
+
+                    employee.add(employees);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return employee;
+    }
 }

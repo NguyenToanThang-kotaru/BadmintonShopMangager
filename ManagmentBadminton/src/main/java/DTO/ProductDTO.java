@@ -38,6 +38,15 @@ public class ProductDTO {
         this.tenNCC = tenNCC;
         this.giaNhap = giaNhap;
     }
+    public ProductDTO(String productID, String productName, String giaNhap, String soluong, String maNCC, String ML, String anh) {
+        this.productID = productID;
+        this.productName = productName;
+        this.giaNhap = giaNhap;
+        this.soluong = soluong;
+        this.maNCC = maNCC;
+        this.ML = ML;
+        this.anh = anh;
+    }
 
     public String getProductID() {
         return productID;
@@ -61,6 +70,14 @@ public class ProductDTO {
 
     public void setGia(String gia) {
         this.gia = gia;
+    }
+
+    public String getGiaNhap() {
+        return giaNhap;
+    }
+
+    public void setGiaNhap(String giaNhap) {
+        this.giaNhap = giaNhap;
     }
 
     public String getSoluong() {

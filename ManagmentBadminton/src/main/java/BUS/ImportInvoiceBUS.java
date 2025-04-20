@@ -2,6 +2,8 @@ package BUS;
 
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
 import DAO.ImportInvoiceDAO;
 import DAO.ImportInvoiceDetailDAO;
 import DAO.ProductDAO;
@@ -42,12 +44,12 @@ public class ImportInvoiceBUS {
                 String image = (String) detail[7];
                 ProductBUS productBUS = new ProductBUS();
                 //Theem sản phẩm vào danh sách sản phẩm nếu chưa có trong danh sách
-//                if(productBUS.getProductByID(productID) == null){
-//                    productBUS.insert(new ProductDTO(productID, productName, String.valueOf(price) , String.valueOf(quantity), supplierID, typeID, "", image,""));
-//                }
-//                else {
-//                    productDAO.updateProductQuantity(productID, quantity);
-//                }
+                if(productBUS.getProductByID(productID) == null){
+                    productBUS.insert(new ProductDTO(productID, productName, String.valueOf(price) , String.valueOf(quantity), supplierID, typeID, image));
+                }
+                else {
+                    productDAO.updateProductQuantity(productID, quantity);
+                }
                 ImportInvoiceDetailDTO importDetail = new ImportInvoiceDetailDTO(importInvoice.getImportID(), productID, supplierID, quantity, price, totalPrice);
                 if (!importDetailDAO.insert(importDetail)) {
                     result = false;
@@ -73,6 +75,59 @@ public class ImportInvoiceBUS {
             result = false;
         }
         return result;
+    }
+
+    public boolean validateProductImport(String productName, String priceImport, String image){
+        // Không cho tên chỉ toàn số
+        if (productName.matches("\\d+")) {
+            JOptionPane.showMessageDialog(null,
+                    "Tên sản phẩm không được chỉ chứa số.",
+                    "Lỗi nhập liệu",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        // Không chứa ký tự đặc biệt (chỉ cho phép chữ cái, số và khoảng trắng)
+        if (!productName.matches("^[\\p{L}0-9\\s+\\-\\.]+$")) {
+            JOptionPane.showMessageDialog(null,
+                    "Tên sản phẩm không được chứa ký tự đặc biệt.",
+                    "Lỗi nhập liệu",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        if (!priceImport.matches("^\\d+$")) {
+            JOptionPane.showMessageDialog(null,
+                    "Giá chỉ được chứa số.",
+                    "Lỗi nhập liệu",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        if (Double.parseDouble(priceImport) <= 0) {
+            JOptionPane.showMessageDialog(null,
+                    "Giá phải lớn hơn 0.",
+                    "Lỗi nhập liệu",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        if (productDAO.productNameExists(productName)) {
+                JOptionPane.showMessageDialog(null,
+                        "Tên sản phẩm đã tồn tại!",
+                        "Lỗi nhập liệu",
+                        JOptionPane.ERROR_MESSAGE);
+                return false;
+        }
+        // Kiểm tra ảnh có phải là file .png hoặc .jpg không
+        String fileExtension = image.substring(image.lastIndexOf(".") + 1).toLowerCase();
+        if (!fileExtension.equals("png") && !fileExtension.equals("jpg")) {
+            JOptionPane.showMessageDialog(null,
+                    "Ảnh chỉ được phép có định dạng .png hoặc .jpg.",
+                    "Lỗi nhập liệu",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
     }
 
     public String generateNextSeriesFrom(String lastID) {
@@ -112,7 +167,7 @@ public class ImportInvoiceBUS {
             return new Object[]{
                 product.getProductID(),
                 product.getProductName(),
-                Utils.formatCurrency(Double.parseDouble(product.getGia())),
+                Utils.formatCurrency(Double.parseDouble(product.getGiaNhap())),
                 product.getMaNCC(),
                 product.getTL(),
                 product.getAnh()
@@ -129,7 +184,7 @@ public class ImportInvoiceBUS {
             products.add(new Object[]{
                 product.getProductID(),
                 product.getProductName(),
-                Utils.formatCurrency(Double.parseDouble(product.getGia())),
+                Utils.formatCurrency(Double.parseDouble(product.getGiaNhap())),
                 product.getSoluong()
             });
         }
