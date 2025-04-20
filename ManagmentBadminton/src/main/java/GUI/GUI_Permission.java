@@ -19,7 +19,7 @@ public class GUI_Permission extends JPanel {
     private JTable permissionTable;
     private DefaultTableModel tableModel;
     private JComboBox<String> roleComboBox;
-    private CustomButton editButton, addButton, deleteButton, detailButton;
+    private CustomButton editButton, addButton, deleteButton, detailButton, reloadButton;
     private CustomSearch searchField;
     private PermissionDTO permissionChoosing;
 
@@ -34,7 +34,8 @@ public class GUI_Permission extends JPanel {
         topPanel.setPreferredSize(new Dimension(0, 60));
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         topPanel.setBackground(Color.WHITE);
-
+        reloadButton = new CustomButton("Reload");
+        topPanel.add(reloadButton, BorderLayout.WEST);
         searchField = new CustomSearch(275, 40); // Ô nhập tìm kiếm
         searchField.setBackground(Color.WHITE);
         topPanel.add(searchField, BorderLayout.CENTER);
@@ -139,14 +140,14 @@ public class GUI_Permission extends JPanel {
                 }
             }
         });
-
+        reloadButton.addActionListener(e -> {loadPermissions();});
         editButton.addActionListener(e -> {
-            Form_Permission FP = new Form_Permission(this,permissionChoosing);
+            Form_Permission FP = new Form_Permission(this, permissionChoosing);
             FP.setVisible(true);
         });
 
         addButton.addActionListener(e -> {
-            Form_Permission FP = new Form_Permission(this,null);
+            Form_Permission FP = new Form_Permission(this, null);
             FP.setVisible(true);
         });
 
@@ -162,7 +163,7 @@ public class GUI_Permission extends JPanel {
     }
 
     // Phương thức tải danh sách tài khoản từ database lên bảng
-    private void loadPermissions(){
+    private void loadPermissions() {
         ArrayList<PermissionDTO> permission = PermissionBUS.getAllPermissions();
         tableModel.setRowCount(0); // Xóa dữ liệu cũ trước khi cập nhật
         int index = 1;

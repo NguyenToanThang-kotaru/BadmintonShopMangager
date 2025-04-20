@@ -20,6 +20,13 @@ public class PermissionBUS {
     public static String generateNewPermissionID() {
         return PermissionDAO.generateNewPermissionID();
     }
+    public static Boolean update_Permission(PermissionDTO per) {
+        delete_FunctionAction(per);
+        return PermissionDAO.add_FunctionAction(per);
+    }
+    public static Boolean delete_FunctionAction(PermissionDTO per) {
+        return PermissionDAO.delete_FunctionAction(per.getID());
+    }
     public static Boolean add_Permisison(PermissionDTO per) {
         return PermissionDAO.add_Permission(per);
     }

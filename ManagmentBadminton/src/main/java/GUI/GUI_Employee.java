@@ -17,7 +17,7 @@ public class GUI_Employee extends JPanel {
     private JPanel midPanel, topPanel, botPanel;
     private JTable employeeTable;
     private DefaultTableModel tableModel;
-    private JLabel nameLabel,addressLabel,phoneLabel,genderLabel,ageLabel;
+    private JLabel nameLabel, addressLabel, phoneLabel, genderLabel, ageLabel;
     private CustomButton deleteButton, addButton, editButton, reloadButton;
     private CustomSearch searchField;
     private EmployeeBUS employeeBUS;
@@ -44,7 +44,7 @@ public class GUI_Employee extends JPanel {
         searchField.setBackground(Color.WHITE);
         topPanel.add(searchField, BorderLayout.CENTER);
 
-        addButton = new CustomButton("+ Thêm Tài Khoản"); // Nút thêm tài khoản
+        addButton = new CustomButton("+ Thêm Nhân Viên"); // Nút thêm tài khoản
         topPanel.add(addButton, BorderLayout.EAST);
 
         // ========== BẢNG HIỂN THỊ DANH SÁCH TÀI KHOẢN ==========
@@ -190,9 +190,12 @@ public class GUI_Employee extends JPanel {
         });
 
         searchField.setSearchListener(e -> {
-//            String keyword = searchField.getText();
-//            ArrayList<EmployeeDTO> ketQua = EmployeeDAO.searchEmployees(keyword);
-//            capNhatBangTaiKhoan(ketQua); // Hiển thị kết quả tìm được trên bảng
+            String keyword = searchField.getText().trim();
+            if (!keyword.isEmpty()) {
+                searchEmployee(keyword);
+            } else {
+                loadEmployees(); // Nếu ô tìm kiếm trống, load lại toàn bộ khách hàng
+            }
         });
 
     }
@@ -212,4 +215,12 @@ public class GUI_Employee extends JPanel {
         genderLabel.setText("");
     }
 
+    private void searchEmployee(String keyword) {
+        List<EmployeeDTO> employee = employeeBUS.searchEmployee(keyword);
+        tableModel.setRowCount(0);
+        int index = 1;
+        for (EmployeeDTO emp : employee) {
+            tableModel.addRow(new Object[]{index++, emp.getFullName(), emp.getAddress(), emp.getPhone(), emp.getGender()});
+        }
+    }
 }
