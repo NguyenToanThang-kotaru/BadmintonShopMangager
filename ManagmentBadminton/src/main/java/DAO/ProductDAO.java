@@ -374,7 +374,7 @@ public class ProductDAO {
 
     public boolean insert(ProductDTO product){
         boolean result = false;
-        String sql = "Insert into product(ProductID, ProductName, ProductImg, Quantity, SupplierID, TypeID, Price, IsDeleted) values(?,?,?,?,?,?,?,?)";
+        String sql = "Insert into product(ProductID, ProductName, ProductImg, Quantity, SupplierID, TypeID, ImportPrice, Price, IsDeleted) values(?,?,?,?,?,?,?,?,?)";
         try(Connection conn = DatabaseConnection.getConnection();
             PreparedStatement pst = conn.prepareStatement(sql)){
             pst.setString(1, product.getProductID());
@@ -383,8 +383,9 @@ public class ProductDAO {
             pst.setInt(4, Integer.parseInt(product.getSoluong()));
             pst.setString(5, product.getMaNCC());
             pst.setString(6, product.getML());
-            pst.setDouble(7, Double.parseDouble(product.getGia()));
-            pst.setInt(8, 0);
+            pst.setDouble(7, Double.parseDouble(product.getGiaNhap()));
+            pst.setDouble(8, Double.parseDouble(product.getGiaNhap()) * 1.2); // Giá bán = Giá nhập * 1.2 (lãi 20%)
+            pst.setInt(9, 0);
             // In thu cau truy van de kiem tra
             System.out.println(pst.toString());
 
@@ -394,6 +395,21 @@ public class ProductDAO {
             e.printStackTrace();
         }
         return result;
+    }
+
+    public boolean productNameExists(String productName) {
+        String query = "SELECT COUNT(*) FROM product WHERE ProductName = ? AND IsDeleted = 0";
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, productName);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0; // Trả về true nếu có sản phẩm trùng tên
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 }

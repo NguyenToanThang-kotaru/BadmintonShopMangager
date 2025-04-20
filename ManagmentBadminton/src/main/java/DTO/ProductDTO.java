@@ -4,6 +4,7 @@ public class ProductDTO {
 
     private String productID;
     private String productName;
+    private String giaNhap;
     private String gia;
     private String soluong;
     private String maNCC;
@@ -22,6 +23,7 @@ public class ProductDTO {
         this.anh = "";
         this.TL = "";
         this.tenNCC = "";
+        this.giaNhap = "";
     }
 
     public ProductDTO(String productID, String productName, String gia, String soluong, String maNCC, String ML, String TL, String anh, String tenNCC) {
@@ -34,6 +36,15 @@ public class ProductDTO {
         this.anh = anh;
         this.TL = TL;
         this.tenNCC = tenNCC;
+    }
+    public ProductDTO(String productID, String productName, String giaNhap, String soluong, String maNCC, String ML, String anh) {
+        this.productID = productID;
+        this.productName = productName;
+        this.giaNhap = giaNhap;
+        this.soluong = soluong;
+        this.maNCC = maNCC;
+        this.ML = ML;
+        this.anh = anh;
     }
 
     public String getProductID() {
@@ -58,6 +69,14 @@ public class ProductDTO {
 
     public void setGia(String gia) {
         this.gia = gia;
+    }
+
+    public String getGiaNhap() {
+        return giaNhap;
+    }
+
+    public void setGiaNhap(String giaNhap) {
+        this.giaNhap = giaNhap;
     }
 
     public String getSoluong() {
