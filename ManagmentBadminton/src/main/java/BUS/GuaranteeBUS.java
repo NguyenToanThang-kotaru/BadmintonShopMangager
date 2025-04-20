@@ -29,4 +29,8 @@ public class GuaranteeBUS {
         GuaranteeDAO dao = new GuaranteeDAO();
         dao.updateGuarantee(guarantee);
     }
+
+    public static Boolean addGuarantee(String Series) {
+        return GuaranteeDAO.addGuarantee(Series);
+    }
 }
