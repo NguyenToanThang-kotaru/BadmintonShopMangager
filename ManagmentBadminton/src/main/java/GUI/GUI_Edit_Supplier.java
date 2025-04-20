@@ -82,6 +82,8 @@ public class GUI_Edit_Supplier extends JDialog {
         btnCancel.addActionListener(e -> dispose());
         btnSave.addActionListener(e -> {
             try {
+                if (txtName.getText().isEmpty() || txtPhone.getText().isEmpty() || txtEmail.getText().isEmpty() || txtAddress.getText().isEmpty())
+                    throw new IllegalArgumentException("Vui lòng điền đầy đủ thông tin!");
                 SupplierDTO updatedSupplier = new SupplierDTO(
                         lblSupplierID.getText(),
                         txtName.getText(),
@@ -90,10 +92,13 @@ public class GUI_Edit_Supplier extends JDialog {
                         txtAddress.getText(),
                         0
                 );
-                supplierBUS.update(updatedSupplier);
-                JOptionPane.showMessageDialog(this, "Cập nhật nhà cung cấp thành công!");
-                dispose();
-                parent.loadSupplier();
+                if (!supplierBUS.validateSupplierUpdate(updatedSupplier)) 
+                    return;
+                if(supplierBUS.update(updatedSupplier)){
+                    JOptionPane.showMessageDialog(this, "Cập nhật nhà cung cấp thành công!");
+                    dispose();
+                    parent.loadSupplier();
+                }
             } catch (IllegalArgumentException ex) {
                 JOptionPane.showMessageDialog(this, ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             } catch (Exception ex) {
