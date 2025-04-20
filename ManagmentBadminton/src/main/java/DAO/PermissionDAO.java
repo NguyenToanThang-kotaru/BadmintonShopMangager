@@ -16,6 +16,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -97,50 +98,65 @@ public class PermissionDAO {
         }
     }
 
-    public static PermissionDTO getPermissionByName(String Name) {
-        String sql = "SELECT er.rankID, er.rankName, "
-                + "f.functionID, f.functionName, f.functionNameUnsigned, "
-                + "a.actionID, a.actionName, a.actionNameVN "
-                + "FROM function_detail fd "
-                + "JOIN employee_rank er ON fd.rankID = er.rankID "
-                + "JOIN `function` f ON fd.functionID = f.functionID "
-                + "JOIN action a ON fd.actionID = a.actionID "
-                + "WHERE er.RankName = ? AND fd.IsDeleted = 0 "
-                + "ORDER BY f.functionID, a.actionID";
-
+    public static PermissionDTO getPermissionByName(String name) {
+        String sql = "SELECT rankID, rankName FROM employee_rank WHERE rankName = ?";
         PermissionDTO permission = null;
 
-        try (
-                Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
-            ps.setString(1, Name);
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, name);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    permission = new PermissionDTO();
+                    permission.setID(rs.getString("rankID"));
+                    permission.setName(rs.getString("rankName"));
+                    // Gọi hàm lấy function + action riêng
+                    permission.setFunction(getFunctionsByRankID(permission.getID()));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return permission;
+    }
+
+    public static ArrayList<FunctionActionDTO> getFunctionsByRankID(String rankID) {
+        String sql = "SELECT f.functionID, f.functionName, f.functionNameUnsigned, "
+                + "a.actionID, a.actionName, a.actionNameVN "
+                + "FROM function_detail fd "
+                + "JOIN `function` f ON fd.functionID = f.functionID "
+                + "JOIN action a ON fd.actionID = a.actionID "
+                + "WHERE fd.rankID = ? AND fd.IsDeleted = 0 "
+                + "ORDER BY f.functionID, a.actionID";
+
+        ArrayList<FunctionActionDTO> functionList = new ArrayList<>();
+
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, rankID);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    if (permission == null) {
-                        permission = new PermissionDTO();
-                        permission.setID(rs.getString("rankID"));
-                        permission.setName(rs.getString("rankName"));
-                        permission.setFunction(new ArrayList<>());
-                    }
-
-                    String functionId = rs.getString("functionID");
+                    String functionID = rs.getString("functionID");
                     FunctionActionDTO function = null;
 
-                    for (FunctionActionDTO f : permission.getFunction()) {
-                        if (f.getID().equals(functionId)) {
+                    // Tìm function trong danh sách đã có
+                    for (FunctionActionDTO f : functionList) {
+                        if (f.getID().equals(functionID)) {
                             function = f;
                             break;
                         }
                     }
 
+                    // Nếu chưa có thì tạo mới
                     if (function == null) {
                         function = new FunctionActionDTO();
-                        function.setID(functionId);
+                        function.setID(functionID);
                         function.setName(rs.getString("functionName"));
                         function.setNameUnsigned(rs.getString("functionNameUnsigned"));
                         function.setAction(new ArrayList<>());
-                        permission.getFunction().add(function);
+                        functionList.add(function);
                     }
 
+                    // Thêm action vào function
                     ActionDTO action = new ActionDTO();
                     action.setID(rs.getString("actionID"));
                     action.setName(rs.getString("actionName"));
@@ -149,10 +165,10 @@ public class PermissionDAO {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // hoặc log lỗi tùy hệ thống logging bạn dùng
+            e.printStackTrace();
         }
 
-        return permission; // null nếu không tìm thấy
+        return functionList;
     }
 
     public static String countTotalAction(String roleID) {

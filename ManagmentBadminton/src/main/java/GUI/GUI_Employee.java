@@ -9,6 +9,8 @@ import java.util.List;
 import BUS.EmployeeBUS;
 import BUS.PermissionBUS;
 import DAO.EmployeeDAO;
+import DTO.AccountDTO;
+import DTO.ActionDTO;
 import java.util.ArrayList;
 
 public class GUI_Employee extends JPanel {
@@ -24,7 +26,7 @@ public class GUI_Employee extends JPanel {
     private EmployeeDTO employeeChoosing;
     private EmployeeDAO EmployeeDAO;
 
-    public GUI_Employee() {
+    public GUI_Employee(AccountDTO a) {
         employeeBUS = new EmployeeBUS(); // Khởi tạo đối tượng BUS để lấy dữ liệu tài khoản
         // Cấu hình layout chính
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -50,6 +52,8 @@ public class GUI_Employee extends JPanel {
         // ========== BẢNG HIỂN THỊ DANH SÁCH TÀI KHOẢN ==========
         midPanel = new JPanel(new BorderLayout());
         midPanel.setBackground(Color.WHITE);
+        midPanel.setMinimumSize(new Dimension(200, 450));
+        midPanel.setPreferredSize(new Dimension(200, 450));
 
         // Định nghĩa tiêu đề cột
         String[] columnNames = {"STT", "Nhân viên", "Địa chỉ", "Số điện thoại", "Giới tính"};
@@ -57,8 +61,9 @@ public class GUI_Employee extends JPanel {
         employeeTable = customTable.getAccountTable(); // Lấy JTable từ CustomTable
         tableModel = customTable.getTableModel(); // Lấy model của bảng
 
-        midPanel.add(customTable, BorderLayout.CENTER);
         CustomScrollPane scrollPane = new CustomScrollPane(employeeTable);
+        midPanel.add(scrollPane, BorderLayout.CENTER);
+
         // ========== PANEL CHI TIẾT TÀI KHOẢN ==========
         botPanel = new JPanel(new GridBagLayout());
         botPanel.setBackground(Color.WHITE);
@@ -147,7 +152,7 @@ public class GUI_Employee extends JPanel {
         add(topPanel);
         add(Box.createVerticalStrut(10));
 
-        add(scrollPane);
+        add(midPanel);
         add(Box.createVerticalStrut(10));
         add(botPanel);
 
@@ -197,6 +202,31 @@ public class GUI_Employee extends JPanel {
                 loadEmployees(); // Nếu ô tìm kiếm trống, load lại toàn bộ khách hàng
             }
         });
+
+        ArrayList<ActionDTO> actions = PermissionBUS.getPermissionActions(a, "Quan ly nhan vien");
+
+        boolean canAdd = false, canEdit = false, canDelete = false, canWatch = false;
+
+        if (actions != null) {
+            for (ActionDTO action : actions) {
+                switch (action.getName()) {
+                    case "Add" ->
+                        canAdd = true;
+                    case "Edit" ->
+                        canEdit = true;
+                    case "Delete" ->
+                        canDelete = true;
+                    case "Watch" ->
+                        canWatch = true;
+                }
+            }
+        }
+
+        addButton.setVisible(canAdd);
+        editButton.setVisible(canEdit);
+        deleteButton.setVisible(canDelete);
+        scrollPane.setVisible(canWatch);
+        reloadButton.setVisible(false);
 
     }
 

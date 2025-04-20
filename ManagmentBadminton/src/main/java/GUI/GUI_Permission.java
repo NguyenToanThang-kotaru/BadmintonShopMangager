@@ -157,6 +157,7 @@ public class GUI_Permission extends JPanel {
         add(midPanel);
         add(Box.createVerticalStrut(10));
         add(botPanel);
+        detailButton.setVisible(false);
 
         // Tải dữ liệu tài khoản lên bảng
         loadPermissions();
