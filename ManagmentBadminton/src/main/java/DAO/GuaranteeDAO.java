@@ -71,38 +71,21 @@ public class GuaranteeDAO {
         return warranties;
     }
 
-    // Cập nhật thông tin sản phẩm
     public static void updateGuarantee(GuaranteeDTO guarantee) {
         String updateSql = "UPDATE warranty SET Series = ?, WarrantyReason = ?, Status = ? WHERE WarrantyID = ?";
         String deleteSql = "DELETE FROM warranty WHERE WarrantyID = ?";
 
-        try (Connection conn = DatabaseConnection.getConnection()) {
-            if ("Đã bảo hành".equalsIgnoreCase(guarantee.gettrangthai())) {
-                // Nếu trạng thái là "Đã bảo hành", thực hiện DELETE
-                try (PreparedStatement stmt = conn.prepareStatement(deleteSql)) {
-                    stmt.setString(1, guarantee.getBaohanhID());
-                    int rowsDeleted = stmt.executeUpdate();
-                    if (rowsDeleted > 0) {
-                        System.out.println("Đã xóa bảo hành với mã: " + guarantee.getBaohanhID());
-                    } else {
-                        System.out.println("Không tìm thấy bảo hành để xóa.");
-                    }
-                }
-            } else {
-                // Nếu không phải "Đã bảo hành", thực hiện UPDATE
-                try (PreparedStatement stmt = conn.prepareStatement(updateSql)) {
-                    stmt.setString(1, guarantee.getSerialID());
-                    stmt.setString(2, guarantee.getLydo());
-                    stmt.setString(3, guarantee.gettrangthai());
-                    stmt.setString(4, guarantee.getBaohanhID());
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(updateSql)) {
+            stmt.setString(1, guarantee.getSerialID());
+            stmt.setString(2, guarantee.getLydo());
+            stmt.setString(3, guarantee.gettrangthai());
+            stmt.setString(4, guarantee.getBaohanhID());
 
-                    int rowsUpdated = stmt.executeUpdate();
-                    if (rowsUpdated > 0) {
-                        System.out.println("Cập nhật bảo hành thành công.");
-                    } else {
-                        System.out.println("Không tìm thấy bảo hành để cập nhật.");
-                    }
-                }
+            int rowsUpdated = stmt.executeUpdate();
+            if (rowsUpdated > 0) {
+                System.out.println("Cập nhật bảo hành thành công.");
+            } else {
+                System.out.println("Không tìm thấy bảo hành để cập nhật.");
             }
         } catch (SQLException e) {
             System.out.println("Lỗi cập nhật/xóa bảo hành: " + e.getMessage());
@@ -110,22 +93,47 @@ public class GuaranteeDAO {
         }
     }
 
-//
-//    // Lấy đường dẫn ảnh sản phẩm
-//    public static String getProductImage(String productID) {
-//        String imagePath = null;
-//        String query = "SELECT hinh_anh_sp FROM san_pham WHERE ma_bao_hanh = ?";
-//
-//        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
-//            stmt.setString(1, productID);
-//            try (ResultSet rs = stmt.executeQuery()) {
-//                if (rs.next()) {
-//                    imagePath = rs.getString("hinh_anh_sp"); // Lấy tên file ảnh
-//                }
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//        return imagePath;
-//    }
+    private static String generateNewGuaranteeID() {
+        String query = "SELECT WarrantyID FROM warranty ORDER BY WarrantyID DESC LIMIT 1";
+
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
+
+            if (rs.next()) {
+                String lastID = rs.getString("WarrantyID"); // Ví dụ: "NV005"
+
+                // Cắt bỏ "TK", chỉ lấy số
+                int number = Integer.parseInt(lastID.substring(2));
+
+                // Tạo ID mới với định dạng NVXXX
+                return String.format("W%02d", number + 1);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi tạo mã bảo hành mới: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return "W01"; // Nếu không có nhân viên nào, bắt đầu từ "NV001"
+    }
+
+    public static boolean addGuarantee(String Series) {
+        String sql = "INSERT INTO `warranty`(`WarrantyID`, `Series`, `WarrantyReason`, `Status`, `IsDeleted`) VALUES (?, ?, '', 'Không', 0) ";
+
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            String newID = generateNewGuaranteeID(); // Tạo ID mới
+
+            stmt.setString(1, newID);
+            stmt.setString(2, Series);
+            stmt.executeUpdate();
+            System.out.println("Thêm sản phẩm bảo hành thành công với ID: " + newID);
+            return true;
+
+        } catch (SQLException e) {
+            System.out.println("Lỗi thêm sản phẩm: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }
