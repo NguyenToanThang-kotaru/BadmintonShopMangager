@@ -25,12 +25,10 @@ public class GUI_SerialNumber extends JFrame {
     private DefaultTableModel tableModel;
     private ProductSoldBUS productBUS;
 
-    private String productId;
     private String detailSaleInvoiceID;
 
 
-    public GUI_SerialNumber(String productId, String detailSaleInvoiceID) {
-        this.productId = productId;
+    public GUI_SerialNumber(String detailSaleInvoiceID) {
         this.detailSaleInvoiceID = detailSaleInvoiceID;
         productBUS = new ProductSoldBUS();
 
@@ -45,7 +43,7 @@ public class GUI_SerialNumber extends JFrame {
         mainPanel.setBackground(Color.WHITE);
 
         // Tiêu đề
-        JLabel titleLabel = new JLabel("Chi Tiết Mã Serial Của SP: " + productId, JLabel.CENTER);
+        JLabel titleLabel = new JLabel("Chi Tiết Mã Serial Của CTHĐ: " + detailSaleInvoiceID, JLabel.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
         titleLabel.setForeground(new Color(50, 50, 50));
         mainPanel.add(titleLabel, BorderLayout.NORTH);
@@ -90,7 +88,7 @@ public class GUI_SerialNumber extends JFrame {
     }
 
     private void loadDetailOrder() {
-        List<ProductSoldDTO> details = productBUS.getByProductIDAndDetailSaleInvoiceID(productId, detailSaleInvoiceID);
+        List<ProductSoldDTO> details = productBUS.getByDetailSaleInvoiceID(detailSaleInvoiceID);
         tableModel.setRowCount(0);
         for (ProductSoldDTO detail : details) {
             tableModel.addRow(new Object[]{

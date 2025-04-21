@@ -426,9 +426,31 @@ public class GUI_Form_Order extends JDialog {
             String productId = lblProductId.getText();
             String productName = lblProductName.getText();
             String category = lblCategory.getText();
+            boolean added = false;
             int price = Integer.parseInt(lblPrice.getText().replaceAll("[^0-9]", ""));
             int total = price * quantity;
-            orderTableModel.addRow(new Object[]{productId, productName, category, quantity, formatCurrency(price), formatCurrency(total)});
+            System.out.println(price + " * " + quantity + " = " + total);
+
+            // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
+            for (int i = 0; i < orderTableModel.getRowCount(); i++) {
+                if (orderTableModel.getValueAt(i, 0).equals(productId)) {
+                    int oldQuantity = Integer.parseInt(orderTableModel.getValueAt(i, 3).toString());
+                    int newQuantity = oldQuantity + quantity;
+                    if (newQuantity > tonKho) {
+                        JOptionPane.showMessageDialog(this, "Số lượng vượt quá tồn kho!");
+                        return;
+                    }
+                    orderTableModel.setValueAt(newQuantity, i, 3);
+                    orderTableModel.setValueAt(formatCurrency(price * newQuantity), i, 5);
+                    totalAmount = price * quantity;
+                    lblTongTien.setText(formatCurrency(totalAmount));
+                    added = true;
+                    break;
+                }
+            }
+
+            if (!added)
+                orderTableModel.addRow(new Object[]{productId, productName, category, quantity, formatCurrency(price), formatCurrency(total)});
             totalAmount += total;
             lblTongTien.setText(formatCurrency(totalAmount));
             // Khóa thông tin khách
@@ -562,14 +584,20 @@ public class GUI_Form_Order extends JDialog {
             // Lấy danh sách chi tiết sản phẩm theo mã sản phẩm và số lượng sản phẩm
 
             List<ProductDetailDTO> productDetails = productDetailBUS.getProductDetailByProductID(productId);
+            
+            for (ProductDetailDTO productDetail : productDetails) {
+                System.out.println("ProductDetail: " + productDetail.getSeries());
+            }
+
             for (int j = 0; j < quantity; j++) {
-                ProductDetailDTO productDetail = productDetails.get(i);
+                ProductDetailDTO productDetail = productDetails.get(0);
+                System.out.println("ProductDetail " + j + ": " + productDetail.getSeries());
                 ProductSoldDTO productSold = new ProductSoldDTO();
                 productSold.setDetailSaleInvoiceID(detail.getDetailSaleInvoiceID());
-                productSold.setProductId(productId);
                 productSold.setSeries(productDetail.getSeries());
                 productSoldBUS.add(productSold);
                 productDetailBUS.delete(productDetail.getSeries());
+                productDetails.remove(0);
             }
         }
 

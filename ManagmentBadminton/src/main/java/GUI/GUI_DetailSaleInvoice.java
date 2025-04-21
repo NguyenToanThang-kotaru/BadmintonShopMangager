@@ -139,7 +139,7 @@ public class GUI_DetailSaleInvoice extends JFrame {
         if (selectedRow != -1) {
             String productID = (String) detailTable.getValueAt(selectedRow, 1);
             String detailSaleInvoiceID = (String) detailTable.getValueAt(selectedRow, 0);
-            GUI_SerialNumber serialGUI = new GUI_SerialNumber(productID, detailSaleInvoiceID);
+            GUI_SerialNumber serialGUI = new GUI_SerialNumber(detailSaleInvoiceID);
             serialGUI.setVisible(true);
         } else {
             // Show a message dialog if no row is selected

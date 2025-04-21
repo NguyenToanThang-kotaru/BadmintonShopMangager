@@ -24,10 +24,6 @@ public class ProductSoldBUS {
         return productSoldDAO.getBySeries(series);
     }
 
-    public List<ProductSoldDTO> getByProductIDAndDetailSaleInvoiceID(String productId, String detailSaleInvoiceID) {
-        return productSoldDAO.getByProductIDAndDetailSaleInvoiceID(productId, detailSaleInvoiceID);
-    }
-
     // Add ProductSoldDTO
     public boolean add(ProductSoldDTO productSoldDTO) {
         return productSoldDAO.add(productSoldDTO);
