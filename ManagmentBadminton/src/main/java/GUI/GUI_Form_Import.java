@@ -216,7 +216,8 @@ public class GUI_Form_Import extends JDialog {
                 JOptionPane.showMessageDialog(this, "Vui lòng chọn hình ảnh sản phẩm", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            if (!bus.validateProductImport(productName, price, productImg)){
+            ProductBUS productBUS = new ProductBUS();
+            if (productBUS.getProductByID(productId) == null && !bus.validateProductImport(productName, price, productImg)){
                 return;
             }
             int quantity = Integer.parseInt(quantityText);

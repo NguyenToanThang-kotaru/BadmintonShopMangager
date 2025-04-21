@@ -624,17 +624,17 @@ public class GUI_Form_Order extends JDialog {
 
     private String getNextDetailOrderID() {
         ArrayList<DetailSaleInvoiceDTO> detailOrderIDs = new DetailSaleInvoiceBUS().getAll();
-        if (detailOrderIDs == null) {
+        if (detailOrderIDs.size() == 0) {
             return "SID01";
         }
         String lastID = detailOrderIDs.get(detailOrderIDs.size() - 1).getDetailSaleInvoiceID();
-        int number = Integer.parseInt(lastID.substring(3));
+            int number = Integer.parseInt(lastID.substring(3));
         return String.format("SID%02d", number + 1);
     }
 
     private String getNextOrderID() {
         ArrayList<SaleInvoiceDTO> orderIDs = orderBUS.getAll();
-        if (orderIDs == null) {
+        if (orderIDs.size() == 0) {
             return "SI01";
         }
         String lastID = orderIDs.get(orderIDs.size() - 1).getId();
