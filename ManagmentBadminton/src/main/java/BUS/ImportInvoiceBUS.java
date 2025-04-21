@@ -223,4 +223,8 @@ public class ImportInvoiceBUS {
             return "0";
         }
     }
+
+    public static ArrayList<ImportInvoiceDTO> searchImportInvoice(String keyword) {
+        return ImportInvoiceDAO.searchImportInvoice(keyword);
+    }
 }

@@ -22,7 +22,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import BUS.ImportInvoiceBUS;
+import BUS.SupplierBUS;
 import DTO.ImportInvoiceDTO;
+import DTO.SupplierDTO;
 import DTO.AccountDTO;
 
 public class GUI_Import extends JPanel {
@@ -59,7 +61,6 @@ public class GUI_Import extends JPanel {
 
         searchField = new CustomSearch(275, 20);
         searchField.setBackground(Color.WHITE);
-        searchField.setSearchListener(e -> searchImport());
         topPanel.add(searchField, BorderLayout.CENTER);
 
         CustomButton addButton = new CustomButton("+ Thêm Phiếu Nhập");
@@ -163,6 +164,12 @@ public class GUI_Import extends JPanel {
                 receiptDateLabel.setText(receiptDate);
             }
         });
+
+        searchField.setSearchListener(e -> {
+            String keyword = searchField.getText();
+            ArrayList<ImportInvoiceDTO> ketQua = ImportInvoiceBUS.searchImportInvoice(keyword);
+            capNhatBangImport(ketQua); // Hiển thị kết quả tìm được trên bảng
+        });
     }
 
     // Tải danh sách phiếu nhập vào bảng
@@ -170,35 +177,22 @@ public class GUI_Import extends JPanel {
         ArrayList<ImportInvoiceDTO> importList = ImportInvoiceBUS.getAllImportInvoice();
         tableModel.setRowCount(0);
         for (ImportInvoiceDTO importDTO : importList) {
-            double calculatedTotal = importBUS.calculateImportTotal(importDTO.getImportID());
             tableModel.addRow(new Object[]{
                     importDTO.getImportID(),
                     importDTO.getEmployeeID(),
-                    Utils.formatCurrency(calculatedTotal),
+                    Utils.formatCurrency(importDTO.getTotalPrice()),
                     importDTO.getDate()
             });
         }
     }
-
-    // Tìm kiếm phiếu nhập theo từ khóa
-    private void searchImport() {
-        String keyword = searchField.getText().trim().toLowerCase();
-        ArrayList<ImportInvoiceDTO> importList = ImportInvoiceBUS.getAllImportInvoice();
-        tableModel.setRowCount(0);
-
-        for (ImportInvoiceDTO importDTO : importList) {
-            if (importDTO.getImportID().toLowerCase().contains(keyword) ||
-                importDTO.getEmployeeID().toLowerCase().contains(keyword)) {
-                double calculatedTotal = importBUS.calculateImportTotal(importDTO.getImportID());
-                tableModel.addRow(new Object[]{
-                        importDTO.getImportID(),
-                        importDTO.getEmployeeID(),
-                        Utils.formatCurrency(calculatedTotal),
-                        importDTO.getDate()
-                });
-            }
+    private void capNhatBangImport(ArrayList<ImportInvoiceDTO> imports) {
+        tableModel.setRowCount(0); // Xóa dữ liệu cũ
+        int index = 1;
+        for (ImportInvoiceDTO importDTO : imports) {
+            tableModel.addRow(new Object[]{importDTO.getImportID(), importDTO.getEmployeeID(), Utils.formatCurrency(importDTO.getTotalPrice()), importDTO.getDate()});
         }
     }
+
 
 
     // Hiển thị chi tiết phiếu nhập

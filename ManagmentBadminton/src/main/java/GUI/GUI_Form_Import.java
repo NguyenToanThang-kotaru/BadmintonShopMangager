@@ -201,15 +201,25 @@ public class GUI_Form_Import extends JDialog {
             String productImg = productDetailPanel.getTxtImageFilename().getText();
             String productName = productDetailPanel.getTxtProductName().getText();
             String price = productDetailPanel.getTxtPrice().getText().replaceAll("[^0-9]", "");
-            int quantity = Integer.parseInt(quantityText);
             //Kiểm tra tất cả không để trống
-            if (productName == null || productName.isEmpty() || price == null || price.isEmpty() || productImg == null || productImg.isEmpty()) {
+            if (productName == null || productName.isEmpty() || price == null || price.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Vui lòng điền đầy đủ thông tin sản phẩm", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            //Kiểm tra số lượng nhập hàng
+            if (quantityText == null || quantityText.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Vui lòng nhập số lượng sản phẩm", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            //Kiem tra hinh anh
+            if (productImg == null || productImg.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn hình ảnh sản phẩm", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             if (!bus.validateProductImport(productName, price, productImg)){
                 return;
             }
+            int quantity = Integer.parseInt(quantityText);
             double priceImport = Double.parseDouble(price);
             double total = priceImport * quantity;
             if (validationError != null) {

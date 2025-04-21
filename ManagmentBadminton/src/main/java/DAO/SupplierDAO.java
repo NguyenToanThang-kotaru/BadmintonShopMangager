@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import Connection.DatabaseConnection;
+import DTO.PermissionDTO;
 import DTO.SupplierDTO;
 
 public class SupplierDAO {
@@ -243,6 +244,39 @@ public class SupplierDAO {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public static ArrayList<SupplierDTO> searchSupplier(String keyword) {
+        ArrayList<SupplierDTO> accounts = new ArrayList<>();
+
+        String accountQuery = "SELECT * FROM supplier "
+                   + "WHERE IsDeleted = 0 "
+                   + "AND (SupplierID LIKE ? OR SupplierName LIKE ? OR Phone LIKE ? "
+                   + "OR Email LIKE ? OR Address LIKE ?)";
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement accountStmt = conn.prepareStatement(accountQuery)) {
+
+            String searchKeyword = "%" + keyword + "%";
+            accountStmt.setString(1, searchKeyword);
+            accountStmt.setString(2, searchKeyword);
+            accountStmt.setString(3, searchKeyword);
+            accountStmt.setString(4, searchKeyword);
+            accountStmt.setString(5, searchKeyword);
+            try (ResultSet rs = accountStmt.executeQuery()) {
+                while (rs.next()) {
+                    accounts.add(new SupplierDTO(
+                        rs.getString("SupplierID"),
+                        rs.getString("SupplierName"),
+                        rs.getString("Phone"),
+                        rs.getString("Email"),
+                        rs.getString("Address"),
+                        rs.getInt("IsDeleted")
+                    ));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return accounts;
     }
 
 }
