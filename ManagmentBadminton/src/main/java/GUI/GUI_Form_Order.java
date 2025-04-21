@@ -45,6 +45,7 @@ import BUS.ProductBUS;
 import BUS.ProductDetailBUS;
 import BUS.ProductSoldBUS;
 import BUS.SaleInvoiceBUS;
+import BUS.GuaranteeBUS;
 import DAO.ProductDAO;
 import DTO.AccountDTO;
 import DTO.CustomerDTO;
@@ -595,6 +596,7 @@ public class GUI_Form_Order extends JDialog {
                 ProductSoldDTO productSold = new ProductSoldDTO();
                 productSold.setDetailSaleInvoiceID(detail.getDetailSaleInvoiceID());
                 productSold.setSeries(productDetail.getSeries());
+                GuaranteeBUS.addGuarantee(productSold.getSeries());
                 productSoldBUS.add(productSold);
                 productDetailBUS.delete(productDetail.getSeries());
                 productDetails.remove(0);

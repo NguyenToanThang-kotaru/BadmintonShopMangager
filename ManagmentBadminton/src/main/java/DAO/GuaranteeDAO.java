@@ -117,7 +117,7 @@ public class GuaranteeDAO {
     }
 
     public static boolean addGuarantee(String Series) {
-        String sql = "INSERT INTO `warranty`(`WarrantyID`, `Series`, `WarrantyReason`, `Status`, `IsDeleted`) VALUES (?, ?, '', 'Không', 0) ";
+        String sql = "INSERT INTO `warranty`(`WarrantyID`, `Series`, `WarrantyReason`, `Status`) VALUES (?, ?, '', 'Không') ";
 
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
