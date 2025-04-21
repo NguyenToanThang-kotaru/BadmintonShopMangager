@@ -22,12 +22,15 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import BUS.ImportInvoiceBUS;
+import BUS.PermissionBUS;
 import BUS.SupplierBUS;
 import DTO.ImportInvoiceDTO;
 import DTO.SupplierDTO;
 import DTO.AccountDTO;
+import DTO.ActionDTO;
 
 public class GUI_Import extends JPanel {
+
     private final ImportInvoiceBUS importBUS;
     private final DefaultTableModel tableModel;
     private final JTable importTable;
@@ -41,7 +44,7 @@ public class GUI_Import extends JPanel {
 
     public GUI_Import(AccountDTO username) {
         this.importBUS = new ImportInvoiceBUS();
-        String currentUsername =username.getUsername() ;
+        String currentUsername = username.getUsername();
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -170,21 +173,47 @@ public class GUI_Import extends JPanel {
             ArrayList<ImportInvoiceDTO> ketQua = ImportInvoiceBUS.searchImportInvoice(keyword);
             capNhatBangImport(ketQua); // Hiển thị kết quả tìm được trên bảng
         });
+
+        ArrayList<ActionDTO> actions = PermissionBUS.getPermissionActions(username, "Quan ly hoa dong nhap");
+
+        boolean canAdd = false, canEdit = false, canDelete = false, canWatch = false;
+
+        if (actions != null) {
+            for (ActionDTO action : actions) {
+                switch (action.getName()) {
+                    case "Add" ->
+                        canAdd = true;
+                    case "Edit" ->
+                        canEdit = true;
+                    case "Delete" ->
+                        canDelete = true;
+                    case "Watch" ->
+                        canWatch = true;
+                }
+            }
+        }
+
+        addButton.setVisible(canAdd);
+//        editButton.setVisible(canEdit);
+//        deleteButton.setVisible(canDelete);
+//        scrollPane.setVisible(canWatch);
+        reloadButton.setVisible(false);
     }
 
     // Tải danh sách phiếu nhập vào bảng
-    public void loadImport() { 
+    public void loadImport() {
         ArrayList<ImportInvoiceDTO> importList = ImportInvoiceBUS.getAllImportInvoice();
         tableModel.setRowCount(0);
         for (ImportInvoiceDTO importDTO : importList) {
             tableModel.addRow(new Object[]{
-                    importDTO.getImportID(),
-                    importDTO.getEmployeeID(),
-                    Utils.formatCurrency(importDTO.getTotalPrice()),
-                    importDTO.getDate()
+                importDTO.getImportID(),
+                importDTO.getEmployeeID(),
+                Utils.formatCurrency(importDTO.getTotalPrice()),
+                importDTO.getDate()
             });
         }
     }
+
     private void capNhatBangImport(ArrayList<ImportInvoiceDTO> imports) {
         tableModel.setRowCount(0); // Xóa dữ liệu cũ
         int index = 1;
@@ -192,8 +221,6 @@ public class GUI_Import extends JPanel {
             tableModel.addRow(new Object[]{importDTO.getImportID(), importDTO.getEmployeeID(), Utils.formatCurrency(importDTO.getTotalPrice()), importDTO.getDate()});
         }
     }
-
-
 
     // Hiển thị chi tiết phiếu nhập
     private void showImportDetail() {
@@ -214,10 +241,9 @@ public class GUI_Import extends JPanel {
             JOptionPane.showMessageDialog(this, "Vui lòng chọn một phiếu nhập để in PDF!");
             return;
         }
-        
 
         new CustomImportInvoicePDF().export(
-            selectedImport                 // Tổng tiền
+                selectedImport // Tổng tiền
         );
     }
 }

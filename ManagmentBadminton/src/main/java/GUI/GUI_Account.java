@@ -9,6 +9,7 @@ import java.util.List;
 import BUS.AccountBUS;
 import BUS.PermissionBUS;
 import DAO.AccountDAO;
+import DTO.ActionDTO;
 import java.util.ArrayList;
 
 public class GUI_Account extends JPanel {
@@ -26,7 +27,7 @@ public class GUI_Account extends JPanel {
     private AccountDTO accountChoosing;
     private AccountDAO AccountDAO;
 
-    public GUI_Account() {
+    public GUI_Account(AccountDTO a) {
         accountBUS = new AccountBUS(); // Khởi tạo đối tượng BUS để lấy dữ liệu tài khoản
         // Cấu hình layout chính
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -192,6 +193,30 @@ public class GUI_Account extends JPanel {
             capNhatBangTaiKhoan(ketQua); // Hiển thị kết quả tìm được trên bảng
         });
 
+        ArrayList<ActionDTO> actions = PermissionBUS.getPermissionActions(a, "Quan ly tai khoan");
+
+        boolean canAdd = false, canEdit = false, canDelete = false, canWatch = false;
+
+        if (actions != null) {
+            for (ActionDTO action : actions) {
+                switch (action.getName()) {
+                    case "Add" ->
+                        canAdd = true;
+                    case "Edit" ->
+                        canEdit = true;
+                    case "Delete" ->
+                        canDelete = true;
+                    case "Watch" ->
+                        canWatch = true;
+                }
+            }
+        }
+
+        addButton.setVisible(canAdd);
+        editButton.setVisible(canEdit);
+        deleteButton.setVisible(canDelete);
+        scrollPane.setVisible(canWatch);
+        reloadButton.setVisible(false);
     }
 
     // Phương thức tải danh sách tài khoản từ database lên bảng

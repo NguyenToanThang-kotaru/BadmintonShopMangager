@@ -23,13 +23,17 @@ import javax.swing.table.DefaultTableModel;
 
 import BUS.CustomerBUS;
 import BUS.EmployeeBUS;
+import BUS.PermissionBUS;
 import BUS.SaleInvoiceBUS;
 import DTO.AccountDTO;
+import DTO.ActionDTO;
 import DTO.CustomerDTO;
 import DTO.EmployeeDTO;
 import DTO.SaleInvoiceDTO;
+import java.util.ArrayList;
 
 public class GUI_SaleInvoice extends JPanel {
+
     private JPanel topPanel, midPanel, botPanel;
     private JTable orderTable;
     private DefaultTableModel tableModel;
@@ -51,7 +55,7 @@ public class GUI_SaleInvoice extends JPanel {
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         topPanel.setBackground(Color.WHITE);
 
-        searchField = new CustomSearch(275,20); // Ô nhập tìm kiếm
+        searchField = new CustomSearch(275, 20); // Ô nhập tìm kiếm
         searchField.setBackground(Color.WHITE);
         topPanel.add(searchField, BorderLayout.CENTER);
 
@@ -159,7 +163,32 @@ public class GUI_SaleInvoice extends JPanel {
                 JOptionPane.showMessageDialog(this, "Vui lòng chọn hóa đơn trước!", "Thông báo", JOptionPane.WARNING_MESSAGE);
             }
         });
+        ArrayList<ActionDTO> actions = PermissionBUS.getPermissionActions(cn, "Quan ly don hang");
+
+        boolean canAdd = false, canEdit = false, canDelete = false, canWatch = false;
+
+        if (actions != null) {
+            for (ActionDTO action : actions) {
+                switch (action.getName()) {
+                    case "Add" ->
+                        canAdd = true;
+                    case "Edit" ->
+                        canEdit = true;
+                    case "Delete" ->
+                        canDelete = true;
+                    case "Watch" ->
+                        canWatch = true;
+                }
+            }
+        }
+
+        addButton.setVisible(canAdd);
+//        editButton.setVisible(canEdit);
+//        deleteButton.setVisible(canDelete);
+        scrollPane.setVisible(canWatch);
+//        reloadButton.setVisible(false);
     }
+
     public void loadOrder() {
         tableModel.setRowCount(0); // Xóa dữ liệu cũ trong bảng
         List<SaleInvoiceDTO> orderList = saleInvoiceBUS.getAll();

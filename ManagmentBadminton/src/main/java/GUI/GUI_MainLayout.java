@@ -71,23 +71,23 @@ public class GUI_MainLayout extends JFrame {
         Sidebar.productPanel.setBackground(Color.GREEN);
         Sidebar.productPanel.add(new JLabel("Danh sách sản phẩm"));
 
-        Sidebar.productPanel = new GUI_Product();
-
         Sidebar.orderPanel = new GUI_SaleInvoice(logined);
 
-        Sidebar.employeePanel = new GUI_Employee(logined);
-
-        Sidebar.supplierPanel = new GUI_Supplier();
+        Sidebar.supplierPanel = new GUI_Supplier(logined);
 
         Sidebar.importPanel = new GUI_Import(logined);
 
-        Sidebar.promotionPanel = new GUI_Promotion();
+        Sidebar.promotionPanel = new GUI_Promotion(logined);
 
-        Sidebar.customerPanel = new GUI_Customer();
+        Sidebar.customerPanel = new GUI_Customer(logined);
 
-        Sidebar.accountPanel = new GUI_Account();
+        Sidebar.accountPanel = new GUI_Account(logined);
 
         Sidebar.repairPanel = new GUI_Guarantee(logined);
+        
+        Sidebar.employeePanel = new GUI_Employee(logined);
+
+        Sidebar.productPanel = new GUI_Product(logined);
 
         Sidebar.rolePanel = new GUI_Permission(logined);
         for (Component comp : Sidebar.panel2.getComponents()) {
