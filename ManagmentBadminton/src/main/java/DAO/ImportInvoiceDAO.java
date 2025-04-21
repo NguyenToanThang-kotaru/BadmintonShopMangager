@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import Connection.DatabaseConnection;
 import DTO.ImportInvoiceDTO;
+import DTO.SupplierDTO;
 
 public class ImportInvoiceDAO {
     public static ArrayList<ImportInvoiceDTO> getAllImportInvoice() {
@@ -134,5 +135,36 @@ public class ImportInvoiceDAO {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static ArrayList<ImportInvoiceDTO> searchImportInvoice(String keyword) {
+        ArrayList<ImportInvoiceDTO> imports = new ArrayList<>();
+
+        String accountQuery = "SELECT * FROM import_invoice "
+        + "WHERE CAST(ImportID AS CHAR) LIKE ? "
+        + "OR CAST(EmployeeID AS CHAR) LIKE ? "
+        + "OR CAST(Date AS CHAR) LIKE ? "
+        + "OR CAST(TotalPrice AS CHAR) LIKE ?";
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement accountStmt = conn.prepareStatement(accountQuery)) {
+
+            String searchKeyword = "%" + keyword + "%";
+            accountStmt.setString(1, searchKeyword);
+            accountStmt.setString(2, searchKeyword);
+            accountStmt.setString(3, searchKeyword);
+            accountStmt.setString(4, searchKeyword);
+            try (ResultSet rs = accountStmt.executeQuery()) {
+                while (rs.next()) {
+                    imports.add(new ImportInvoiceDTO(
+                            rs.getString("ImportID"),
+                            rs.getString("EmployeeID"),
+                            rs.getString("Date"),
+                            rs.getDouble("TotalPrice")
+                    ));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return imports;
     }
 }

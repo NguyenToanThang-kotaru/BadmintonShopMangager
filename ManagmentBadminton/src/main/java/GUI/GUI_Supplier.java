@@ -7,6 +7,7 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -19,7 +20,9 @@ import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
+import BUS.AccountBUS;
 import BUS.SupplierBUS;
+import DTO.AccountDTO;
 import DTO.SupplierDTO;
 
 public class GUI_Supplier extends JPanel {
@@ -208,6 +211,20 @@ public class GUI_Supplier extends JPanel {
         add(botPanel);
 
         loadSupplier();
+
+        searchField.setSearchListener(e -> {
+            String keyword = searchField.getText();
+            ArrayList<SupplierDTO> ketQua = SupplierBUS.searchSupplier(keyword);
+            capNhatBangNCC(ketQua); // Hiển thị kết quả tìm được trên bảng
+        });
+    }
+
+    private void capNhatBangNCC(ArrayList<SupplierDTO> suppliers) {
+        tableModel.setRowCount(0); // Xóa dữ liệu cũ
+        int index = 1;
+        for (SupplierDTO supplierDTO : suppliers) {
+            tableModel.addRow(new Object[]{index++, supplierDTO.getSupplierID(), supplierDTO.getSupplierName(), supplierDTO.getPhone(), supplierDTO.getEmail(), supplierDTO.getAddress()});
+        }
     }
 
     public void loadSupplier() {

@@ -222,4 +222,8 @@ public class SupplierBUS {
 
         return true;
     }
+
+    public static ArrayList<SupplierDTO> searchSupplier(String keyword) {
+        return SupplierDAO.searchSupplier(keyword);
+    }
 }
