@@ -2,11 +2,12 @@ package GUI;
 
 import DAO.GuaranteeDAO;
 import DTO.GuaranteeDTO;
+
+import BUS.GuaranteeBUS;
+import DTO.AccountDTO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumnModel;
 import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,10 +18,10 @@ public class GUI_Guarantee extends JPanel {
     private JTable warrantyTable;
     private DefaultTableModel tableModel;
     private JComboBox<String> warrantyStatusComboBox;
-    private CustomButton saveButton, fixButton;
+    private CustomButton saveButton, fixButton, reloadButton;
     private CustomSearch searchField;
 
-    public GUI_Guarantee(List<String> b) {
+    public GUI_Guarantee(AccountDTO b) {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(new EmptyBorder(10, 10, 10, 10));
         setBackground(new Color(200, 200, 200));
@@ -36,11 +37,13 @@ public class GUI_Guarantee extends JPanel {
         searchField.setFont(new Font("Arial", Font.PLAIN, 14));
         searchField.setBackground(Color.WHITE);
         topPanel.add(searchField, BorderLayout.CENTER);
+        reloadButton = new CustomButton("Tải Lại Trang");
+        topPanel.add(reloadButton, BorderLayout.WEST);
 
         // ========== BẢNG HIỂN THỊ ==========
         midPanel = new JPanel(new BorderLayout());
         midPanel.setBackground(Color.WHITE);
-        String[] columnNames = {"Mã BH", "Mã Serial", "Lý do bảo hành", "Thời gian bảo hành", "Trạng thái bảo hành"};
+        String[] columnNames = {"Mã BH", "Mã Serial", "Lý do bảo hành", "Trạng thái bảo hành"};
         CustomTable customTable = new CustomTable(columnNames);
 
         warrantyTable = customTable.getAccountTable();
@@ -66,13 +69,13 @@ public class GUI_Guarantee extends JPanel {
         JLabel serialLabel = new JLabel("Chưa chọn");
         botPanel.add(serialLabel, gbc);
 
-        // Ngày mua
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        botPanel.add(new JLabel("Ngày mua: "), gbc);
-        gbc.gridx = 1;
-        JLabel purchaseDateLabel = new JLabel("Chưa chọn");
-        botPanel.add(purchaseDateLabel, gbc);
+//        // Ngày mua
+//        gbc.gridx = 0;
+//        gbc.gridy = 1;
+//        botPanel.add(new JLabel("Ngày mua: "), gbc);
+//        gbc.gridx = 1;
+//        JLabel purchaseDateLabel = new JLabel("Chưa chọn");
+//        botPanel.add(purchaseDateLabel, gbc);
 
         // Trạng thái bảo hành
         gbc.gridx = 0;
@@ -90,17 +93,18 @@ public class GUI_Guarantee extends JPanel {
         JLabel textReasonLabel = new JLabel("");
         botPanel.add(textReasonLabel, gbc);
 
-        gbc.gridx = 0;
-        gbc.gridy = 4;
-        botPanel.add(new JLabel("Thời gian bảo hành: "), gbc);
-        gbc.gridx = 1;
-        JLabel StatusTime = new JLabel("");
-        botPanel.add(StatusTime, gbc);
+//        gbc.gridx = 0;
+//        gbc.gridy = 4;
+//        botPanel.add(new JLabel("Thời gian bảo hành: "), gbc);
+//        gbc.gridx = 1;
+//        JLabel StatusTime = new JLabel("");
+//        botPanel.add(StatusTime, gbc);
 
         // Nút sửa
         gbc.gridx = 0;
-        gbc.gridy = 5;
+        gbc.gridy = 4;
         gbc.gridwidth = 2;
+        gbc.fill= GridBagConstraints.HORIZONTAL;
         fixButton = new CustomButton("Sửa");
         fixButton.setCustomColor(Color.RED);
 
@@ -109,18 +113,17 @@ public class GUI_Guarantee extends JPanel {
 
             if (selectedRow != -1) {
                 String guaranteeID = (String) warrantyTable.getValueAt(selectedRow, 0);
-                GuaranteeDTO guarantee = GuaranteeDAO.getGuarantee(guaranteeID);
+                GuaranteeDTO guarantee = GuaranteeBUS.getGuarantee(guaranteeID);
 //                System.out.println("Dang chon ");
                 serialLabel.setText(guarantee.getSerialID());
                 textReasonLabel.setText(guarantee.getLydo());
-                StatusTime.setText(guarantee.getTGBH());
                 StatusLabel.setText(guarantee.gettrangthai());
-                if (b.contains("sua_bh")) {
+//                if (b.contains("sua_bh")) {
                     botPanel.add(fixButton, gbc);
-                    System.out.println("Co sua ");
-                }
-                else
-                    System.out.println("Khong co sua ");
+//                    System.out.println("Co sua ");
+//                } else {
+//                    System.out.println("Khong co sua ");
+//                }
             }
         }
         );
@@ -140,26 +143,33 @@ public class GUI_Guarantee extends JPanel {
             String guaranteeID = (String) warrantyTable.getValueAt(selectedRow, 0);
 
             // Lấy dữ liệu bảo hành từ database
-            GuaranteeDTO guarantee = GuaranteeDAO.getGuarantee(guaranteeID);
+            GuaranteeDTO guarantee = GuaranteeBUS.getGuarantee(guaranteeID);
 
-            GUI_Form_Guarantee fixForm = new GUI_Form_Guarantee((JFrame) SwingUtilities.getWindowAncestor(this), this, guarantee);
+            Form_Guarantee fixForm = new Form_Guarantee((JFrame) SwingUtilities.getWindowAncestor(this), this, guarantee);
             fixForm.setVisible(true);
         });
+        
+        loadGuaranteeData();
 
-        if (b.contains("xem_bh")) {
+        reloadButton.addActionListener(e -> {
             loadGuaranteeData();
-        }
+            tableModel.fireTableDataChanged();
+        });
+
+     
+            loadGuaranteeData();
+        
 
         // Xử lý sự kiện chọn dòng trong bảng
         // Xử lý sự kiện chọn dòng trong bảng
     }
 
     public void loadGuaranteeData() {
-        ArrayList<GuaranteeDTO> guaranteeList = GuaranteeDAO.getAllGuarantee();
+        ArrayList<GuaranteeDTO> guaranteeList = GuaranteeBUS.getAllGuarantee();
         tableModel.setRowCount(0);
         for (GuaranteeDTO guarantee : guaranteeList) {
             tableModel.addRow(new Object[]{
-                guarantee.getBaohanhID(), guarantee.getSerialID(), guarantee.getLydo(), guarantee.getTGBH(), guarantee.gettrangthai()
+                guarantee.getBaohanhID(), guarantee.getSerialID(), guarantee.getLydo(), guarantee.gettrangthai()
             });
         }
 
@@ -168,12 +178,18 @@ public class GUI_Guarantee extends JPanel {
 
 //    public static void main(String[] args) {
 //        SwingUtilities.invokeLater(() -> {
-//            JFrame frame = new JFrame("Quản lý bảo hành");
+//            JFrame frame = new JFrame("Quản Lý Bảo Hành");
 //            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//            frame.setSize(900, 600);
+//            frame.setSize(800, 600);
 //            frame.setLocationRelativeTo(null);
-//            frame.setContentPane(new GUI_Guarantee());
+//
+//            // Truyền vào một danh sách rỗng (không có quyền)
+//            List<String> emptyPermissions = new ArrayList<>();
+//            GUI_Guarantee guiGuarantee = new GUI_Guarantee(emptyPermissions);
+//
+//            frame.setContentPane(guiGuarantee);
 //            frame.setVisible(true);
 //        });
 //    }
+
 }

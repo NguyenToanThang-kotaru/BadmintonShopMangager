@@ -87,11 +87,9 @@ public class GUI_MainLayout extends JFrame {
 
         Sidebar.accountPanel = new GUI_Account();
 
-        Sidebar.repairPanel = new JPanel();
-        Sidebar.repairPanel.setBackground(Color.DARK_GRAY);
-        Sidebar.repairPanel.add(new JLabel("Bảo hành"));
+        Sidebar.repairPanel = new GUI_Guarantee(logined);
 
-        Sidebar.rolePanel = new GUI_Permission();
+        Sidebar.rolePanel = new GUI_Permission(logined);
         for (Component comp : Sidebar.panel2.getComponents()) {
             if (comp instanceof JLabel menuLabel) {
                 menuLabel.addMouseListener(new MouseAdapter() {

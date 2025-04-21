@@ -1,14 +1,19 @@
 package GUI;
 
 import DTO.GuaranteeDTO;
+
+import BUS.GuaranteeBUS;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import DAO.GuaranteeDAO;
 import GUI.GUI_Guarantee;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ItemEvent;
 
-public class GUI_Form_Guarantee extends JDialog {
+public class Form_Guarantee extends JDialog {
 
     private JTextField reasonField;
     private JPanel reasonPanel;
@@ -17,7 +22,7 @@ public class GUI_Form_Guarantee extends JDialog {
     private GuaranteeDTO guarantee;
     private GUI_Guarantee parentGUI;
 
-    public GUI_Form_Guarantee(JFrame parent, GUI_Guarantee parentGUI, GuaranteeDTO guarantee) {
+    public Form_Guarantee(JFrame parent, GUI_Guarantee parentGUI, GuaranteeDTO guarantee) {
         super(parent, "Cập nhật bảo hành", true);
         this.parentGUI = parentGUI;
         this.guarantee = guarantee;
@@ -25,7 +30,7 @@ public class GUI_Form_Guarantee extends JDialog {
         setLayout(new GridBagLayout());
         setLocationRelativeTo(parent);
 
-        getContentPane().setBackground(Color.PINK);
+        getContentPane().setBackground(Color.WHITE);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
@@ -58,7 +63,7 @@ public class GUI_Form_Guarantee extends JDialog {
         gbc.gridy = 2;
         add(new JLabel("Trạng thái: "), gbc);
         gbc.gridx = 1;
-        CustomCombobox statusBaohanh = new CustomCombobox(new String[]{"Chưa bảo hành", "Đang Bảo hành", "Đã bảo hành"});
+        CustomCombobox statusBaohanh = new CustomCombobox(new String[]{"Không", "Có"});
         statusBaohanh.setSelectedItem(guarantee.gettrangthai());
         
         gbc.fill = GridBagConstraints.NONE;
@@ -75,7 +80,7 @@ public class GUI_Form_Guarantee extends JDialog {
 ////        add(reasonField, gbc);
         reasonPanel = new JPanel(new GridBagLayout());
 
-        reasonPanel.setBackground(Color.GREEN);
+        reasonPanel.setBackground(Color.WHITE);
         GridBagConstraints reasonGbc = new GridBagConstraints();
         reasonGbc.insets = new Insets(5, 5, 5, 5);
         reasonGbc.anchor = GridBagConstraints.WEST;
@@ -98,14 +103,14 @@ public class GUI_Form_Guarantee extends JDialog {
         add(reasonPanel, gbc);
 
         // Ẩn panel lý do bảo hành nếu không phải "Đang Bảo hành"
-        reasonPanel.setVisible("Đang Bảo hành".equals(statusBaohanh.getSelectedItem()));
+        reasonPanel.setVisible("Có".equals(statusBaohanh.getSelectedItem()));
 
         // Lắng nghe sự kiện thay đổi lựa chọn của ComboBox
         statusBaohanh.addItemListener(e -> {
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 String selected = (String) statusBaohanh.getSelectedItem();
-                reasonPanel.setVisible("Đang Bảo hành".equals(selected));
-                reasonField.setVisible("Đang Bảo hành".equals(selected));
+                reasonPanel.setVisible("Có".equals(selected));
+                reasonField.setVisible("Có".equals(selected));
                 revalidate();
                 repaint();
             }
@@ -127,7 +132,7 @@ public class GUI_Form_Guarantee extends JDialog {
             guarantee.setLydo(lydo);
 
             // Gọi updateProduct để cập nhật sản phẩm với mã loại tương ứng
-            GuaranteeDAO.updateGuarantee(guarantee);
+            GuaranteeBUS.updateGuarantee(guarantee);
 //
             JOptionPane.showMessageDialog(this, "Cập nhật bảo hành thành công!");
             parentGUI.loadGuaranteeData();

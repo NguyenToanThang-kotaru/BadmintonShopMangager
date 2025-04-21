@@ -167,5 +167,82 @@ public class SupplierDAO {
         }
         return newID;
     }
+    public boolean isPhoneExists(String phone) {
+        String query = "SELECT * FROM supplier WHERE Phone = ? AND IsDeleted = 0";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, phone);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next(); // Nếu có kết quả trả về thì số điện thoại đã tồn tại
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    public boolean isEmailExists(String email) {
+        String query = "SELECT * FROM supplier WHERE Email = ? AND IsDeleted = 0";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, email);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next(); // Nếu có kết quả trả về thì email đã tồn tại
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    public boolean isNameExists(String name) {
+        String query = "SELECT * FROM supplier WHERE SupplierName = ? AND IsDeleted = 0";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, name);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next(); // Nếu có kết quả trả về thì tên nhà cung cấp đã tồn tại
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    public boolean isPhoneExistsUpdate(String phone, String id) {
+        String query = "SELECT * FROM supplier WHERE Phone = ? AND SupplierID != ? AND IsDeleted = 0";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, phone);
+            stmt.setString(2, id);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next(); // Nếu có kết quả trả về thì số điện thoại đã tồn tại
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    public boolean isEmailExistsUpdate(String email, String id) {
+        String query = "SELECT * FROM supplier WHERE Email = ? AND SupplierID != ? AND IsDeleted = 0";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, email);
+            stmt.setString(2, id);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next(); // Nếu có kết quả trả về thì email đã tồn tại
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    public boolean isNameExistsUpdate(String name, String id) {
+        System.out.println("ID: " + id);
+        System.out.println("Name: " + name);
+        String query = "SELECT * FROM supplier WHERE SupplierName = ? AND SupplierID != ? AND IsDeleted = 0";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, name);
+            stmt.setString(2, id);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next(); // Nếu có kết quả trả về thì tên nhà cung cấp đã tồn tại
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
 }

@@ -11,9 +11,12 @@ import BUS.PermissionBUS;
 import DAO.EmployeeDAO;
 import DTO.AccountDTO;
 import DTO.ActionDTO;
+import DTO.EmployeeDTO;
 import java.util.ArrayList;
 
 public class GUI_Employee extends JPanel {
+    
+    
 
     // Khai báo các thành phần giao diện
     private JPanel midPanel, topPanel, botPanel;
@@ -195,12 +198,9 @@ public class GUI_Employee extends JPanel {
         });
 
         searchField.setSearchListener(e -> {
-            String keyword = searchField.getText().trim();
-            if (!keyword.isEmpty()) {
-                searchEmployee(keyword);
-            } else {
-                loadEmployees(); // Nếu ô tìm kiếm trống, load lại toàn bộ khách hàng
-            }
+            String keyword = searchField.getText();
+            ArrayList<EmployeeDTO> ketQua = EmployeeBUS.searchEmployee(keyword);
+            searchEmployee(ketQua); // Hiển thị kết quả tìm được trên bảng
         });
 
         ArrayList<ActionDTO> actions = PermissionBUS.getPermissionActions(a, "Quan ly nhan vien");
@@ -245,8 +245,8 @@ public class GUI_Employee extends JPanel {
         genderLabel.setText("");
     }
 
-    private void searchEmployee(String keyword) {
-        List<EmployeeDTO> employee = employeeBUS.searchEmployee(keyword);
+    private void searchEmployee(List<EmployeeDTO> employee) {
+//        List<EmployeeDTO> employee = employeeBUS.searchEmployee(keyword);
         tableModel.setRowCount(0);
         int index = 1;
         for (EmployeeDTO emp : employee) {

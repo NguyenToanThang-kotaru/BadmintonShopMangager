@@ -44,7 +44,7 @@ public class EmployeeBUS {
         return EmployeeDAO.updateEmployee(emp);
     }
 
-    public List<EmployeeDTO> searchEmployee(String keyword) {
+    public static ArrayList<EmployeeDTO> searchEmployee(String keyword) {
         return EmployeeDAO.searchEmployee(keyword);
     }
 }

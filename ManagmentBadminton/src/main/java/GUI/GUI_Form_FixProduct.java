@@ -3,14 +3,14 @@ package GUI;
 import DTO.ProductDTO;
 import DAO.ProductDAO;
 import BUS.ProductBUS;
-import DAO.SupplierDAO;  
-import BUS.SupplierBUS;   
+import DAO.SupplierDAO;
+import BUS.SupplierBUS;
 import java.awt.*;
 import java.io.File;
-import java.nio.file.Files; 
+import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
-import javax.swing.*;   
+import javax.swing.*;
 import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 
 public class GUI_Form_FixProduct extends JDialog {
@@ -27,7 +27,7 @@ public class GUI_Form_FixProduct extends JDialog {
         super(parent, "Sửa sản phẩm", true);
         this.parentGUI = parentGUI;
         this.product = product;
-        setSize(400, 560);      
+        setSize(400, 560);
         setLayout(new GridBagLayout());
         setLocationRelativeTo(parent);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -46,14 +46,25 @@ public class GUI_Form_FixProduct extends JDialog {
 
         addComponent("Tên sản phẩm:", nameField = new JTextField(20), gbc, 1);
         nameField.setText(product.getProductName());
-        addComponent("Giá:", priceField = new JTextField(20), gbc, 2);
-        priceField.setText(String.valueOf(product.getGia()));
+        
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        add(new JLabel("Giá bán: "), gbc);
+        gbc.gridx = 1;
+        JLabel Price = new JLabel(String.valueOf(product.getGia()));
+        add(Price, gbc);
 //        addComponent("Mã NCC:", maNCCField = new JTextField(20), gbc, 3);
 //        maNCCField.setText(String.valueOf(product.getMaNCC()));
 //        addComponent("Số lượng:", soluongField = new JTextField(20), gbc, 4);
 //        soluongField.setText(String.valueOf(product.getSoluong()));
 //        addComponent("Thông số kỹ thuật:", tsktField = new JTextField(20), gbc, 5);
 //        tsktField.setText(product.getTSKT());
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        add(new JLabel("Giá nhập: "), gbc);
+        gbc.gridx = 1;
+        JLabel ImportPrice = new JLabel(String.valueOf(product.getgiaNhap()));
+        add(ImportPrice, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 6;
@@ -143,14 +154,14 @@ public class GUI_Form_FixProduct extends JDialog {
 
     private void saveProduct() {
         String name = nameField.getText().trim();
-        String price = priceField.getText().trim();
+//        String price = priceField.getText().trim();
 //        String soluong = soluongField.getText().trim();
 //        String tskt = tsktField.getText().trim();
         String tenLoai = (String) TLField.getSelectedItem();
         String tenNCC = (String) NCCField.getSelectedItem();
         String anh = product.getAnh();
 
-        if (name.isEmpty() || price.isEmpty()) {
+        if (name.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -160,7 +171,7 @@ public class GUI_Form_FixProduct extends JDialog {
         }
 
         product.setProductName(name);
-        product.setGia(price);
+//        product.setGia(price);
         product.settenNCC(tenNCC);
 //        product.setSoluong(soluong);
 //        product.setTSKT(tskt);

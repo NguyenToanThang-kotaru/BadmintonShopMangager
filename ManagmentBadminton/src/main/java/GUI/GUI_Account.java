@@ -9,6 +9,7 @@ import java.util.List;
 import BUS.AccountBUS;
 import BUS.PermissionBUS;
 import DAO.AccountDAO;
+import java.util.ArrayList;
 
 public class GUI_Account extends JPanel {
 
@@ -41,11 +42,14 @@ public class GUI_Account extends JPanel {
         reloadButton = new CustomButton("Tải lại trang");
         topPanel.add(reloadButton, BorderLayout.WEST);
 
-        searchField = new CustomSearch(275, 20); // Ô nhập tìm kiếm
+        searchField = new CustomSearch(250, 30); // Ô nhập tìm kiếm
         searchField.setBackground(Color.WHITE);
         topPanel.add(searchField, BorderLayout.CENTER);
 
         addButton = new CustomButton("+ Thêm Tài Khoản"); // Nút thêm tài khoản
+        addButton.setFont(new Font("Arial", Font.BOLD, 14));
+
+        addButton.setPreferredSize(new Dimension(170, 30));
         topPanel.add(addButton, BorderLayout.EAST);
 
         // ========== BẢNG HIỂN THỊ DANH SÁCH TÀI KHOẢN ==========
@@ -58,8 +62,8 @@ public class GUI_Account extends JPanel {
         accountTable = customTable.getAccountTable(); // Lấy JTable từ CustomTable
         tableModel = customTable.getTableModel(); // Lấy model của bảng
 
-        midPanel.add(customTable, BorderLayout.CENTER);
         CustomScrollPane scrollPane = new CustomScrollPane(accountTable);
+        midPanel.add(scrollPane, BorderLayout.CENTER);
         // ========== PANEL CHI TIẾT TÀI KHOẢN ==========
         botPanel = new JPanel(new GridBagLayout());
         botPanel.setBackground(Color.WHITE);
@@ -138,10 +142,10 @@ public class GUI_Account extends JPanel {
 
         // Thêm các panel vào giao diện chính
         add(topPanel);
-        add(Box.createVerticalStrut(10));
+//        add(Box.createVerticalStrut(10));
 
-        add(scrollPane);
-        add(Box.createVerticalStrut(10));
+        add(midPanel);
+//        add(Box.createVerticalStrut(10));
         add(botPanel);
 
         // Tải dữ liệu tài khoản lên bảng
@@ -183,9 +187,9 @@ public class GUI_Account extends JPanel {
         });
 
         searchField.setSearchListener(e -> {
-//            String keyword = searchField.getText();
-//            ArrayList<AccountDTO> ketQua = AccountDAO.searchAccounts(keyword);
-//            capNhatBangTaiKhoan(ketQua); // Hiển thị kết quả tìm được trên bảng
+            String keyword = searchField.getText();
+            ArrayList<AccountDTO> ketQua = AccountBUS.searchAccounts(keyword);
+            capNhatBangTaiKhoan(ketQua); // Hiển thị kết quả tìm được trên bảng
         });
 
     }
@@ -205,4 +209,12 @@ public class GUI_Account extends JPanel {
         roleComboBox.setText("");
     }
 
+    private void capNhatBangTaiKhoan(List<AccountDTO> accounts) {
+        tableModel.setRowCount(0); // Xóa dữ liệu cũ
+        int index = 1;
+        for (AccountDTO acc : accounts) {
+            tableModel.addRow(new Object[]{index++, acc.getFullName(),
+                acc.getUsername(), acc.getPassword(), acc.getRankID().getName()});
+        }
+    }
 }

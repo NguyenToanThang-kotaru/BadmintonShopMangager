@@ -3,9 +3,13 @@ package BUS;
 
 import DAO.AccountDAO;
 import DTO.AccountDTO;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AccountBUS {
+    public static ArrayList<AccountDTO> searchAccounts(String keyword) {
+        return AccountDAO.searchAccounts(keyword);
+    }
     public static AccountDTO getAccountByUsername(String username){
         return AccountDAO.getAccountByUsername(username);
     }
