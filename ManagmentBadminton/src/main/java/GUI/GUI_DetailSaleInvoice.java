@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.text.DecimalFormat;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -37,6 +38,7 @@ public class GUI_DetailSaleInvoice extends JFrame {
     private String date;
     private String totalMoney;
 
+
     public GUI_DetailSaleInvoice(String id, String employeeName, String customerName, String date, String totalMoney) {
         this.id = id;
         this.employeeName = employeeName;
@@ -44,6 +46,7 @@ public class GUI_DetailSaleInvoice extends JFrame {
         this.date = date;
         this.totalMoney = totalMoney;
         detailOrderBUS = new DetailSaleInvoiceBUS();
+        productBUS = new ProductBUS();
 
         setTitle("Chi Tiết Hóa Đơn");
         setSize(650, 500);
@@ -86,7 +89,7 @@ public class GUI_DetailSaleInvoice extends JFrame {
         centerPanel.add(infoPanel, BorderLayout.NORTH);
 
         // Panel bảng chi tiết
-        String [] columnNames = {"Mã SP", "Tên SP", "Số Lượng", "Giá"};
+        String [] columnNames = {"Mã CTHĐ", "Mã SP", "Tên SP", "Số Lượng", "Giá", "Thành Tiền"};
         tableModel = new DefaultTableModel(columnNames, 0);
         detailTable = new JTable(tableModel);
         detailTable.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -112,6 +115,16 @@ public class GUI_DetailSaleInvoice extends JFrame {
         closeButton.addActionListener(e -> dispose());
 
         buttonPanel.add(closeButton);
+
+        JButton serialButton = new JButton("Mã serial");
+        serialButton.setFont(new Font("Arial", Font.BOLD, 14));
+        serialButton.setBackground(new Color(30, 144, 255));
+        serialButton.setForeground(Color.WHITE);
+        serialButton.setPreferredSize(new Dimension(100, 35));
+        serialButton.addActionListener(e -> openSerialGUI());    
+
+        buttonPanel.add(serialButton);
+
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         add(mainPanel);
@@ -120,20 +133,40 @@ public class GUI_DetailSaleInvoice extends JFrame {
 
     }
 
+    // when the button is clicked and a row is choose on the table, it will open the serial GUI
+    private void openSerialGUI() {
+        int selectedRow = detailTable.getSelectedRow();
+        if (selectedRow != -1) {
+            String productID = (String) detailTable.getValueAt(selectedRow, 1);
+            String detailSaleInvoiceID = (String) detailTable.getValueAt(selectedRow, 0);
+            GUI_SerialNumber serialGUI = new GUI_SerialNumber(detailSaleInvoiceID);
+            serialGUI.setVisible(true);
+        } else {
+            // Show a message dialog if no row is selected
+            javax.swing.JOptionPane.showMessageDialog(this, "Vui lòng chọn một sản phẩm để xem mã serial.", "Thông báo", javax.swing.JOptionPane.WARNING_MESSAGE);
+        }
+    }
+    
     private void loadDetailOrder() {
         List<DetailSaleInvoiceDTO> details = detailOrderBUS.getBySalesID(id);
         tableModel.setRowCount(0);
         for (DetailSaleInvoiceDTO detail : details) {
+            DecimalFormat decimalFormat = new DecimalFormat("#,##0.00");
+            String formattedPrice = decimalFormat.format(detail.getPrice());
+            String formattedTotalPrice = decimalFormat.format(detail.getTotalPrice());
+
+
             ProductDTO product = productBUS.getProductByID(detail.getProduct_id());
             tableModel.addRow(new Object[]{
+                detail.getDetailSaleInvoiceID(),
                 product.getProductID(),
                 product.getProductName(),
                 detail.getQuantity(),
-                detail.getPrice()
+                formattedPrice,
+                formattedTotalPrice
             });
         }
     }
-
 
     private JPanel createInfoRow(String label, String value) {
         JPanel rowPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));

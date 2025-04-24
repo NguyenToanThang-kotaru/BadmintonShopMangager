@@ -21,11 +21,15 @@ import javax.swing.table.DefaultTableModel;
 
 import BUS.CustomerBUS;
 import BUS.EmployeeBUS;
+import BUS.PermissionBUS;
 import DAO.CustomerDAO;
+import DTO.AccountDTO;
+import DTO.ActionDTO;
 import DTO.CustomerDTO;
 
 public class GUI_Customer extends JPanel {
-        // Khai báo các thành phần giao diện
+    // Khai báo các thành phần giao diện
+
     private JPanel midPanel, topPanel, botPanel;
     private JTable customerTable;
     private DefaultTableModel tableModel;
@@ -36,7 +40,7 @@ public class GUI_Customer extends JPanel {
     private CustomerDTO customerChoosing;
     private CustomerDAO customerDAO;
 
-    public GUI_Customer() {
+    public GUI_Customer(AccountDTO a) {
         customerBUS = new CustomerBUS(); // Khởi tạo đối tượng BUS để lấy dữ liệu tài khoản
         // Cấu hình layout chính
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -129,8 +133,7 @@ public class GUI_Customer extends JPanel {
                 String id = String.valueOf(customerTable.getValueAt(selectedRow, 0));
                 if (id.length() == 1) {
                     id = "C0" + id;
-                }
-                else {
+                } else {
                     id = "C" + id;
                 }
                 String ten = (String) customerTable.getValueAt(selectedRow, 1);
@@ -159,10 +162,9 @@ public class GUI_Customer extends JPanel {
 
         addButton.addActionListener(e -> {
 
-        
             // JOptionPane.showMessageDialog(this, "Chức năng thêm nhân viên chưa được triển khai!");
-           GUI_Form_Customer GFC = new GUI_Form_Customer(this, null);
-           GFC.setVisible(true);
+            GUI_Form_Customer GFC = new GUI_Form_Customer(this, null);
+            GFC.setVisible(true);
         });
 
         editButton.addActionListener(e -> {
@@ -201,6 +203,31 @@ public class GUI_Customer extends JPanel {
 //            ArrayList<CustomerDTO> ketQua = customerDAO.searchEmployees(keyword);
 //            capNhatBangTaiKhoan(ketQua); // Hiển thị kết quả tìm được trên bảng
         });
+
+        ArrayList<ActionDTO> actions = PermissionBUS.getPermissionActions(a, "Quan ly khach hang");
+
+        boolean canAdd = false, canEdit = false, canDelete = false, canWatch = false;
+
+        if (actions != null) {
+            for (ActionDTO action : actions) {
+                switch (action.getName()) {
+                    case "Add" ->
+                        canAdd = true;
+                    case "Edit" ->
+                        canEdit = true;
+                    case "Delete" ->
+                        canDelete = true;
+                    case "Watch" ->
+                        canWatch = true;
+                }
+            }
+        }
+
+        addButton.setVisible(canAdd);
+        editButton.setVisible(canEdit);
+        deleteButton.setVisible(canDelete);
+        scrollPane.setVisible(canWatch);
+        reloadButton.setVisible(false);
 
     }
 

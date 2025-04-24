@@ -8,8 +8,43 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class AccountDAO {
+
+    public static ArrayList<AccountDTO> searchAccounts(String keyword) {
+        ArrayList<AccountDTO> accounts = new ArrayList<>();
+
+        String accountQuery = "SELECT a.*, e.* FROM account a "
+                   + "JOIN employee e ON a.EmployeeID = e.EmployeeID "
+                   + "WHERE a.IsDeleted = 0 "
+                   + "AND (a.Username LIKE ? OR a.Password LIKE ? OR a.EmployeeID LIKE ? "
+                   + "OR a.RankID LIKE ? OR e.FullName LIKE ?)";
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement accountStmt = conn.prepareStatement(accountQuery)) {
+
+            String searchKeyword = "%" + keyword + "%";
+            accountStmt.setString(1, searchKeyword);
+            accountStmt.setString(2, searchKeyword);
+            accountStmt.setString(3, searchKeyword);
+            accountStmt.setString(4, searchKeyword);
+            accountStmt.setString(5, searchKeyword);
+            try (ResultSet rs = accountStmt.executeQuery()) {
+                while (rs.next()) {
+                    PermissionDTO permission = PermissionDAO.getPermissionByID(rs.getString("RankID"));
+                    accounts.add(new AccountDTO(
+                            rs.getString("Username"),
+                            rs.getString("Password"),
+                            rs.getString("EmployeeID"),
+                            rs.getString("FullName"), // Lấy tên nhân viên
+                            permission
+                    ));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return accounts;
+    }
 
     public static String countAccountFromPermission(String permissionID) {
         String total = "0";
@@ -102,8 +137,8 @@ public class AccountDAO {
             return false;
         }
     }
-    
-        public static Boolean delete_AccountByEmployee(String id) {
+
+    public static Boolean delete_AccountByEmployee(String id) {
         String query = "DELETE FROM `account` WHERE EmployeeID = ?;";
         try {
             Connection conn = DatabaseConnection.getConnection();

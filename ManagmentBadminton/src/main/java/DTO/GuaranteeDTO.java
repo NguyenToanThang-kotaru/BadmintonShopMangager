@@ -12,15 +12,13 @@ public class GuaranteeDTO {
         this.BaohanhID = "";
         this.SerialID = "";
         this.lydo = "";
-        this.TGBH = "";
         this.trangthai = "";
     }
 
-    public GuaranteeDTO(String BaohanhID, String SerialID, String lydo, String TGBH, String trangthai) {
+    public GuaranteeDTO(String BaohanhID, String SerialID, String lydo, String trangthai) {
         this.BaohanhID = BaohanhID;
         this.SerialID = SerialID;
         this.lydo = lydo;
-        this.TGBH = TGBH;
         this.trangthai = trangthai;
     }
 
@@ -54,13 +52,4 @@ public class GuaranteeDTO {
     public void setLydo(String lydo) {
         this.lydo = lydo;
     }
-
-    public String getTGBH() {
-        return TGBH;
-    }
-
-    public void setTGBH(String TGBH) {
-        this.TGBH = TGBH;
-    }
-
 }

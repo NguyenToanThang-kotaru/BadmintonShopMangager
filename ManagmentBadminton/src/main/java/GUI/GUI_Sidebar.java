@@ -1,5 +1,8 @@
 package GUI;
 
+import DTO.AccountDTO;
+import DTO.FunctionActionDTO;
+import DTO.PermissionDTO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -21,7 +24,7 @@ public class GUI_Sidebar extends JPanel {
     public JPanel panel1, panel2, panel3;
     public CustomScrollPane scrollPane;
 
-    public GUI_Sidebar(JFrame login, JFrame Main_Layout) {
+    public GUI_Sidebar(JFrame login, JFrame Main_Layout, AccountDTO logined) {
         setLayout(new BorderLayout());
         setBackground(Color.LIGHT_GRAY);
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -39,19 +42,46 @@ public class GUI_Sidebar extends JPanel {
 
         // ====== Danh sách menu từ ArrayList ======
         menuItems = new ArrayList<>();
-        menuItems.add("Thống kê");
-        menuItems.add("Sản Phẩm");
-        menuItems.add("Đơn Hàng");
-        menuItems.add("Nhân Viên");
-        menuItems.add("Nhà Cung Cấp");
-        menuItems.add("Hóa Đơn Nhập");
-        menuItems.add("Khuyến Mãi");
-        menuItems.add("Khách Hàng");
-        menuItems.add("Tài Khoản");
-        menuItems.add("Bảo Hành");
-        menuItems.add("Phân Quyền");
+
+        // Duyệt qua tất cả các quyền trong danh sách permission
+        menuItems = new ArrayList<>();
+
+        // Duyệt qua tất cả các quyền trong danh sách permission
+        PermissionDTO permission = logined.getPermission();
+        // Duyệt qua các chức năng trong PermissionDTO
+        for (FunctionActionDTO function : permission.getFunction()) {
+            String nameUnsigned = function.getNameUnsigned().toLowerCase(); // Chuyển thành chữ thường để dễ so sánh
+
+            // Kiểm tra xem chức năng có chứa từ khóa không dấu trong tên chức năng
+            if (nameUnsigned.contains("thong ke")) {
+                menuItems.add("Thống kê");
+            } else if (nameUnsigned.contains("san pham")) {
+                menuItems.add("Sản Phẩm");
+            } else if (nameUnsigned.contains("don hang")) {
+                menuItems.add("Đơn Hàng");
+            } else if (nameUnsigned.contains("nhan vien")) {
+                menuItems.add("Nhân Viên");
+            } else if (nameUnsigned.contains("nha cung cap")) {
+                menuItems.add("Nhà Cung Cấp");
+            } else if (nameUnsigned.contains("khach hang")) {
+                menuItems.add("Khách Hàng");
+            } else if (nameUnsigned.contains("tai khoan")) {
+                menuItems.add("Tài Khoản");
+            } else if (nameUnsigned.contains("bao hanh")) {
+                menuItems.add("Bảo Hành");
+            } else if (nameUnsigned.contains("hoa don nhap")) {
+                menuItems.add("Hóa Đơn Nhập");
+            } else if (nameUnsigned.contains("phan quyen")) {
+                menuItems.add("Phân Quyền");
+            } else if (nameUnsigned.contains("khuyen mai")) {
+                menuItems.add("Khuyến Mãi");
+            }
+        }
+
         panel2 = new JPanel();
-        panel2.setLayout(new BoxLayout(panel2, BoxLayout.Y_AXIS));
+
+        panel2.setLayout(
+                new BoxLayout(panel2, BoxLayout.Y_AXIS));
         panel2.setBackground(Color.LIGHT_GRAY);
 
         for (String item : menuItems) {
@@ -137,24 +167,36 @@ public class GUI_Sidebar extends JPanel {
         // ====== Thêm JScrollPane vào sidebar ======
         // ====== panel3: Nút thoát ======
         panel3 = new JPanel();
+
         panel3.setBackground(Color.LIGHT_GRAY);
-        panel3.setPreferredSize(new Dimension(this.getWidth(), 50));
+
+        panel3.setPreferredSize(
+                new Dimension(this.getWidth(), 50));
 
         JButton logoutButton = new JButton("Đăng xuất");
-        logoutButton.setForeground(Color.WHITE);
-        logoutButton.setBackground(Color.RED);
-        logoutButton.setFocusPainted(false);
-        logoutButton.setFont(new Font("Arial", Font.BOLD, 14));
 
-        logoutButton.addActionListener((ActionEvent e) -> {
-            logout(login,Main_Layout); // Gọi hàm check khi bấm nút
-        });
+        logoutButton.setForeground(Color.WHITE);
+
+        logoutButton.setBackground(Color.RED);
+
+        logoutButton.setFocusPainted(
+                false);
+        logoutButton.setFont(
+                new Font("Arial", Font.BOLD, 14));
+
+        logoutButton.addActionListener(
+                (ActionEvent e) -> {
+                    logout(login, Main_Layout); // Gọi hàm check khi bấm nút
+                }
+        );
 
         panel3.add(logoutButton);
 
         // ====== Sắp xếp các panel trong sidebar ======
         add(panel1, BorderLayout.NORTH);
+
         add(scrollPane, BorderLayout.CENTER);
+
         add(panel3, BorderLayout.SOUTH); // Đặt ở dưới cùng
     }
 

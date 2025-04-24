@@ -9,22 +9,27 @@ import java.util.List;
 import BUS.EmployeeBUS;
 import BUS.PermissionBUS;
 import DAO.EmployeeDAO;
+import DTO.AccountDTO;
+import DTO.ActionDTO;
+import DTO.EmployeeDTO;
 import java.util.ArrayList;
 
 public class GUI_Employee extends JPanel {
+    
+    
 
     // Khai báo các thành phần giao diện
     private JPanel midPanel, topPanel, botPanel;
     private JTable employeeTable;
     private DefaultTableModel tableModel;
-    private JLabel nameLabel,addressLabel,phoneLabel,genderLabel,ageLabel;
+    private JLabel nameLabel, addressLabel, phoneLabel, genderLabel, ageLabel;
     private CustomButton deleteButton, addButton, editButton, reloadButton;
     private CustomSearch searchField;
     private EmployeeBUS employeeBUS;
     private EmployeeDTO employeeChoosing;
     private EmployeeDAO EmployeeDAO;
 
-    public GUI_Employee() {
+    public GUI_Employee(AccountDTO a) {
         employeeBUS = new EmployeeBUS(); // Khởi tạo đối tượng BUS để lấy dữ liệu tài khoản
         // Cấu hình layout chính
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -44,12 +49,14 @@ public class GUI_Employee extends JPanel {
         searchField.setBackground(Color.WHITE);
         topPanel.add(searchField, BorderLayout.CENTER);
 
-        addButton = new CustomButton("+ Thêm Tài Khoản"); // Nút thêm tài khoản
+        addButton = new CustomButton("+ Thêm Nhân Viên"); // Nút thêm tài khoản
         topPanel.add(addButton, BorderLayout.EAST);
 
         // ========== BẢNG HIỂN THỊ DANH SÁCH TÀI KHOẢN ==========
         midPanel = new JPanel(new BorderLayout());
         midPanel.setBackground(Color.WHITE);
+        midPanel.setMinimumSize(new Dimension(200, 450));
+        midPanel.setPreferredSize(new Dimension(200, 450));
 
         // Định nghĩa tiêu đề cột
         String[] columnNames = {"STT", "Nhân viên", "Địa chỉ", "Số điện thoại", "Giới tính"};
@@ -57,8 +64,9 @@ public class GUI_Employee extends JPanel {
         employeeTable = customTable.getAccountTable(); // Lấy JTable từ CustomTable
         tableModel = customTable.getTableModel(); // Lấy model của bảng
 
-        midPanel.add(customTable, BorderLayout.CENTER);
         CustomScrollPane scrollPane = new CustomScrollPane(employeeTable);
+        midPanel.add(scrollPane, BorderLayout.CENTER);
+
         // ========== PANEL CHI TIẾT TÀI KHOẢN ==========
         botPanel = new JPanel(new GridBagLayout());
         botPanel.setBackground(Color.WHITE);
@@ -147,7 +155,7 @@ public class GUI_Employee extends JPanel {
         add(topPanel);
         add(Box.createVerticalStrut(10));
 
-        add(scrollPane);
+        add(midPanel);
         add(Box.createVerticalStrut(10));
         add(botPanel);
 
@@ -190,10 +198,35 @@ public class GUI_Employee extends JPanel {
         });
 
         searchField.setSearchListener(e -> {
-//            String keyword = searchField.getText();
-//            ArrayList<EmployeeDTO> ketQua = EmployeeDAO.searchEmployees(keyword);
-//            capNhatBangTaiKhoan(ketQua); // Hiển thị kết quả tìm được trên bảng
+            String keyword = searchField.getText();
+            ArrayList<EmployeeDTO> ketQua = EmployeeBUS.searchEmployee(keyword);
+            searchEmployee(ketQua); // Hiển thị kết quả tìm được trên bảng
         });
+
+        ArrayList<ActionDTO> actions = PermissionBUS.getPermissionActions(a, "Quan ly nhan vien");
+
+        boolean canAdd = false, canEdit = false, canDelete = false, canWatch = false;
+
+        if (actions != null) {
+            for (ActionDTO action : actions) {
+                switch (action.getName()) {
+                    case "Add" ->
+                        canAdd = true;
+                    case "Edit" ->
+                        canEdit = true;
+                    case "Delete" ->
+                        canDelete = true;
+                    case "Watch" ->
+                        canWatch = true;
+                }
+            }
+        }
+
+        addButton.setVisible(canAdd);
+        editButton.setVisible(canEdit);
+        deleteButton.setVisible(canDelete);
+        scrollPane.setVisible(canWatch);
+        reloadButton.setVisible(false);
 
     }
 
@@ -212,4 +245,12 @@ public class GUI_Employee extends JPanel {
         genderLabel.setText("");
     }
 
+    private void searchEmployee(List<EmployeeDTO> employee) {
+//        List<EmployeeDTO> employee = employeeBUS.searchEmployee(keyword);
+        tableModel.setRowCount(0);
+        int index = 1;
+        for (EmployeeDTO emp : employee) {
+            tableModel.addRow(new Object[]{index++, emp.getFullName(), emp.getAddress(), emp.getPhone(), emp.getGender()});
+        }
+    }
 }

@@ -11,7 +11,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import DTO.AccountDTO;
-
+import DTO.FunctionActionDTO;
+import DTO.PermissionDTO;
+import GUI.Promotion.GUI_Promotion;
+import GUI.Statistics.StatisticsPanel;
 
 public class GUI_MainLayout extends JFrame {
 
@@ -20,53 +23,73 @@ public class GUI_MainLayout extends JFrame {
 
     public GUI_MainLayout(JFrame login, AccountDTO logined) {
         setTitle("Quản Lý Kho Hàng");
-        setSize(1000, 600);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(0, 0));
         setUndecorated(true);
+        AccountDTO account = logined; // account đã được gán từ trước
+
+        System.out.println("Tài khoản: " + account.getUsername());
+        System.out.println("Nhân viên: " + account.getFullName());
+        System.out.println("Danh sách quyền:");
+
+        PermissionDTO permission = account.getPermission();
+        if (permission != null && permission.getFunction() != null) {
+            for (FunctionActionDTO func : permission.getFunction()) {
+                System.out.println("- Chức năng: " + func.getNameUnsigned());
+
+                if (func.getAction() != null && !func.getAction().isEmpty()) {
+                    System.out.print("  + Các hành động: ");
+                    for (int i = 0; i < func.getAction().size(); i++) {
+                        System.out.print(func.getAction().get(i).getName());
+                        if (i < func.getAction().size() - 1) {
+                            System.out.print(", ");
+                        }
+                    }
+                    System.out.println(); // xuống dòng sau danh sách hành động
+                } else {
+                    System.out.println("  + Không có hành động nào.");
+                }
+            }
+        } else {
+            System.out.println("Không có quyền nào được phân.");
+        }
 
         // ================================ Title Bar ================================
         tittleBar = new GUI_TittleBar(this);
 
         // ================================ GUI_Sidebar ================================
-        Sidebar = new GUI_Sidebar(login,this);
+        Sidebar = new GUI_Sidebar(login, this, logined);
 
         // ================================ Content ================================
         JPanel contentPanel = new JPanel(new BorderLayout());
 
-        Sidebar.statisticsPanel = new JPanel();
-        Sidebar.statisticsPanel.setBackground(Color.CYAN);
-        Sidebar.statisticsPanel.add(new JLabel("Thống kê doanh thu"));
+        Sidebar.statisticsPanel = new StatisticsPanel();
 
         Sidebar.productPanel = new JPanel();
         Sidebar.productPanel.setBackground(Color.GREEN);
         Sidebar.productPanel.add(new JLabel("Danh sách sản phẩm"));
 
-        Sidebar.productPanel = new GUI_Product();
-
         Sidebar.orderPanel = new GUI_SaleInvoice(logined);
 
-        Sidebar.employeePanel = new GUI_Employee();
+        Sidebar.supplierPanel = new GUI_Supplier(logined);
 
+        Sidebar.importPanel = new GUI_Import(logined);
 
-        Sidebar.supplierPanel = new GUI_Supplier();
+        Sidebar.promotionPanel = new GUI_Promotion(logined);
 
-        Sidebar.importPanel = new GUI_Import();
+        Sidebar.customerPanel = new GUI_Customer(logined);
 
-        Sidebar.promotionPanel = new JPanel();
-        Sidebar.promotionPanel.setBackground(Color.BLUE);
-        Sidebar.promotionPanel.add(new JLabel("Khuyến mãi"));
+        Sidebar.accountPanel = new GUI_Account(logined);
 
-        Sidebar.customerPanel = new GUI_Customer();
+        Sidebar.repairPanel = new GUI_Guarantee(logined);
+        
+        Sidebar.employeePanel = new GUI_Employee(logined);
 
-        Sidebar.accountPanel = new GUI_Account();
+        Sidebar.productPanel = new GUI_Product(logined);
 
-        Sidebar.repairPanel = new JPanel();
-        Sidebar.repairPanel.setBackground(Color.DARK_GRAY);
-        Sidebar.repairPanel.add(new JLabel("Bảo hành"));
-
-        Sidebar.rolePanel = new GUI_Permission();
+        Sidebar.rolePanel = new GUI_Permission(logined);
         for (Component comp : Sidebar.panel2.getComponents()) {
             if (comp instanceof JLabel menuLabel) {
                 menuLabel.addMouseListener(new MouseAdapter() {
@@ -78,37 +101,37 @@ public class GUI_MainLayout extends JFrame {
                             case "Thống kê":
                                 contentPanel.add(Sidebar.statisticsPanel, BorderLayout.CENTER);
                                 break;
-                            case "Sản Phẩm" :
+                            case "Sản Phẩm":
                                 contentPanel.add(Sidebar.productPanel, BorderLayout.CENTER);
                                 break;
-                            case "Đơn Hàng" :
+                            case "Đơn Hàng":
                                 contentPanel.add(Sidebar.orderPanel, BorderLayout.CENTER);
                                 break;
-                            case "Nhân Viên" :
+                            case "Nhân Viên":
                                 contentPanel.add(Sidebar.employeePanel, BorderLayout.CENTER);
                                 break;
-                            case "Nhà Cung Cấp" :
+                            case "Nhà Cung Cấp":
                                 contentPanel.add(Sidebar.supplierPanel, BorderLayout.CENTER);
                                 break;
-                            case "Hóa Đơn Nhập" :
+                            case "Hóa Đơn Nhập":
                                 contentPanel.add(Sidebar.importPanel, BorderLayout.CENTER);
                                 break;
-                            case "Khuyến Mãi" :
+                            case "Khuyến Mãi":
                                 contentPanel.add(Sidebar.promotionPanel, BorderLayout.CENTER);
                                 break;
-                            case "Khách Hàng" :
+                            case "Khách Hàng":
                                 contentPanel.add(Sidebar.customerPanel, BorderLayout.CENTER);
                                 break;
-                            case "Tài Khoản" :
+                            case "Tài Khoản":
                                 contentPanel.add(Sidebar.accountPanel, BorderLayout.CENTER);
                                 break;
-                            case "Bảo Hành" :
+                            case "Bảo Hành":
                                 contentPanel.add(Sidebar.repairPanel, BorderLayout.CENTER);
                                 break;
-                            case "Phân Quyền" :
+                            case "Phân Quyền":
                                 contentPanel.add(Sidebar.rolePanel, BorderLayout.CENTER);
                                 break;
-                            default :
+                            default:
                                 contentPanel.add(new JLabel("Chưa có nội dung"), BorderLayout.CENTER);
                         }
 
