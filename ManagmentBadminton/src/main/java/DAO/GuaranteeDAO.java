@@ -1,13 +1,13 @@
 package DAO;
 
-import DTO.GuaranteeDTO;
-
-import Connection.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+
+import Connection.DatabaseConnection;
+import DTO.GuaranteeDTO;
 
 // Lớp này dùng để kết nối database và lấy dữ liệu sản phẩm
 public class GuaranteeDAO {
@@ -105,7 +105,7 @@ public class GuaranteeDAO {
                 int number = Integer.parseInt(lastID.substring(2));
 
                 // Tạo ID mới với định dạng NVXXX
-                return String.format("W%02d", number + 1);
+                return String.format("W%03d", number + 1);
             }
 
         } catch (SQLException e) {

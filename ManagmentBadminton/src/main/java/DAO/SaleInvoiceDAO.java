@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import Connection.DatabaseConnection;
 import DTO.SaleInvoiceDTO;
+import DTO.SaleInvoiceDTO;
 
 public class SaleInvoiceDAO {
     public static ArrayList<SaleInvoiceDTO> getAll() {
@@ -161,5 +162,39 @@ public class SaleInvoiceDAO {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public static ArrayList<SaleInvoiceDTO> searchSaleInvoice(String keyword) {
+        ArrayList<SaleInvoiceDTO> sales = new ArrayList<>();
+
+        String accountQuery = "SELECT * FROM sales_invoice "
+        + "WHERE CAST(SalesID AS CHAR) LIKE ? "
+        + "OR CAST(EmployeeID AS CHAR) LIKE ? "
+        + "OR CAST(CustomerID AS CHAR) LIKE ? "
+        + "OR CAST(Date AS CHAR) LIKE ? "
+        + "OR CAST(TotalPrice AS CHAR) LIKE ?";
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement accountStmt = conn.prepareStatement(accountQuery)) {
+
+            String searchKeyword = "%" + keyword + "%";
+            accountStmt.setString(1, searchKeyword);
+            accountStmt.setString(2, searchKeyword);
+            accountStmt.setString(3, searchKeyword);
+            accountStmt.setString(4, searchKeyword);
+            accountStmt.setString(5, searchKeyword);
+            try (ResultSet rs = accountStmt.executeQuery()) {
+                while (rs.next()) {
+                    SaleInvoiceDTO saleInvoice = new SaleInvoiceDTO();
+                    saleInvoice.setId(rs.getString("SalesID"));
+                    saleInvoice.setCustomerId(rs.getString("CustomerID"));
+                    saleInvoice.setEmployeeId(rs.getString("EmployeeID"));
+                    saleInvoice.setDate(rs.getDate("Date").toLocalDate()); // Convert java.sql.Date to java.time.LocalDate
+                    saleInvoice.setTotalPrice(rs.getDouble("TotalPrice")); // Use getDouble for numeric columns
+                    sales.add(saleInvoice);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return sales;
     }
 }

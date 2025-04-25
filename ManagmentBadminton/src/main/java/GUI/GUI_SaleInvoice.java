@@ -23,12 +23,14 @@ import javax.swing.table.DefaultTableModel;
 
 import BUS.CustomerBUS;
 import BUS.EmployeeBUS;
+import BUS.ImportInvoiceBUS;
 import BUS.PermissionBUS;
 import BUS.SaleInvoiceBUS;
 import DTO.AccountDTO;
 import DTO.ActionDTO;
 import DTO.CustomerDTO;
 import DTO.EmployeeDTO;
+import DTO.ImportInvoiceDTO;
 import DTO.SaleInvoiceDTO;
 import java.util.ArrayList;
 
@@ -163,6 +165,13 @@ public class GUI_SaleInvoice extends JPanel {
                 JOptionPane.showMessageDialog(this, "Vui lòng chọn hóa đơn trước!", "Thông báo", JOptionPane.WARNING_MESSAGE);
             }
         });
+
+        searchField.setSearchListener(e -> {
+            String keyword = searchField.getText();
+            ArrayList<SaleInvoiceDTO> ketQua = saleInvoiceBUS.searchSaleInvoice(keyword);
+            capNhatBangSale(ketQua); // Hiển thị kết quả tìm được trên bảng
+        });
+
         ArrayList<ActionDTO> actions = PermissionBUS.getPermissionActions(cn, "Quan ly don hang");
 
         boolean canAdd = false, canEdit = false, canDelete = false, canWatch = false;
@@ -201,4 +210,18 @@ public class GUI_SaleInvoice extends JPanel {
             tableModel.addRow(rowData);
         }
     }
+
+    private void capNhatBangSale(ArrayList<SaleInvoiceDTO> sales) {
+        tableModel.setRowCount(0); // Xóa dữ liệu cũ
+        int index = 1;
+        for (SaleInvoiceDTO order : sales) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+            String formattedString = order.getDate().format(formatter);
+            DecimalFormat decimalFormat = new DecimalFormat("#,##0.00");
+            String formattedTotalPrice = decimalFormat.format(order.getTotalPrice());
+            String[] rowData = {order.getId(), order.getEmployeeId(), order.getCustomerId(), formattedTotalPrice, formattedString};
+            tableModel.addRow(rowData);
+        }
+
+    }   
 }

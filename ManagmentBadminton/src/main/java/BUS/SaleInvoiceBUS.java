@@ -27,4 +27,7 @@ public class SaleInvoiceBUS {
     public boolean update(SaleInvoiceDTO saleInvoice) {
         return SaleInvoiceDAO.update(saleInvoice);
     }
+    public ArrayList<SaleInvoiceDTO> searchSaleInvoice(String keyword) {
+        return SaleInvoiceDAO.searchSaleInvoice(keyword);
+    }
 }

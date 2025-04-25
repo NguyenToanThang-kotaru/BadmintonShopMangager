@@ -20,6 +20,7 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -41,11 +42,12 @@ import javax.swing.table.TableColumnModel;
 import BUS.CustomerBUS;
 import BUS.DetailSaleInvoiceBUS;
 import BUS.EmployeeBUS;
+import BUS.GuaranteeBUS;
 import BUS.ProductBUS;
 import BUS.ProductDetailBUS;
 import BUS.ProductSoldBUS;
+import BUS.PromotionBUS;
 import BUS.SaleInvoiceBUS;
-import BUS.GuaranteeBUS;
 import DAO.ProductDAO;
 import DTO.AccountDTO;
 import DTO.CustomerDTO;
@@ -54,6 +56,7 @@ import DTO.EmployeeDTO;
 import DTO.ProductDTO;
 import DTO.ProductDetailDTO;
 import DTO.ProductSoldDTO;
+import DTO.PromotionDTO;
 import DTO.SaleInvoiceDTO;
 
 public class GUI_Form_Order extends JDialog {
@@ -63,12 +66,14 @@ public class GUI_Form_Order extends JDialog {
     private CustomButton btnThemSP, btnLuu, btnHuy;
     private JLabel lblProductImage, lblProductId, lblProductName, lblCategory, lblPrice;
     private JTextField txtQuantity, txtMaKhachHang, txtTenKhachHang, txtSoDienThoai;
+    private JComboBox promotion;
     private SaleInvoiceBUS orderBUS;
     private SaleInvoiceDTO currentOrder;
     private AccountDTO currentAccount;
     private int totalAmount;
     private ProductBUS productBUS = new ProductBUS();
     private CustomerBUS customerBUS = new CustomerBUS();
+    private PromotionBUS promotionBUS = new PromotionBUS();
 
     public GUI_Form_Order(JPanel parent, SaleInvoiceDTO order, AccountDTO account) {
         
@@ -316,6 +321,27 @@ public class GUI_Form_Order extends JDialog {
         gbc.gridx = 0; gbc.gridy = 7; detailPanel.add(new JLabel("Tên khách hàng:"), gbc);
         gbc.gridx = 1; txtTenKhachHang = new JTextField(25); txtTenKhachHang.setEditable(false); detailPanel.add(txtTenKhachHang, gbc);
 
+
+        gbc.gridx = 0; gbc.gridy = 8; detailPanel.add(new JLabel("Mã khuyến mãi:"), gbc);
+        gbc.gridx = 1; 
+        List<PromotionDTO> promotions = promotionBUS.getAllPromotion();
+        String[] promotionNames = new String[promotions.size()];
+        promotion = new JComboBox<>(promotionNames); 
+        detailPanel.add(promotion, gbc);
+
+        // once the promotion combobox is changed, it will update the total price of the order
+        promotion.addActionListener(e -> {
+            int selectedIndex = promotion.getSelectedIndex();
+            if (selectedIndex > 0) {
+                PromotionDTO selectedPromotion = promotions.get(selectedIndex - 1);
+                double discount = selectedPromotion.getDiscountRate();
+                int totalPrice = (int)(totalAmount * (100 - discount));
+                lblTongTien.setText(formatCurrency(totalPrice));
+            } else {
+                lblTongTien.setText(formatCurrency(totalAmount));
+            }
+        });
+
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 5));
         bottomPanel.setBackground(Color.WHITE);
         CustomButton btnSuaSL = new CustomButton("Sửa SL");
@@ -370,20 +396,16 @@ public class GUI_Form_Order extends JDialog {
         try {
             int selectedRow = productsTable.getSelectedRow();
             if (selectedRow >= 0) {
-                int oldQuantity = Integer.parseInt(orderTableModel.getValueAt(selectedRow, 3).toString());
-                int oldPrice = Integer.parseInt(orderTableModel.getValueAt(selectedRow, 4).toString().replaceAll("[^0-9]", ""));
-                int oldTotal = oldQuantity * oldPrice;
-
                 int newQuantity = Integer.parseInt(txtQuantity.getText().trim());
-                int newTotal = oldPrice * newQuantity;
-
-                // Cập nhật lại dòng
-                orderTableModel.setValueAt(newQuantity, selectedRow, 3);
-                orderTableModel.setValueAt(formatCurrency(newTotal), selectedRow, 5);
+                int oldQuantity = Integer.parseInt(orderTableModel.getValueAt(selectedRow, 3).toString());
+                updateProductTableQuantity(lblProductId.getText(), newQuantity - oldQuantity);
 
                 // Cập nhật tổng tiền
-                totalAmount = totalAmount - oldTotal + newTotal;
+                totalAmount = updatePrice(newQuantity, selectedRow);
                 lblTongTien.setText(formatCurrency(totalAmount));
+                allProductsTable.clearSelection(); // Clear selection after add/update
+                productsTable.clearSelection();    // Clear selection after add/update
+                // Removed unnecessary assignment to selectedRow
 
             } else {
                 JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm trong giỏ hàng để sửa.");
@@ -441,22 +463,25 @@ public class GUI_Form_Order extends JDialog {
                         JOptionPane.showMessageDialog(this, "Số lượng vượt quá tồn kho!");
                         return;
                     }
-                    orderTableModel.setValueAt(newQuantity, i, 3);
-                    orderTableModel.setValueAt(formatCurrency(price * newQuantity), i, 5);
-                    totalAmount = price * quantity;
+                    totalAmount = updatePrice(newQuantity, i);
                     lblTongTien.setText(formatCurrency(totalAmount));
+                    updateProductTableQuantity(productId, newQuantity);
                     added = true;
                     break;
                 }
             }
 
-            if (!added)
+            if (!added) {
                 orderTableModel.addRow(new Object[]{productId, productName, category, quantity, formatCurrency(price), formatCurrency(total)});
-            totalAmount += total;
-            lblTongTien.setText(formatCurrency(totalAmount));
+                totalAmount += total;
+                updateProductTableQuantity(productId, quantity);
+                lblTongTien.setText(formatCurrency(totalAmount));
+            }
             // Khóa thông tin khách
             txtSoDienThoai.setEditable(false);
             txtTenKhachHang.setEditable(false);
+            allProductsTable.clearSelection(); // Clear selection after add/update
+            productsTable.clearSelection();    // Clear selection after add/update
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Lỗi khi thêm sản phẩm.");
         }
@@ -468,6 +493,9 @@ public class GUI_Form_Order extends JDialog {
             int thanhTien = Integer.parseInt(orderTableModel.getValueAt(selectedRow, 5).toString().replaceAll("[^0-9]", ""));
             totalAmount -= thanhTien;
             lblTongTien.setText(formatCurrency(totalAmount));
+            String productId = orderTableModel.getValueAt(selectedRow, 0).toString();
+            int quantity = Integer.parseInt(orderTableModel.getValueAt(selectedRow, 3).toString());
+            updateProductTableQuantity(productId, quantity);
             orderTableModel.removeRow(selectedRow);
             // Mở lại nhập thông tin khách nếu giỏ trống
             if (orderTableModel.getRowCount() == 0) {
@@ -477,6 +505,15 @@ public class GUI_Form_Order extends JDialog {
         }
     }
 
+    private void updateProductTableQuantity(String productId, int quantityChange) {
+        for (int i = 0; i < productTableModel.getRowCount(); i++) {
+            if (productTableModel.getValueAt(i, 0).equals(productId)) {
+                int currentStock = Integer.parseInt(productTableModel.getValueAt(i, 4).toString());
+                productTableModel.setValueAt(currentStock - quantityChange, i, 4);
+                break;
+            }
+        }
+    }
 
     private void loadAllProducts() {
         productTableModel.setRowCount(0);
@@ -529,9 +566,14 @@ public class GUI_Form_Order extends JDialog {
     }
 
     private void saveOrder() {
+        if (orderTableModel.getRowCount() == 0) {
+            JOptionPane.showMessageDialog(this, "Giỏ hàng trống! Vui lòng thêm sản phẩm trước khi lưu hóa đơn.");
+            return;
+        }
         if (currentAccount != null)
             System.out.println(currentAccount.getEmployeeID() + currentAccount.getUsername());
         else System.out.println("NV null");
+
         String orderID = lblMaHoaDon.getText();
         String maKH = txtMaKhachHang.getText().trim();
         String tenKH = txtTenKhachHang.getText().trim();
@@ -656,5 +698,24 @@ public class GUI_Form_Order extends JDialog {
         String lastID = customerIDs.get(customerIDs.size() - 1).getId();
         int number = Integer.parseInt(lastID.substring(2));
         return String.format("C%02d", number + 1);
+    }
+
+    public int updatePrice(int newQuantity, int selectedRow) {
+        int oldQuantity = Integer.parseInt(orderTableModel.getValueAt(selectedRow, 3).toString());
+        int oldPrice = Integer.parseInt(orderTableModel.getValueAt(selectedRow, 4).toString().replaceAll("[^0-9]", ""));
+        int oldTotal = oldQuantity * oldPrice;
+        System.out.println("Old total: " + oldTotal);
+        
+        
+        int newTotal = oldPrice * newQuantity;
+        System.out.println("New total: " + newTotal);
+
+        // Cập nhật lại dòng
+        orderTableModel.setValueAt(newQuantity, selectedRow, 3);
+        orderTableModel.setValueAt(formatCurrency(newTotal), selectedRow, 5);
+
+        // Cập nhật tổng tiền
+        System.out.println("total price = total price - old total + new total = " + (totalAmount - oldTotal + newTotal));
+        return totalAmount - oldTotal + newTotal;
     }
 }
