@@ -1,7 +1,9 @@
-
 package GUI.Promotion;
 
+import BUS.PermissionBUS;
 import BUS.PromotionBUS;
+import DTO.AccountDTO;
+import DTO.ActionDTO;
 import GUI.CustomButton;
 import GUI.CustomSearch;
 import GUI.CustomTable;
@@ -11,6 +13,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -21,8 +24,8 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
+public class GUI_Promotion extends JPanel {
 
-public class GUI_Promotion extends JPanel{
     private JPanel topPanel, midPanel, botPanel;
     private JTable promoTable;
     private DefaultTableModel tableModel;
@@ -31,7 +34,7 @@ public class GUI_Promotion extends JPanel{
     private JTextField maKMField, tenKMField, mucGiamField, ngayBDField, ngayKTField;
     private PromotionBUS promotionBUS;
 
-    public GUI_Promotion() {
+    public GUI_Promotion(AccountDTO a) {
         promotionBUS = new PromotionBUS();
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -70,31 +73,36 @@ public class GUI_Promotion extends JPanel{
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.anchor = GridBagConstraints.WEST;
 
-        gbc.gridx = 0; gbc.gridy = 0;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
         botPanel.add(new JLabel("Mã khuyến mãi: "), gbc);
         gbc.gridx = 1;
         JLabel lblMaKM = new JLabel("Chọn khuyến mãi");
         botPanel.add(lblMaKM, gbc);
 
-        gbc.gridx = 0; gbc.gridy = 1;
+        gbc.gridx = 0;
+        gbc.gridy = 1;
         botPanel.add(new JLabel("Tên chương trình: "), gbc);
         gbc.gridx = 1;
         JLabel lblTen = new JLabel("");
         botPanel.add(lblTen, gbc);
 
-        gbc.gridx = 0; gbc.gridy = 2;
+        gbc.gridx = 0;
+        gbc.gridy = 2;
         botPanel.add(new JLabel("Ngày bắt đầu: "), gbc);
         gbc.gridx = 1;
         JLabel lblStart = new JLabel("");
         botPanel.add(lblStart, gbc);
 
-        gbc.gridx = 0; gbc.gridy = 3;
+        gbc.gridx = 0;
+        gbc.gridy = 3;
         botPanel.add(new JLabel("Ngày kết thúc: "), gbc);
         gbc.gridx = 1;
         JLabel lblEnd = new JLabel("");
         botPanel.add(lblEnd, gbc);
 
-        gbc.gridx = 1; gbc.gridy = 5;
+        gbc.gridx = 1;
+        gbc.gridy = 5;
         saveButton = new CustomButton("💾 Lưu");
         botPanel.add(saveButton, gbc);
 
@@ -118,8 +126,32 @@ public class GUI_Promotion extends JPanel{
         add(botPanel);
 
         loadKhuyenMai();
+        ArrayList<ActionDTO> actions = PermissionBUS.getPermissionActions(a, "Quan ly khuyen mai");
+
+        boolean canAdd = false, canEdit = false, canDelete = false, canWatch = false;
+
+        if (actions != null) {
+            for (ActionDTO action : actions) {
+                switch (action.getName()) {
+                    case "Add" ->
+                        canAdd = true;
+                    case "Edit" ->
+                        canEdit = true;
+                    case "Delete" ->
+                        canDelete = true;
+                    case "Watch" ->
+                        canWatch = true;
+                }
+            }
+        }
+
+        addButton.setVisible(canAdd);
+//        editButton.setVisible(canEdit);
+//        deleteButton.setVisible(canDelete);
+//        scrollPane.setVisible(canWatch);
+//        reloadButton.setVisible(false);
     }
-    
+
     private void loadKhuyenMai() {
 //        List<KhuyenMaiDTO> list = khuyenMaiBUS.getAll();
 //        tableModel.setRowCount(0);
@@ -130,6 +162,5 @@ public class GUI_Promotion extends JPanel{
 //            });
 //        }
     }
-    
-    
+
 }

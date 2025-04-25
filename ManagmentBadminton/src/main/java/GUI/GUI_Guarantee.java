@@ -4,7 +4,9 @@ import DAO.GuaranteeDAO;
 import DTO.GuaranteeDTO;
 
 import BUS.GuaranteeBUS;
+import BUS.PermissionBUS;
 import DTO.AccountDTO;
+import DTO.ActionDTO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -21,7 +23,7 @@ public class GUI_Guarantee extends JPanel {
     private CustomButton saveButton, fixButton, reloadButton;
     private CustomSearch searchField;
 
-    public GUI_Guarantee(AccountDTO b) {
+    public GUI_Guarantee(AccountDTO a) {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(new EmptyBorder(10, 10, 10, 10));
         setBackground(new Color(200, 200, 200));
@@ -76,7 +78,6 @@ public class GUI_Guarantee extends JPanel {
 //        gbc.gridx = 1;
 //        JLabel purchaseDateLabel = new JLabel("Chưa chọn");
 //        botPanel.add(purchaseDateLabel, gbc);
-
         // Trạng thái bảo hành
         gbc.gridx = 0;
         gbc.gridy = 2;
@@ -99,12 +100,11 @@ public class GUI_Guarantee extends JPanel {
 //        gbc.gridx = 1;
 //        JLabel StatusTime = new JLabel("");
 //        botPanel.add(StatusTime, gbc);
-
         // Nút sửa
         gbc.gridx = 0;
         gbc.gridy = 4;
         gbc.gridwidth = 2;
-        gbc.fill= GridBagConstraints.HORIZONTAL;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
         fixButton = new CustomButton("Sửa");
         fixButton.setCustomColor(Color.RED);
 
@@ -119,7 +119,7 @@ public class GUI_Guarantee extends JPanel {
                 textReasonLabel.setText(guarantee.getLydo());
                 StatusLabel.setText(guarantee.gettrangthai());
 //                if (b.contains("sua_bh")) {
-                    botPanel.add(fixButton, gbc);
+                botPanel.add(fixButton, gbc);
 //                    System.out.println("Co sua ");
 //                } else {
 //                    System.out.println("Khong co sua ");
@@ -148,7 +148,7 @@ public class GUI_Guarantee extends JPanel {
             Form_Guarantee fixForm = new Form_Guarantee((JFrame) SwingUtilities.getWindowAncestor(this), this, guarantee);
             fixForm.setVisible(true);
         });
-        
+
         loadGuaranteeData();
 
         reloadButton.addActionListener(e -> {
@@ -156,10 +156,32 @@ public class GUI_Guarantee extends JPanel {
             tableModel.fireTableDataChanged();
         });
 
-     
-            loadGuaranteeData();
-        
+        loadGuaranteeData();
 
+        ArrayList<ActionDTO> actions = PermissionBUS.getPermissionActions(a, "Quan ly bao hanh");
+
+        boolean canAdd = false, canEdit = false, canDelete = false, canWatch = false;
+
+        if (actions != null) {
+            for (ActionDTO action : actions) {
+                switch (action.getName()) {
+                    case "Add" ->
+                        canAdd = true;
+                    case "Edit" ->
+                        canEdit = true;
+                    case "Delete" ->
+                        canDelete = true;
+                    case "Watch" ->
+                        canWatch = true;
+                }
+            }
+        }
+
+//        addButton.setVisible(canAdd);
+        fixButton.setVisible(canEdit);
+//        deleteButton.setVisible(canDelete);
+        scrollPane.setVisible(canWatch);
+        reloadButton.setVisible(false);
         // Xử lý sự kiện chọn dòng trong bảng
         // Xử lý sự kiện chọn dòng trong bảng
     }
@@ -191,5 +213,4 @@ public class GUI_Guarantee extends JPanel {
 //            frame.setVisible(true);
 //        });
 //    }
-
 }
