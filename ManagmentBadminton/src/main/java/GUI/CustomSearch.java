@@ -5,7 +5,6 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 
 public class CustomSearch extends JPanel {
-
     private RoundedTextField searchField;
     private JButton searchButton;
 
@@ -53,7 +52,6 @@ public class CustomSearch extends JPanel {
 
     // Lớp JTextField tùy chỉnh với góc bo tròn
     private static class RoundedTextField extends JTextField {
-
         private int cornerRadius;
 
         public RoundedTextField(int cornerRadius) {

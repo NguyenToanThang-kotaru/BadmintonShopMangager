@@ -13,14 +13,8 @@ public class StatisticsPanel extends javax.swing.JPanel {
         jTabbedPane1 = new javax.swing.JTabbedPane();
         overviewFrom2 = new GUI.Statistics.form.overviewFrom();
         jTabbedPane2 = new javax.swing.JTabbedPane();
-        dashboardFrom1 = new GUI.Statistics.form.DashboardFrom();
-        dashboardFrom11 = new GUI.Statistics.form.DashboardFrom1();
 
         jTabbedPane1.addTab("Tổng Quan", overviewFrom2);
-
-        jTabbedPane2.addTab("Thống kê theo năm", dashboardFrom1);
-        jTabbedPane2.addTab("Thống kê theo tháng", dashboardFrom11);
-
         jTabbedPane1.addTab("Tài Chính", jTabbedPane2);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -41,8 +35,6 @@ public class StatisticsPanel extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private GUI.Statistics.form.DashboardFrom dashboardFrom1;
-    private GUI.Statistics.form.DashboardFrom1 dashboardFrom11;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTabbedPane jTabbedPane2;
     private GUI.Statistics.form.overviewFrom overviewFrom2;

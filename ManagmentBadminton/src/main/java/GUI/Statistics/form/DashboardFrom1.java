@@ -1,61 +1,56 @@
 package GUI.Statistics.form;
 
+import BUS.StatisticsBUS;
+import DTO.Statistics.StatisticsByMonthDTO;
 import GUI.Statistics.Chart.ModelChart;
 import java.awt.Color;
+import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Locale;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.table.DefaultTableModel;
 
 public class DashboardFrom1 extends javax.swing.JPanel {
 
-    /**
-     * Creates new form DashboardFrom
-     */
-    public DashboardFrom1() {
-        initComponents();
-        init();
-    }
-
-    private void init() {
-        chart.addLegend("Doanh thu", new Color(12, 84, 175), new Color(0, 108, 247));
-        chart.addLegend("Chi phí", new Color(54, 4, 143), new Color(104, 49, 200));
-        chart.addLegend("Lợi nhuận", new Color(5, 125, 0), new Color(95, 209, 69));
-
-        chart.addData(new ModelChart("Tháng 1", new double[]{120, 80, 40}));
-        chart.addData(new ModelChart("Tháng 2", new double[]{100, 90, 10}));
-        chart.addData(new ModelChart("Tháng 3", new double[]{130, 100, 30}));
-        chart.addData(new ModelChart("Tháng 4", new double[]{110, 70, 40}));
-        chart.addData(new ModelChart("Tháng 5", new double[]{150, 120, 60}));
-        chart.addData(new ModelChart("Tháng 6", new double[]{170, 140, 80}));
-        chart.addData(new ModelChart("Tháng 7", new double[]{180, 160, 100}));
-        chart.addData(new ModelChart("Tháng 8", new double[]{160, 130, 90}));
-        chart.addData(new ModelChart("Tháng 9", new double[]{140, 100, 70}));
-        chart.addData(new ModelChart("Tháng 10", new double[]{200, 180, 120}));
-        chart.addData(new ModelChart("Tháng 11", new double[]{190, 150, 110}));
-        chart.addData(new ModelChart("Tháng 12", new double[]{210, 170, 130}));
-
-        chart.start();
-
-        DefaultTableModel model = (DefaultTableModel) table.getModel();
-        model.addRow(new Object[]{"Tháng 1", 80, 120, 40});
-        model.addRow(new Object[]{"Tháng 2", 90, 100, 10});
-        model.addRow(new Object[]{"Tháng 3", 100, 130, 30});
-        model.addRow(new Object[]{"Tháng 4", 70, 110, 40});
-        model.addRow(new Object[]{"Tháng 5", 120, 150, 60});
-        model.addRow(new Object[]{"Tháng 6", 140, 170, 80});
-        model.addRow(new Object[]{"Tháng 7", 160, 180, 100});
-        model.addRow(new Object[]{"Tháng 8", 130, 160, 90});
-        model.addRow(new Object[]{"Tháng 9", 100, 140, 70});
-        model.addRow(new Object[]{"Tháng 10", 180, 200, 120});
-        model.addRow(new Object[]{"Tháng 11", 150, 190, 110});
-        model.addRow(new Object[]{"Tháng 12", 170, 210, 130});
-
+    StatisticsBUS statisticsBUS;
+    private ArrayList<StatisticsByMonthDTO> dataset;
+    private DefaultTableModel model;
+    static NumberFormat fm = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+    
+    public DashboardFrom1(StatisticsBUS statisticsBUS) {
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
         SpinnerNumberModel yearModel = new SpinnerNumberModel(currentYear, 2000, 2100, 1);
         jSpinner.setModel(yearModel);
         jSpinner.setEditor(new JSpinner.NumberEditor(jSpinner, "#"));
-
+        int selectedYear = (int) jSpinner.getValue();
+        this.statisticsBUS = statisticsBUS;
+        this.dataset = this.statisticsBUS.getStatisticsByMonth(selectedYear);
+        initComponents();
+        loadDataTalbe(dataset);
+        loadDataChart(dataset);
+        
+    }
+    
+    private void loadDataTalbe(ArrayList<StatisticsByMonthDTO> list){
+        for(StatisticsByMonthDTO i : list){
+            model.addRow(new Object[]{
+                i.getMonth(), fm.format(i.getCost()).replace("₫", "VND"), 
+                fm.format(i.getIncome()).replace("₫", "VND"), 
+                fm.format(i.getProfit()).replace("₫", "VND")
+            });
+        }
+    }
+    
+    private void loadDataChart(ArrayList<StatisticsByMonthDTO> list){
+        chart.addLegend("Doanh thu", new Color(12, 84, 175), new Color(0, 108, 247));
+        chart.addLegend("Chi phí", new Color(54, 4, 143), new Color(104, 49, 200));
+        chart.addLegend("Lợi nhuận", new Color(5, 125, 0), new Color(95, 209, 69));
+        for(StatisticsByMonthDTO i : list){
+            chart.addData(new ModelChart("Năm " + i.getMonth(), new double[]{i.getCost(), i.getIncome(), i.getProfit()}));
+        }
+        chart.start();
     }
 
     @SuppressWarnings("unchecked")
@@ -104,7 +99,7 @@ public class DashboardFrom1 extends javax.swing.JPanel {
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, true, true
+                false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -129,7 +124,7 @@ public class DashboardFrom1 extends javax.swing.JPanel {
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(134, 134, 134))
+                        .addGap(153, 153, 153))
                     .addComponent(roundPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );

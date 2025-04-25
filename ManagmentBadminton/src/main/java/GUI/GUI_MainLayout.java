@@ -20,7 +20,6 @@ public class GUI_MainLayout extends JFrame {
 
     private GUI_Sidebar Sidebar;
     private GUI_TittleBar tittleBar;
-
     public GUI_MainLayout(JFrame login, AccountDTO logined) {
         setTitle("Quản Lý Kho Hàng");
         setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -77,7 +76,7 @@ public class GUI_MainLayout extends JFrame {
 
         Sidebar.importPanel = new GUI_Import(logined);
 
-        Sidebar.promotionPanel = new GUI_Promotion(logined);
+        Sidebar.promotionPanel = new GUI_Promotion();
 
         Sidebar.customerPanel = new GUI_Customer(logined);
 

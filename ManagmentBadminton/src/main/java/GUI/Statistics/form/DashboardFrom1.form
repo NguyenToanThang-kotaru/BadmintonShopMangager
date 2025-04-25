@@ -26,7 +26,7 @@
                       <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jSpinner" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="134" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="153" max="-2" attributes="0"/>
                   </Group>
                   <Component id="roundPanel1" max="32767" attributes="0"/>
               </Group>
@@ -43,7 +43,7 @@
                   <Component id="jSpinner" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
               <Component id="roundPanel1" max="32767" attributes="0"/>
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Component id="jScrollPane1" pref="213" max="32767" attributes="0"/>
@@ -116,8 +116,8 @@
               <Table columnCount="4" rowCount="0">
                 <Column editable="false" title="Th&#xe1;ng" type="java.lang.Object"/>
                 <Column editable="false" title="Chi Ph&#xed;" type="java.lang.Object"/>
-                <Column editable="true" title="Doanh Thu" type="java.lang.Object"/>
-                <Column editable="true" title="L&#x1ee3;i Nhu&#x1ead;n" type="java.lang.Object"/>
+                <Column editable="false" title="Doanh Thu" type="java.lang.Object"/>
+                <Column editable="false" title="L&#x1ee3;i Nhu&#x1ead;n" type="java.lang.Object"/>
               </Table>
             </Property>
             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">

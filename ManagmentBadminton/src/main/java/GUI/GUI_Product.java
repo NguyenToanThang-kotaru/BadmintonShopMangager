@@ -268,7 +268,6 @@ public class GUI_Product extends JPanel {
 
             }
         });
-
         reloadButton.addActionListener(e -> {
             loadProductData();
             tableModel.fireTableDataChanged();

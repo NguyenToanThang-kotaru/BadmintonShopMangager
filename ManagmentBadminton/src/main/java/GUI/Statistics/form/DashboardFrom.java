@@ -1,40 +1,47 @@
 package GUI.Statistics.form;
 
+import BUS.StatisticsBUS;
+import DTO.Statistics.StatisticsByYearDTO;
 import GUI.Statistics.Chart.ModelChart;
 import java.awt.Color;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Locale;
 import javax.swing.table.DefaultTableModel;
 
 public class DashboardFrom extends javax.swing.JPanel {
 
-    /**
-     * Creates new form DashboardFrom
-     */
-    public DashboardFrom() {
+    StatisticsBUS statisticsBUS;
+    private ArrayList<StatisticsByYearDTO> dataset;
+    private DefaultTableModel model;
+    static NumberFormat fm = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+    
+    public DashboardFrom(StatisticsBUS statisticsBUS) {
+        this.statisticsBUS = statisticsBUS;
+        this.dataset = this.statisticsBUS.getStatisticsByYear();
         initComponents();
-        init();
+        loadDataTalbe(dataset);
+        loadDataChart(dataset);
     }
-
-    private void init() {
+    
+    private void loadDataTalbe(ArrayList<StatisticsByYearDTO> list){
+        for(StatisticsByYearDTO i : list){
+            model.addRow(new Object[]{
+                i.getYear(), fm.format(i.getCost()).replace("₫", "VND"), 
+                fm.format(i.getIncome()).replace("₫", "VND"), 
+                fm.format(i.getProfit()).replace("₫", "VND")
+            });
+        }
+    }
+    
+    private void loadDataChart(ArrayList<StatisticsByYearDTO> list){
         chart.addLegend("Doanh thu", new Color(12, 84, 175), new Color(0, 108, 247));
         chart.addLegend("Chi phí", new Color(54, 4, 143), new Color(104, 49, 200));
         chart.addLegend("Lợi nhuận", new Color(5, 125, 0), new Color(95, 209, 69));
-
-        chart.addData(new ModelChart("2020", new double[]{500, 200, 80}));
-        chart.addData(new ModelChart("2021", new double[]{600, 750, 90}));
-        chart.addData(new ModelChart("2022", new double[]{200, 350, 460}));
-        chart.addData(new ModelChart("2023", new double[]{480, 150, 750}));
-        chart.addData(new ModelChart("2024", new double[]{350, 540, 300}));
-        chart.addData(new ModelChart("2025", new double[]{190, 280, 81}));
-
+        for(StatisticsByYearDTO i : list){
+            chart.addData(new ModelChart("Năm " + i.getYear(), new double[]{i.getCost(), i.getIncome(), i.getProfit()}));
+        }
         chart.start();
-
-        DefaultTableModel model = (DefaultTableModel) table.getModel();
-        model.addRow(new Object[]{"2020", 200, 500, 80});
-        model.addRow(new Object[]{"2021", 750, 600, 90});
-        model.addRow(new Object[]{"2022", 350, 200, 460});
-        model.addRow(new Object[]{"2023", 150, 480, 750});
-        model.addRow(new Object[]{"2024", 540, 350, 300});
-        model.addRow(new Object[]{"2025", 280, 190, 81});
     }
 
     @SuppressWarnings("unchecked")
@@ -81,7 +88,7 @@ public class DashboardFrom extends javax.swing.JPanel {
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, true, true
+                false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
