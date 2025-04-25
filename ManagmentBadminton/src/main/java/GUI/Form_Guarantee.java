@@ -111,6 +111,9 @@ public class Form_Guarantee extends JDialog {
                 String selected = (String) statusBaohanh.getSelectedItem();
                 reasonPanel.setVisible("Có".equals(selected));
                 reasonField.setVisible("Có".equals(selected));
+                if ("Không".equals(selected)) {
+                    reasonField.setText("");
+                }
                 revalidate();
                 repaint();
             }
