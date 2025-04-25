@@ -174,7 +174,7 @@ public class GUI_Import extends JPanel {
             capNhatBangImport(ketQua); // Hiển thị kết quả tìm được trên bảng
         });
 
-        ArrayList<ActionDTO> actions = PermissionBUS.getPermissionActions(username, "Quan ly hoa dong nhap");
+        ArrayList<ActionDTO> actions = PermissionBUS.getPermissionActions(username, "Quan ly hoa don nhap");
 
         boolean canAdd = false, canEdit = false, canDelete = false, canWatch = false;
 

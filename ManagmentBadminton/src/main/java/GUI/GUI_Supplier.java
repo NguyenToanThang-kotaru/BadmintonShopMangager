@@ -45,7 +45,6 @@ public class GUI_Supplier extends JPanel {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(new EmptyBorder(10, 10, 10, 10));
         setBackground(new Color(200, 200, 200));
-
         topPanel = new JPanel(new BorderLayout(10, 10));
         topPanel.setPreferredSize(new Dimension(0, 60));
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -64,7 +63,6 @@ public class GUI_Supplier extends JPanel {
 
         midPanel = new JPanel(new BorderLayout());
         midPanel.setBackground(Color.WHITE);
-
         String[] columnNames = {"Mã NCC", "Tên NCC", "SĐT", "Email", "Địa chỉ"};
         CustomTable customTable = new CustomTable(columnNames);
         supplierTable = customTable.getSupplierTable();
@@ -79,7 +77,6 @@ public class GUI_Supplier extends JPanel {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.anchor = GridBagConstraints.WEST;
-
         gbc.gridx = 0;
         gbc.gridy = 0;
         botPanel.add(new JLabel("Tên Nhà Cung Cấp: "), gbc);
@@ -107,14 +104,12 @@ public class GUI_Supplier extends JPanel {
         gbc.gridx = 1;
         emailLabel = new JLabel("");
         botPanel.add(emailLabel, gbc);
-
         gbc.gridx = 0;
         gbc.gridy = 4;
         botPanel.add(new JLabel("Địa Chỉ: "), gbc);
         gbc.gridx = 1;
         addressLabel = new JLabel("");
         botPanel.add(addressLabel, gbc);
-
         buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 5));
         buttonPanel.setOpaque(false);
 
@@ -178,7 +173,6 @@ public class GUI_Supplier extends JPanel {
                 JOptionPane.showMessageDialog(this, "Vui lòng chọn nhà cung cấp để xem danh sách sản phẩm!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         });
-
         supplierTable.getSelectionModel().addListSelectionListener(e -> {
             int selectedRow = supplierTable.getSelectedRow();
             if (selectedRow != -1) {
@@ -205,7 +199,6 @@ public class GUI_Supplier extends JPanel {
                 botPanel.repaint();
             }
         });
-
         add(topPanel);
         add(Box.createVerticalStrut(10));
         add(midPanel);

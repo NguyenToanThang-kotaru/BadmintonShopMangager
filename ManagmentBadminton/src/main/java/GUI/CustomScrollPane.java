@@ -22,6 +22,7 @@ public class CustomScrollPane extends JScrollPane {
         verticalScrollBar.setPreferredSize(new Dimension(0, 0)); // Giảm độ rộng
         verticalScrollBar.setUnitIncrement(10);
         verticalScrollBar.setBorder(BorderFactory.createLineBorder(new Color(180, 180, 180), 1));
+        setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_AS_NEEDED); // Chỉ hiện khi cần
 
         verticalScrollBar.setUI(new BasicScrollBarUI() {
             @Override
