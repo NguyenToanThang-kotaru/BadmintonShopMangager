@@ -76,7 +76,7 @@ public class GUI_MainLayout extends JFrame {
 
         Sidebar.importPanel = new GUI_Import(logined);
 
-        Sidebar.promotionPanel = new GUI_Promotion(logined);
+        Sidebar.promotionPanel = new GUI_Promotion();
 
         Sidebar.customerPanel = new GUI_Customer(logined);
 
