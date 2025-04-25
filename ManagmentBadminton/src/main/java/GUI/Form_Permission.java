@@ -55,6 +55,9 @@ public class Form_Permission extends JDialog {
 
         // Tên quyền
         txtPermissionName = new JTextField(20);
+        if (permission != null) {
+            txtPermissionName.setText(permission.getName());
+        }
         addComponent("Tên Quyền:", txtPermissionName, gbc);
 
         // Danh sách chức năng với checkbox
@@ -131,12 +134,17 @@ public class Form_Permission extends JDialog {
 //            }
 
             if (!isEditMode) {
-                if (PermissionBUS.add_Permisison(newPermission)&& PermissionBUS.add_FunctionAction(newPermission)) {
+                if (PermissionBUS.add_Permisison(newPermission) && PermissionBUS.add_FunctionAction(newPermission)) {
                     System.out.println("them quyen thanh con");
-                    
+
                 }
             } else {
-//                PermissionDAO.editPermission(newPermission);
+                permission.setName(txtPermissionName.getText());
+                permission.setnameUnsinged(removeAccents(txtPermissionName.getText()));
+                permission.setTotalAccount("0");
+                permission.setFunction(getSelectedFunctionActions());
+                permission.setTotalFunction(Integer.toString(permission.getFunction().size()));
+                PermissionBUS.update_Permission(permission);
             }
             dispose(); // đóng form
         });
@@ -196,7 +204,9 @@ public class Form_Permission extends JDialog {
             for (int col = 0; col < allActions.size(); col++) {
                 ActionDTO action = allActions.get(col);
                 gbc.gridx = col + 1;
-
+                if (func.getNameUnsigned().equals("Quan ly thong ke") && (col == 1 || col == 2 || col == 3)) {
+                    continue;
+                }
                 JCheckBox cb = new JCheckBox();
                 cb.setName(func.getID() + "_" + action.getID()); // Ví dụ: "F001_Them"
 

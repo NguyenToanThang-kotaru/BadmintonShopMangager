@@ -199,15 +199,34 @@ public class GUI_Form_Import extends JDialog {
             String quantityText = productDetailPanel.getTxtQuantity().getText().trim();
             String validationError = bus.validateProductToAdd(productId, quantityText);
             String productImg = productDetailPanel.getTxtImageFilename().getText();
+            String productName = productDetailPanel.getTxtProductName().getText();
+            String price = productDetailPanel.getTxtPrice().getText().replaceAll("[^0-9]", "");
+            //Kiểm tra tất cả không để trống
+            if (productName == null || productName.isEmpty() || price == null || price.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Vui lòng điền đầy đủ thông tin sản phẩm", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            //Kiểm tra số lượng nhập hàng
+            if (quantityText == null || quantityText.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Vui lòng nhập số lượng sản phẩm", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            //Kiem tra hinh anh
+            if (productImg == null || productImg.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn hình ảnh sản phẩm", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            ProductBUS productBUS = new ProductBUS();
+            if (productBUS.getProductByID(productId) == null && !bus.validateProductImport(productName, price, productImg)){
+                return;
+            }
+            int quantity = Integer.parseInt(quantityText);
+            double priceImport = Double.parseDouble(price);
+            double total = priceImport * quantity;
             if (validationError != null) {
                 JOptionPane.showMessageDialog(this, validationError, "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-
-            String productName = productDetailPanel.getTxtProductName().getText();
-            double price = Integer.parseInt(productDetailPanel.getTxtPrice().getText().replaceAll("[^0-9]", ""));
-            int quantity = Integer.parseInt(quantityText);
-            double total = price * quantity;
 
             DefaultTableModel model = importProductsPanel.getImportTableModel();
             boolean found = false;
@@ -218,7 +237,7 @@ public class GUI_Form_Import extends JDialog {
                     // Tăng số lượng
                     int oldQuantity = Integer.parseInt(model.getValueAt(i, 2).toString());
                     int newQuantity = oldQuantity + quantity;
-                    double newTotal = newQuantity * price;
+                    double newTotal = newQuantity * priceImport;
 
                     model.setValueAt(newQuantity, i, 2);
                     model.setValueAt(Utils.formatCurrency(price), i, 3);

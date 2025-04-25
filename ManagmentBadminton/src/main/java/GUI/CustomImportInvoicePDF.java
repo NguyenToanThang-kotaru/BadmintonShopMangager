@@ -65,7 +65,7 @@ public class CustomImportInvoicePDF {
             supplierTable.setSpacingAfter(10);
 
             String employeeName = EmployeeBUS.getEmployeeByID(invoice.getEmployeeID()).getFullName();
-            supplierTable.addCell(getCell("Tên nhân viên:", headerFont));
+            supplierTable.addCell(getCell("Nhân viên nhập:", headerFont));
             supplierTable.addCell(getCell(employeeName, normalFont));
 
             document.add(supplierTable);
@@ -79,7 +79,7 @@ public class CustomImportInvoicePDF {
             productTable.addCell(getCell("SẢN PHẨM", headerFont, PdfPCell.ALIGN_CENTER, 5));
 
             productTable.addCell(getCell("Tên sản phẩm", headerFont));
-            productTable.addCell(getCell("Tên nhà cung cấp", headerFont));
+            productTable.addCell(getCell("Nhà cung cấp", headerFont));
             productTable.addCell(getCell("Số lượng", headerFont));
             productTable.addCell(getCell("Đơn giá", headerFont));
             productTable.addCell(getCell("Thành tiền", headerFont));

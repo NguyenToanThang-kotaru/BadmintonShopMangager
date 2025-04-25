@@ -2,25 +2,22 @@ package DTO;
 
 import java.sql.Date;
 
-public class PromotionDTO {
-    private int id;
-    private String name;
-    private Date startDate;
-    private Date endDate;
-    private double discountRate; 
+public abstract class PromotionDTO {
+    protected int id;
+    protected String name;
+    protected Date startDate;
+    protected Date endDate;
 
     public PromotionDTO() {
     }
 
-    public PromotionDTO(int id, String name, Date startDate, Date endDate, double discountRate) {
+    public PromotionDTO(int id, String name, Date startDate, Date endDate) {
         this.id = id;
         this.name = name;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.discountRate = discountRate;
     }
-    
-    
+
     public int getId() {
         return id;
     }
@@ -53,23 +50,11 @@ public class PromotionDTO {
         this.endDate = endDate;
     }
 
-    public double getDiscountRate() {
-        return discountRate;
-    }
+//    public abstract boolean apDung(SanPham sanPham, HoaDon hoaDon);
+//    public abstract void thucHienKhuyenMai(HoaDon hoaDon);
 
-    public void setDiscountRate(double discountRate) {
-        this.discountRate = discountRate;
+    public int getDiscountRate() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-
-    // Tính giá sau khi giảm
-    public double tinhGiaSauGiam(double giaGoc) {
-        return giaGoc * (1 - discountRate);
-    }
-
-    // Kiểm tra giảm giá còn hiệu lực không (theo ngày hiện tại)
-    public boolean conHieuLuc() {
-        Date today = new Date(System.currentTimeMillis());
-        return (today.equals(startDate) || today.after(startDate)) &&
-               (today.equals(endDate) || today.before(endDate));
-    }
+    
 }

@@ -30,7 +30,6 @@ public class Chart extends javax.swing.JPanel {
     private float animate;
     private String showLabel;
     private Point labelLocation = new Point();
-
     public Chart() {
         initComponents();
         setOpaque(false);

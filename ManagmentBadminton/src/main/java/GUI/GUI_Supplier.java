@@ -7,6 +7,7 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -19,32 +20,41 @@ import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
+import BUS.AccountBUS;
+import BUS.PermissionBUS;
 import BUS.SupplierBUS;
+import DTO.AccountDTO;
+import DTO.ActionDTO;
 import DTO.SupplierDTO;
 
 public class GUI_Supplier extends JPanel {
-    
+
     private JPanel topPanel, midPanel, botPanel;
     private JTable supplierTable;
     private DefaultTableModel tableModel;
-    private CustomButton editButton, deleteButton, productListButton;
+    private CustomButton editButton, deleteButton, productListButton, reloadButton;
     private CustomButton addButton;
     private CustomSearch searchField;
     private SupplierBUS supplierBUS;
     private JLabel suppliernameLabel, supplieridLabel, addressLabel, phoneLabel, emailLabel;
     private JPanel buttonPanel;
 
-    public GUI_Supplier() {
+    public GUI_Supplier(AccountDTO a) {
         supplierBUS = new SupplierBUS();
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(new EmptyBorder(10, 10, 10, 10));
         setBackground(new Color(200, 200, 200));
-        
         topPanel = new JPanel(new BorderLayout(10, 10));
         topPanel.setPreferredSize(new Dimension(0, 60));
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         topPanel.setBackground(Color.WHITE);
+
+        reloadButton = new CustomButton("Tải lại trang");
+        topPanel.add(reloadButton, BorderLayout.WEST);
+        reloadButton.addActionListener(e -> {
+            loadSupplier();
+        });
 
         searchField = new CustomSearch(275, 20);
         searchField.setBackground(Color.WHITE);
@@ -53,13 +63,12 @@ public class GUI_Supplier extends JPanel {
 
         midPanel = new JPanel(new BorderLayout());
         midPanel.setBackground(Color.WHITE);
-        
         String[] columnNames = {"Mã NCC", "Tên NCC", "SĐT", "Email", "Địa chỉ"};
         CustomTable customTable = new CustomTable(columnNames);
         supplierTable = customTable.getSupplierTable();
         tableModel = customTable.getTableModel();
-        
-        midPanel.add(customTable, BorderLayout.CENTER);
+        CustomScrollPane scrollPane = new CustomScrollPane(customTable);
+        midPanel.add(scrollPane, BorderLayout.CENTER);
 
         botPanel = new JPanel(new GridBagLayout());
         botPanel.setBackground(Color.WHITE);
@@ -68,7 +77,6 @@ public class GUI_Supplier extends JPanel {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.anchor = GridBagConstraints.WEST;
-        
         gbc.gridx = 0;
         gbc.gridy = 0;
         botPanel.add(new JLabel("Tên Nhà Cung Cấp: "), gbc);
@@ -96,14 +104,12 @@ public class GUI_Supplier extends JPanel {
         gbc.gridx = 1;
         emailLabel = new JLabel("");
         botPanel.add(emailLabel, gbc);
-        
         gbc.gridx = 0;
         gbc.gridy = 4;
         botPanel.add(new JLabel("Địa Chỉ: "), gbc);
         gbc.gridx = 1;
         addressLabel = new JLabel("");
         botPanel.add(addressLabel, gbc);
-        
         buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 5));
         buttonPanel.setOpaque(false);
 
@@ -167,7 +173,6 @@ public class GUI_Supplier extends JPanel {
                 JOptionPane.showMessageDialog(this, "Vui lòng chọn nhà cung cấp để xem danh sách sản phẩm!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         });
-        
         supplierTable.getSelectionModel().addListSelectionListener(e -> {
             int selectedRow = supplierTable.getSelectedRow();
             if (selectedRow != -1) {
@@ -194,7 +199,6 @@ public class GUI_Supplier extends JPanel {
                 botPanel.repaint();
             }
         });
-        
         add(topPanel);
         add(Box.createVerticalStrut(10));
         add(midPanel);
@@ -202,6 +206,44 @@ public class GUI_Supplier extends JPanel {
         add(botPanel);
 
         loadSupplier();
+
+        searchField.setSearchListener(e -> {
+            String keyword = searchField.getText();
+            ArrayList<SupplierDTO> ketQua = SupplierBUS.searchSupplier(keyword);
+            capNhatBangNCC(ketQua); // Hiển thị kết quả tìm được trên bảng
+        });
+        ArrayList<ActionDTO> actions = PermissionBUS.getPermissionActions(a, "Quan ly nha cung cap");
+
+        boolean canAdd = false, canEdit = false, canDelete = false, canWatch = false;
+
+        if (actions != null) {
+            for (ActionDTO action : actions) {
+                switch (action.getName()) {
+                    case "Add" ->
+                        canAdd = true;
+                    case "Edit" ->
+                        canEdit = true;
+                    case "Delete" ->
+                        canDelete = true;
+                    case "Watch" ->
+                        canWatch = true;
+                }
+            }
+        }
+
+        addButton.setVisible(canAdd);
+        editButton.setVisible(canEdit);
+        deleteButton.setVisible(canDelete);
+        scrollPane.setVisible(canWatch);
+        reloadButton.setVisible(false);
+    }
+
+    private void capNhatBangNCC(ArrayList<SupplierDTO> suppliers) {
+        tableModel.setRowCount(0); // Xóa dữ liệu cũ
+        int index = 1;
+        for (SupplierDTO supplierDTO : suppliers) {
+            tableModel.addRow(new Object[]{index++, supplierDTO.getSupplierID(), supplierDTO.getSupplierName(), supplierDTO.getPhone(), supplierDTO.getEmail(), supplierDTO.getAddress()});
+        }
     }
 
     public void loadSupplier() {
@@ -220,12 +262,11 @@ public class GUI_Supplier extends JPanel {
         tableModel.setRowCount(0);
 
         for (SupplierDTO supplier : supplierList) {
-            if (supplier.getSupplierID().toLowerCase().contains(keyword) ||
-                supplier.getSupplierName().toLowerCase().contains(keyword) ||
-                supplier.getAddress().toLowerCase().contains(keyword) ||
-                supplier.getPhone().toLowerCase().contains(keyword) ||
-                supplier.getEmail().toLowerCase().contains(keyword)
-                ) {
+            if (supplier.getSupplierID().toLowerCase().contains(keyword)
+                    || supplier.getSupplierName().toLowerCase().contains(keyword)
+                    || supplier.getAddress().toLowerCase().contains(keyword)
+                    || supplier.getPhone().toLowerCase().contains(keyword)
+                    || supplier.getEmail().toLowerCase().contains(keyword)) {
                 tableModel.addRow(new Object[]{
                     supplier.getSupplierID(),
                     supplier.getSupplierName(),
@@ -236,7 +277,6 @@ public class GUI_Supplier extends JPanel {
             }
         }
     }
-
 
     private void clearDetails() {
         suppliernameLabel.setText("Chọn Nhà Cung Cấp");

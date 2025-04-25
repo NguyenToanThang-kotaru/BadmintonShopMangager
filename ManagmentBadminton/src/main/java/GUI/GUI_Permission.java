@@ -6,6 +6,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import BUS.AccountBUS;
 import BUS.PermissionBUS;
+import DTO.AccountDTO;
+import DTO.ActionDTO;
 import DTO.PermissionDTO;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -19,11 +21,11 @@ public class GUI_Permission extends JPanel {
     private JTable permissionTable;
     private DefaultTableModel tableModel;
     private JComboBox<String> roleComboBox;
-    private CustomButton editButton, addButton, deleteButton, detailButton;
+    private CustomButton editButton, addButton, deleteButton, detailButton, reloadButton;
     private CustomSearch searchField;
     private PermissionDTO permissionChoosing;
 
-    public GUI_Permission() {
+    public GUI_Permission(AccountDTO a) {
         // Cấu hình layout chính
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -34,7 +36,8 @@ public class GUI_Permission extends JPanel {
         topPanel.setPreferredSize(new Dimension(0, 60));
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         topPanel.setBackground(Color.WHITE);
-
+        reloadButton = new CustomButton("Reload");
+        topPanel.add(reloadButton, BorderLayout.WEST);
         searchField = new CustomSearch(275, 40); // Ô nhập tìm kiếm
         searchField.setBackground(Color.WHITE);
         topPanel.add(searchField, BorderLayout.CENTER);
@@ -45,15 +48,16 @@ public class GUI_Permission extends JPanel {
         // ========== BẢNG HIỂN THỊ DANH SÁCH TÀI KHOẢN ==========
         midPanel = new JPanel(new BorderLayout());
         midPanel.setBackground(Color.WHITE);
+        midPanel.setMinimumSize(new Dimension(200, 450));
+        midPanel.setPreferredSize(new Dimension(200, 450));
 
         // Định nghĩa tiêu đề cột
         String[] columnNames = {"STT", "Tên Quyền", "Số Lượng Chức Năng", "Số Lượng Tài Khoản"};
         CustomTable customTable = new CustomTable(columnNames);
         permissionTable = customTable.getAccountTable(); // Lấy JTable từ CustomTable
         tableModel = customTable.getTableModel(); // Lấy model của bảng
-
-        midPanel.add(customTable, BorderLayout.CENTER);
-
+        CustomScrollPane scrollPane = new CustomScrollPane(customTable);
+        midPanel.add(scrollPane, BorderLayout.CENTER);
         // ========== PANEL CHI TIẾT TÀI KHOẢN ==========
         botPanel = new JPanel(new GridBagLayout());
         botPanel.setBackground(Color.WHITE);
@@ -98,7 +102,7 @@ public class GUI_Permission extends JPanel {
         gbc.gridy = 3;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-
+        
         // Xử lý sự kiện chọn tài khoản trong bảng
         permissionTable.getSelectionModel().addListSelectionListener(e -> {
             int selectedRow = permissionTable.getSelectedRow();
@@ -139,14 +143,16 @@ public class GUI_Permission extends JPanel {
                 }
             }
         });
-
+        reloadButton.addActionListener(e -> {
+            loadPermissions();
+        });
         editButton.addActionListener(e -> {
-            Form_Permission FP = new Form_Permission(this,permissionChoosing);
+            Form_Permission FP = new Form_Permission(this, permissionChoosing);
             FP.setVisible(true);
         });
 
         addButton.addActionListener(e -> {
-            Form_Permission FP = new Form_Permission(this,null);
+            Form_Permission FP = new Form_Permission(this, null);
             FP.setVisible(true);
         });
 
@@ -156,13 +162,39 @@ public class GUI_Permission extends JPanel {
         add(midPanel);
         add(Box.createVerticalStrut(10));
         add(botPanel);
+        detailButton.setVisible(false);
 
         // Tải dữ liệu tài khoản lên bảng
         loadPermissions();
+
+        ArrayList<ActionDTO> actions = PermissionBUS.getPermissionActions(a, "Quan ly phan quyen");
+
+        boolean canAdd = false, canEdit = false, canDelete = false, canWatch = false;
+
+        if (actions != null) {
+            for (ActionDTO action : actions) {
+                switch (action.getName()) {
+                    case "Add" ->
+                        canAdd = true;
+                    case "Edit" ->
+                        canEdit = true;
+                    case "Delete" ->
+                        canDelete = true;
+                    case "Watch" ->
+                        canWatch = true;
+                }
+            }
+        }
+
+        addButton.setVisible(canAdd);
+        editButton.setVisible(canEdit);
+        deleteButton.setVisible(canDelete);
+        scrollPane.setVisible(canWatch);
+        reloadButton.setVisible(false);
     }
 
     // Phương thức tải danh sách tài khoản từ database lên bảng
-    private void loadPermissions(){
+    private void loadPermissions() {
         ArrayList<PermissionDTO> permission = PermissionBUS.getAllPermissions();
         tableModel.setRowCount(0); // Xóa dữ liệu cũ trước khi cập nhật
         int index = 1;

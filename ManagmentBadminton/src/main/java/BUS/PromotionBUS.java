@@ -7,32 +7,24 @@ import java.util.List;
 
 
 public class PromotionBUS {
-    
-    private PromotionDAO promotionDAO;
-
-    public PromotionBUS() {
-        promotionDAO = new PromotionDAO();
-    }
-    
-    
     public List<PromotionDTO> getAllPromotion() {
-        return PromotionDAO.getAllPromotions();
+        return PromotionDAO.getAllPromotion();
     }
 
-    public PromotionDTO getPromotionByID(int maKM) {
-        return PromotionDAO.getPromotionById(maKM);
+    public PromotionDTO getPromotionByID(String maKM) {
+        return PromotionDAO.getKhuyenMaiByID(maKM);
     }
 
     public boolean addPromotion(PromotionDTO km) {
-        return PromotionDAO.addPromotion(km);
+        return PromotionDAO.insert(km);
     }
 
     public boolean updatePromotion(PromotionDTO km) {
-        return PromotionDAO.updatePromotion(km);
+        return PromotionDAO.update(km);
     }
 
-    public boolean deletePromotion(int maKM) {
-        return PromotionDAO.deletePromotionById(maKM);
+    public boolean deletePromotion(String maKM) {
+        return PromotionDAO.delete(maKM);
     }
     
 }

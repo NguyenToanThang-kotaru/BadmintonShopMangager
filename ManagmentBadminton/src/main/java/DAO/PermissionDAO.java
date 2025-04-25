@@ -10,6 +10,7 @@ import Connection.DatabaseConnection;
 import DTO.ActionDTO;
 import DTO.FunctionActionDTO;
 import DTO.PermissionDTO;
+import com.mysql.cj.protocol.Resultset;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -22,7 +23,7 @@ import java.util.List;
  * @author Kieu Mai
  */
 public class PermissionDAO {
-    
+
     public static Boolean add_Permission(PermissionDTO per) {
         try {
             String sql = "INSERT INTO employee_rank (`RankID`, `RankName`, `RankNameUnsigned`, `IsDeleted`) VALUES (?, ?, ?, 0)";
@@ -36,6 +37,19 @@ public class PermissionDAO {
             return result > 0;
 
         } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static Boolean delete_FunctionAction(String RoleID) {
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            String sql = "DELETE FROM `function_detail` WHERE `RankID`= ?;";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, RoleID);
+            stmt.executeUpdate();
+            return true;
+        } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
@@ -61,6 +75,7 @@ public class PermissionDAO {
 
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println("loi nen ra day");
             return false;
         }
     }
@@ -83,50 +98,65 @@ public class PermissionDAO {
         }
     }
 
-    public static PermissionDTO getPermissionByName(String Name) {
-        String sql = "SELECT er.rankID, er.rankName, "
-                + "f.functionID, f.functionName, f.functionNameUnsigned, "
-                + "a.actionID, a.actionName, a.actionNameVN "
-                + "FROM function_detail fd "
-                + "JOIN employee_rank er ON fd.rankID = er.rankID "
-                + "JOIN `function` f ON fd.functionID = f.functionID "
-                + "JOIN action a ON fd.actionID = a.actionID "
-                + "WHERE er.RankName = ? "
-                + "ORDER BY f.functionID, a.actionID";
-
+    public static PermissionDTO getPermissionByName(String name) {
+        String sql = "SELECT rankID, rankName FROM employee_rank WHERE rankName = ?";
         PermissionDTO permission = null;
 
-        try (
-                Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
-            ps.setString(1, Name);
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, name);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    permission = new PermissionDTO();
+                    permission.setID(rs.getString("rankID"));
+                    permission.setName(rs.getString("rankName"));
+                    // Gọi hàm lấy function + action riêng
+                    permission.setFunction(getFunctionsByRankID(permission.getID()));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return permission;
+    }
+
+    public static ArrayList<FunctionActionDTO> getFunctionsByRankID(String rankID) {
+        String sql = "SELECT f.functionID, f.functionName, f.functionNameUnsigned, "
+                + "a.actionID, a.actionName, a.actionNameVN "
+                + "FROM function_detail fd "
+                + "JOIN `function` f ON fd.functionID = f.functionID "
+                + "JOIN action a ON fd.actionID = a.actionID "
+                + "WHERE fd.rankID = ? AND fd.IsDeleted = 0 "
+                + "ORDER BY f.functionID, a.actionID";
+
+        ArrayList<FunctionActionDTO> functionList = new ArrayList<>();
+
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, rankID);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    if (permission == null) {
-                        permission = new PermissionDTO();
-                        permission.setID(rs.getString("rankID"));
-                        permission.setName(rs.getString("rankName"));
-                        permission.setFunction(new ArrayList<>());
-                    }
-
-                    String functionId = rs.getString("functionID");
+                    String functionID = rs.getString("functionID");
                     FunctionActionDTO function = null;
 
-                    for (FunctionActionDTO f : permission.getFunction()) {
-                        if (f.getID().equals(functionId)) {
+                    // Tìm function trong danh sách đã có
+                    for (FunctionActionDTO f : functionList) {
+                        if (f.getID().equals(functionID)) {
                             function = f;
                             break;
                         }
                     }
 
+                    // Nếu chưa có thì tạo mới
                     if (function == null) {
                         function = new FunctionActionDTO();
-                        function.setID(functionId);
+                        function.setID(functionID);
                         function.setName(rs.getString("functionName"));
                         function.setNameUnsigned(rs.getString("functionNameUnsigned"));
                         function.setAction(new ArrayList<>());
-                        permission.getFunction().add(function);
+                        functionList.add(function);
                     }
 
+                    // Thêm action vào function
                     ActionDTO action = new ActionDTO();
                     action.setID(rs.getString("actionID"));
                     action.setName(rs.getString("actionName"));
@@ -135,10 +165,28 @@ public class PermissionDAO {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // hoặc log lỗi tùy hệ thống logging bạn dùng
+            e.printStackTrace();
         }
 
-        return permission; // null nếu không tìm thấy
+        return functionList;
+    }
+
+    public static String countTotalAction(String roleID) {
+        String sql = "SELECT COUNT(*) as totalPermissions "
+                + "FROM function_detail fd "
+                + "WHERE fd.rankID = ? AND fd.IsDeleted = 0";
+        try {
+            Connection conn = DatabaseConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, roleID);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return String.valueOf(rs.getInt("totalPermissions"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "0";
     }
 
     public static PermissionDTO getPermissionByID(String rankId) {
@@ -233,7 +281,7 @@ public class PermissionDAO {
                 permission.setnameUnsinged(rsRank.getString("RankNameUnsigned"));
                 permission.setTotalAccount(AccountBUS.countAccountFromPermission(permission.getID()));
                 permission.setFunction(new ArrayList<>());
-                permission.setTotalFunction("0"); // mặc định là 0
+                permission.setTotalFunction(countTotalAction(permission.getID()));
                 permissions.add(permission);
             }
 
@@ -250,7 +298,7 @@ public class PermissionDAO {
                     + "ORDER BY fd.rankID, f.functionID, a.actionID";
             PreparedStatement psDetail = conn.prepareStatement(detailSql);
             ResultSet rsDetail = psDetail.executeQuery();
-
+            int totalFunction = 0;
             while (rsDetail.next()) {
                 String rankId = rsDetail.getString("rankID");
                 String functionId = rsDetail.getString("functionID");
@@ -262,10 +310,7 @@ public class PermissionDAO {
                         permission = p;
                         break;
                     }
-                }
 
-                if (permission == null) {
-                    continue; // phòng hờ
                 }
                 // === Tìm hoặc tạo FunctionActionDTO ===
                 FunctionActionDTO function = null;
@@ -292,8 +337,10 @@ public class PermissionDAO {
                 action.setVnName(rsDetail.getString("actionNameVN"));
                 function.getAction().add(action);
 
+                totalFunction++;
+
                 // Cập nhật lại số lượng chức năng (sau khi có thêm function mới)
-                permission.setTotalFunction(String.valueOf(permission.getFunction().size()));
+//                permission.setTotalFunction();
             }
 
             rsDetail.close();

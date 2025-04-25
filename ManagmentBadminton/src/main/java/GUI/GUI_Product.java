@@ -1,8 +1,11 @@
 package GUI;
 
+import BUS.PermissionBUS;
 import DAO.ProductDAO;
 import DTO.ProductDTO;
 import BUS.ProductBUS;
+import DTO.AccountDTO;
+import DTO.ActionDTO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -24,7 +27,7 @@ public class GUI_Product extends JPanel {
     private CustomSearch searchField;
     private ProductDTO productChoosing;
 
-    public GUI_Product() {
+    public GUI_Product(AccountDTO a) {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(new EmptyBorder(10, 10, 10, 10));
         setBackground(new Color(200, 200, 200));
@@ -141,6 +144,13 @@ public class GUI_Product extends JPanel {
         JLabel TypeName = new JLabel("");
         infoPanel.add(TypeName, gbcInfo);
 
+        gbcInfo.gridx = 0;
+        gbcInfo.gridy = 6;
+        infoPanel.add(new JLabel("Giá nhập: "), gbcInfo);
+        gbcInfo.gridx = 1;
+        JLabel ImportPrice = new JLabel("");
+        infoPanel.add(ImportPrice, gbcInfo);
+
 // Nút Lưu
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
         buttonPanel.setOpaque(false);
@@ -158,7 +168,7 @@ public class GUI_Product extends JPanel {
         buttonPanel.add(fixButton);
 
         gbcInfo.gridx = 0;
-        gbcInfo.gridy = 6;
+        gbcInfo.gridy = 7;
         gbcInfo.gridwidth = 2;
         gbcInfo.fill = GridBagConstraints.HORIZONTAL;
 
@@ -181,6 +191,7 @@ public class GUI_Product extends JPanel {
                     quantityLabel.setText(product.getSoluong());
                     NameNCC.setText(product.gettenNCC());
                     TypeName.setText(product.getTL());
+                    ImportPrice.setText(product.getgiaNhap());
 
                     infoPanel.add(buttonPanel, gbcInfo);
 
@@ -221,6 +232,7 @@ public class GUI_Product extends JPanel {
                     quantityLabel.setText("");
                     NameNCC.setText("");
                     TypeName.setText("");
+                    ImportPrice.setText("");
                     imageLabel.setIcon(null);
                     infoPanel.remove(buttonPanel); // Ẩn nút nếu không có sản phẩm
                     infoPanel.revalidate();
@@ -256,7 +268,6 @@ public class GUI_Product extends JPanel {
 
             }
         });
-        
         reloadButton.addActionListener(e -> {
             loadProductData();
             tableModel.fireTableDataChanged();
@@ -290,6 +301,7 @@ public class GUI_Product extends JPanel {
                 quantityLabel.setText("");
                 NameNCC.setText("");
                 TypeName.setText("");
+                ImportPrice.setText("");
 
                 String productImg = productChoosing.getAnh();
                 String imagePath = "images/noimage.png"; // Đường dẫn mặc định nếu không có ảnh sản phẩm
@@ -317,6 +329,30 @@ public class GUI_Product extends JPanel {
             capNhatBangSanPham(ketQua); // Hiển thị kết quả tìm được trên bảng
         });
 
+        ArrayList<ActionDTO> actions = PermissionBUS.getPermissionActions(a, "Quan ly san pham");
+
+        boolean canAdd = false, canEdit = false, canDelete = false, canWatch = false;
+
+        if (actions != null) {
+            for (ActionDTO action : actions) {
+                switch (action.getName()) {
+                    case "Add" ->
+                        canAdd = true;
+                    case "Edit" ->
+                        canEdit = true;
+                    case "Delete" ->
+                        canDelete = true;
+                    case "Watch" ->
+                        canWatch = true;
+                }
+            }
+        }
+
+        addButton.setVisible(canAdd);
+        fixButton.setVisible(canEdit);
+        deleteButton.setVisible(canDelete);
+        scrollPane.setVisible(canWatch);
+        reloadButton.setVisible(false);
     }
 
 //    private void showEditForm() {
@@ -444,16 +480,16 @@ public class GUI_Product extends JPanel {
         }
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Quản Lý Sản Phẩm");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(800, 600);
-            frame.setLocationRelativeTo(null);
-            GUI_Product guiProduct = new GUI_Product();
-            frame.setContentPane(guiProduct);
-
-            frame.setVisible(true);
-        });
-    }
+//    public static void main(String[] args) {
+//        SwingUtilities.invokeLater(() -> {
+//            JFrame frame = new JFrame("Quản Lý Sản Phẩm");
+//            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//            frame.setSize(800, 600);
+//            frame.setLocationRelativeTo(null);
+//            GUI_Product guiProduct = new GUI_Product();
+//            frame.setContentPane(guiProduct);
+//
+//            frame.setVisible(true);
+//        });
+//    }
 }

@@ -22,10 +22,15 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import BUS.ImportInvoiceBUS;
+import BUS.PermissionBUS;
+import BUS.SupplierBUS;
 import DTO.ImportInvoiceDTO;
+import DTO.SupplierDTO;
 import DTO.AccountDTO;
+import DTO.ActionDTO;
 
 public class GUI_Import extends JPanel {
+
     private final ImportInvoiceBUS importBUS;
     private final DefaultTableModel tableModel;
     private final JTable importTable;
@@ -34,11 +39,12 @@ public class GUI_Import extends JPanel {
     private final JLabel employeeIdLabel;
     private final JLabel totalMoneyLabel;
     private final JLabel receiptDateLabel;
+    private final CustomButton reloadButton;
     private ImportInvoiceDTO selectedImport;
 
     public GUI_Import(AccountDTO username) {
         this.importBUS = new ImportInvoiceBUS();
-        String currentUsername =username.getUsername() ;
+        String currentUsername = username.getUsername();
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -50,9 +56,14 @@ public class GUI_Import extends JPanel {
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         topPanel.setBackground(Color.WHITE);
 
+        reloadButton = new CustomButton("Tải lại trang");
+        topPanel.add(reloadButton, BorderLayout.WEST);
+        reloadButton.addActionListener(e -> {
+            loadImport();
+        });
+
         searchField = new CustomSearch(275, 20);
         searchField.setBackground(Color.WHITE);
-        searchField.setSearchListener(e -> searchImport());
         topPanel.add(searchField, BorderLayout.CENTER);
 
         CustomButton addButton = new CustomButton("+ Thêm Phiếu Nhập");
@@ -156,43 +167,60 @@ public class GUI_Import extends JPanel {
                 receiptDateLabel.setText(receiptDate);
             }
         });
+
+        searchField.setSearchListener(e -> {
+            String keyword = searchField.getText();
+            ArrayList<ImportInvoiceDTO> ketQua = ImportInvoiceBUS.searchImportInvoice(keyword);
+            capNhatBangImport(ketQua); // Hiển thị kết quả tìm được trên bảng
+        });
+
+        ArrayList<ActionDTO> actions = PermissionBUS.getPermissionActions(username, "Quan ly hoa dong nhap");
+
+        boolean canAdd = false, canEdit = false, canDelete = false, canWatch = false;
+
+        if (actions != null) {
+            for (ActionDTO action : actions) {
+                switch (action.getName()) {
+                    case "Add" ->
+                        canAdd = true;
+                    case "Edit" ->
+                        canEdit = true;
+                    case "Delete" ->
+                        canDelete = true;
+                    case "Watch" ->
+                        canWatch = true;
+                }
+            }
+        }
+
+        addButton.setVisible(canAdd);
+//        editButton.setVisible(canEdit);
+//        deleteButton.setVisible(canDelete);
+//        scrollPane.setVisible(canWatch);
+        reloadButton.setVisible(false);
     }
 
     // Tải danh sách phiếu nhập vào bảng
-    public void loadImport() { 
+    public void loadImport() {
         ArrayList<ImportInvoiceDTO> importList = ImportInvoiceBUS.getAllImportInvoice();
         tableModel.setRowCount(0);
         for (ImportInvoiceDTO importDTO : importList) {
-            double calculatedTotal = importBUS.calculateImportTotal(importDTO.getImportID());
             tableModel.addRow(new Object[]{
-                    importDTO.getImportID(),
-                    importDTO.getEmployeeID(),
-                    Utils.formatCurrency(calculatedTotal),
-                    importDTO.getDate()
+                importDTO.getImportID(),
+                importDTO.getEmployeeID(),
+                Utils.formatCurrency(importDTO.getTotalPrice()),
+                importDTO.getDate()
             });
         }
     }
 
-    // Tìm kiếm phiếu nhập theo từ khóa
-    private void searchImport() {
-        String keyword = searchField.getText().trim().toLowerCase();
-        ArrayList<ImportInvoiceDTO> importList = ImportInvoiceBUS.getAllImportInvoice();
-        tableModel.setRowCount(0);
-
-        for (ImportInvoiceDTO importDTO : importList) {
-            if (importDTO.getImportID().toLowerCase().contains(keyword) ||
-                importDTO.getEmployeeID().toLowerCase().contains(keyword)) {
-                double calculatedTotal = importBUS.calculateImportTotal(importDTO.getImportID());
-                tableModel.addRow(new Object[]{
-                        importDTO.getImportID(),
-                        importDTO.getEmployeeID(),
-                        Utils.formatCurrency(calculatedTotal),
-                        importDTO.getDate()
-                });
-            }
+    private void capNhatBangImport(ArrayList<ImportInvoiceDTO> imports) {
+        tableModel.setRowCount(0); // Xóa dữ liệu cũ
+        int index = 1;
+        for (ImportInvoiceDTO importDTO : imports) {
+            tableModel.addRow(new Object[]{importDTO.getImportID(), importDTO.getEmployeeID(), Utils.formatCurrency(importDTO.getTotalPrice()), importDTO.getDate()});
         }
     }
-
 
     // Hiển thị chi tiết phiếu nhập
     private void showImportDetail() {
@@ -213,10 +241,9 @@ public class GUI_Import extends JPanel {
             JOptionPane.showMessageDialog(this, "Vui lòng chọn một phiếu nhập để in PDF!");
             return;
         }
-        
 
         new CustomImportInvoicePDF().export(
-            selectedImport                 // Tổng tiền
+                selectedImport // Tổng tiền
         );
     }
 }

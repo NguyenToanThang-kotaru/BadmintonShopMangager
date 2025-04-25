@@ -31,7 +31,6 @@ public class LineChart extends javax.swing.JPanel {
     private float animate;
     private String showLabel;
     private Point labelLocation = new Point();
-
     public LineChart() {
         initComponents();
         setOpaque(false);

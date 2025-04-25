@@ -65,7 +65,7 @@ public class GUI_Form_Customer extends JDialog {
         addComponent("Mã Khách Hàng:", txtCustomerID, gbc);
         addComponent("Tên Khách Hàng:", txtFullName, gbc);
         addComponent("Số Điện Thoại:", txtSDT, gbc);
-        addComponent("Email:", txtSpending, gbc);
+        addComponent("Tổng chi:", txtSpending, gbc);
 
         JPanel buttonPanel = new JPanel(new FlowLayout());
         btnSave = new CustomButton(customer == null ? "Thêm" : "Cập Nhật");

@@ -1,5 +1,6 @@
 package BUS;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 
 import DAO.ProductDAO;
 import DAO.SupplierDAO;
@@ -83,5 +84,146 @@ public class SupplierBUS {
             }
         }
         return supplierProducts;
+    }
+    public boolean validateSupplier(SupplierDTO supplier) {
+        String supplierName = supplier.getSupplierName().trim();
+        String phoneNumber = supplier.getPhone().trim();
+        String email = supplier.getEmail().trim();
+
+        // Không cho tên chỉ toàn số
+        if (supplierName.matches("\\d+")) {
+            JOptionPane.showMessageDialog(null,
+                    "Tên nhà cung cấp không được chỉ chứa số.",
+                    "Lỗi nhập liệu",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        // Không chứa ký tự đặc biệt (chỉ cho phép chữ cái, số và khoảng trắng)
+        if (!supplierName.matches("^[\\p{L}0-9\\s+\\-\\.]+$")) {
+            JOptionPane.showMessageDialog(null,
+                    "Tên nhà cung cấp không được chứa ký tự đặc biệt.",
+                    "Lỗi nhập liệu",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        // Tên không được trùng
+        if (supplierDAO.isNameExists(supplierName)) {
+            JOptionPane.showMessageDialog(null,
+                    "Tên nhà cung cấp đã tồn tại!",
+                    "Lỗi nhập liệu",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        // Kiểm tra số điện thoại 10 số và bắt đầu bằng số 0
+        if (!phoneNumber.matches("^0\\d{9}$")) {
+            JOptionPane.showMessageDialog(null,
+                    "Số điện thoại không hợp lệ!",
+                    "Lỗi nhập liệu",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        if( supplierDAO.isPhoneExists(phoneNumber)) {
+            JOptionPane.showMessageDialog(null,
+                    "Số điện thoại đã tồn tại!",
+                    "Lỗi nhập liệu",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        // Kiểm tra email
+        if (!email.matches("^[\\w-\\.]+@[\\w-]+\\.[a-z]{2,4}$")) {
+            JOptionPane.showMessageDialog(null,
+                    "Email không hợp lệ!",
+                    "Lỗi nhập liệu",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        if (supplierDAO.isEmailExists(email)) {
+            JOptionPane.showMessageDialog(null,
+                    "Email đã tồn tại!",
+                    "Lỗi nhập liệu",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        return true;
+    }
+    public boolean validateSupplierUpdate(SupplierDTO supplier) {
+        String supplierID = supplier.getSupplierID().trim();
+        String supplierName = supplier.getSupplierName().trim();
+        String phoneNumber = supplier.getPhone().trim();
+        String email = supplier.getEmail().trim();
+
+        // Không cho tên chỉ toàn số
+        if (supplierName.matches("\\d+")) {
+            JOptionPane.showMessageDialog(null,
+                    "Tên nhà cung cấp không được chỉ chứa số.",
+                    "Lỗi nhập liệu",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        // Không chứa ký tự đặc biệt (chỉ cho phép chữ cái, số và khoảng trắng)
+        if (!supplierName.matches("^[\\p{L}0-9\\s+\\-\\.]+$")) {
+            JOptionPane.showMessageDialog(null,
+                    "Tên nhà cung cấp không được chứa ký tự đặc biệt.",
+                    "Lỗi nhập liệu",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        // Tên không được trùng ngoại trừ tên hiện tại
+        if (supplierDAO.isNameExistsUpdate(supplierName, supplierID)) {
+            JOptionPane.showMessageDialog(null,
+                    "Tên nhà cung cấp đã tồn tại!",
+                    "Lỗi nhập liệu",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        // Kiểm tra số điện thoại 10 số và bắt đầu bằng số 0
+        if (!phoneNumber.matches("^0\\d{9}$")) {
+            JOptionPane.showMessageDialog(null,
+                    "Số điện thoại không hợp lệ!",
+                    "Lỗi nhập liệu",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        if( supplierDAO.isPhoneExistsUpdate(phoneNumber, supplierID)) {
+            JOptionPane.showMessageDialog(null,
+                    "Số điện thoại đã tồn tại!",
+                    "Lỗi nhập liệu",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        // Kiểm tra email
+        if (!email.matches("^[\\w-\\.]+@[\\w-]+\\.[a-z]{2,4}$")) {
+            JOptionPane.showMessageDialog(null,
+                    "Email không hợp lệ!",
+                    "Lỗi nhập liệu",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        if (supplierDAO.isEmailExistsUpdate(email, supplierID)) {
+            JOptionPane.showMessageDialog(null,
+                    "Email đã tồn tại!",
+                    "Lỗi nhập liệu",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        return true;
+    }
+
+    public static ArrayList<SupplierDTO> searchSupplier(String keyword) {
+        return SupplierDAO.searchSupplier(keyword);
     }
 }
