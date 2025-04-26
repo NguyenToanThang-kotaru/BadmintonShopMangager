@@ -62,7 +62,9 @@ public class GUI_Import extends JPanel {
             loadImport();
         });
 
-        searchField = new CustomSearch(275, 20);
+        searchField = new CustomSearch(200, 30);
+        searchField.setPreferredSize(new Dimension(200, 30));
+        searchField.setMinimumSize(new Dimension(200, 30));
         searchField.setBackground(Color.WHITE);
         topPanel.add(searchField, BorderLayout.CENTER);
 

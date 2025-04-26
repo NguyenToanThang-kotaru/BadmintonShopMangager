@@ -20,7 +20,7 @@ import java.nio.file.Files;
 public class GUI_Product extends JPanel {
 
     private JPanel midPanel, topPanel, botPanel;
-    private JTable productTable;
+    private static JTable productTable;
     private DefaultTableModel tableModel;
     private JComboBox<String> roleComboBox;
     private CustomButton fixButton, saveButton, deleteButton, addButton, ShowSEButton, reloadButton;
@@ -466,6 +466,10 @@ public class GUI_Product extends JPanel {
                 });
             }
         });
+    }
+
+    public static JTable getProductTable() {
+        return productTable;
     }
 
     private void capNhatBangSanPham(ArrayList<ProductDTO> products) {
