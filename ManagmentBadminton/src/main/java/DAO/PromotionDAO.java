@@ -104,13 +104,13 @@ public class PromotionDAO {
     }
 
     // Xóa khuyến mãi theo ID
-    public static boolean deletePromotionById(int PromotionID) {
-        String query = "DELETE FROM promotion WHERE PromotionID = ?";
+    public static boolean deletePromotionById(int id) {
+        String query = "UPDATE Promotion SET Status = 0 WHERE PromotionID = ?";
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setInt(1, PromotionID);
-            int rowsDeleted = stmt.executeUpdate();
-            return rowsDeleted > 0;
+            stmt.setInt(1, id);
+            int rowsUpdated = stmt.executeUpdate();
+            return rowsUpdated > 0;
 
         } catch (SQLException e) {
             e.printStackTrace();

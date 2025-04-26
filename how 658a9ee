@@ -1,0 +1,108 @@
+[33m17c1216[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mat2[m[33m, [m[1;31morigin/tin[m[33m, [m[1;31morigin/thien[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/at2[m[33m)[m da fix nhap hang
+[33m658a9ee[m ?
+[33m2563ca1[m chua xong
+[33m2fe2da0[m[33m ([m[1;31morigin/at[m[33m)[m Initial commit for at2
+[33m0d6847d[m da add
+[33maa10696[m da xong
+[33mad1be36[m Merge branch 'tin'
+[33m6fac58d[m ?
+[33m3911022[m Merge branch 'thien'
+[33mff9910a[m thua
+[33mad573da[m Push ngay 21/4/2025
+[33m77c9db3[m search import, supplier
+[33ma52b138[m da xong
+[33m9e8e3b7[m ?
+[33m28dd325[m ?
+[33meb88f30[m Merge branch 'tin' of https://github.com/NguyenToanThang-kotaru/BadmintonShopMangager into tin
+[33m5dbbe41[m ss
+[33mf83a5a1[m ss
+[33ma5208ab[m  tim kiem nhan vien
+[33ma70ab2e[m validate supplier import
+[33md097a84[m ss
+[33mb9d0268[m ss
+[33m8d900b1[m Da xong (nhung con loi series bi trung)
+[33m5df4f09[m da merge
+[33m853d31e[m Merge branch 'luan' of https://github.com/NguyenToanThang-kotaru/BadmintonShopMangager into luan
+[33m953ee02[m ss
+[33ma369e61[m Merge branch 'tin'
+[33m709e5f0[m Merge branch 'at' into tin
+[33mb05e81a[m >
+[33mc860586[m Update so luong ton kho sau khi ban
+[33m285e88c[m Update so luong ton kho sau khi ban
+[33mae58b5a[m ok tui lo het
+[33me8275b1[m Merge pull request #5 from NguyenToanThang-kotaru/thien
+[33m1da69b2[m ĐÃ xong hóa đơn bán và bán hàng (chưa có serial number)
+[33m8b240fe[m Nhap series
+[33mef6bbff[m da merege
+[33mc2d8b05[m luan
+[33m13b1862[m da merge
+[33m0df7791[m da merge
+[33md216c34[m da merge
+[33m22aa65e[m da merge
+[33m3f7daf6[m merge
+[33m3bd7563[m Merge branch 'thien' into luan
+[33m4ead863[m Sua lai loi chinh ta trong cac file DAO
+[33m4ba980e[m code moi
+[33m4d0f45a[m Merge pull request #3 from NguyenToanThang-kotaru/thien
+[33me36d79c[m ss
+[33mc72dcf0[m Hoàn thành code Hóa đơn bán và bán hàng (chưa hoàn thành do chưa thêm serial number cũng như chưa test)
+[33m1098038[m sua ti
+[33m5b17068[m them sp trong nhap
+[33m27903a7[m hoa don nhap
+[33m07ee2db[m thien
+[33m404866d[m oh no
+[33ma371410[m da xong employee
+[33mdb8f772[m Merge branch 'main' of https://github.com/NguyenToanThang-kotaru/BadmintonShopMangager
+[33m4280efc[m employee
+[33me7bb64f[m Add initial code for login UI
+[33m200321e[m product kha on, chac vay..
+[33md13b691[m Đã kết nối database + thiết lập GUI cho khách hàng (Nhớ tải file database mới ở trên group)
+[33m00dfa12[m Đã kết nối database + thiết lập GUI cho khách hàng (Nhớ tải file database mới ở trên group)
+[33m3d8a70a[m .
+[33m229deaa[m da len
+[33m991f9ab[m van ok
+[33mbf5e1dd[m hoa don nhap
+[33ma42bfb7[m supplier
+[33m08d7dff[m Account
+[33m02bec1f[m Merge branch 'main' of https://github.com/NguyenToanThang-kotaru/BadmintonShopMangager
+[33mfcc9268[m ss
+[33m1d5a90f[m oh no
+[33mcb039a1[m met
+[33m19b440c[m Code thêm phần GUI Khách hàng
+[33m5744e07[m da co main
+[33m0684787[m Merge branch 'main' of https://github.com/NguyenToanThang-kotaru/BadmintonShopMangager
+[33m7f6b2ea[m them 1 dong module
+[33m2f9babb[m mo module ncc
+[33mc1f413a[m lien ket voi ncc
+[33m0a193ca[m Merge pull request #2 from NguyenToanThang-kotaru/tin
+[33m89a4811[m NCC
+[33m79e093e[m khong con gi de mat
+[33m88a87c0[m SQL
+[33mf9af2bf[m database ERD
+[33mc2ad37b[m Merge pull request #1 from NguyenToanThang-kotaru/tin1
+[33mfd4b5f0[m k
+[33mf5b87d5[m product
+[33mc4dceb7[m Merge branch 'main' of https://github.com/NguyenToanThang-kotaru/BadmintonShopMangager
+[33m1ffb731[m da thay doi
+[33m7341dfa[m no
+[33m503cdb8[m them cac module
+[33m91a5f96[m them cac module
+[33mccd21b6[m them du lieu database
+[33mcbda46b[m them bao hanh
+[33mb85335d[m Main Layout
+[33m12e237e[m main layout
+[33m7165c0a[m SQL
+[33mc1f75db[m khong ai code ngoai tru tui
+[33m2e5eedc[m thang knun
+[33m6b940b5[m lam vai thu
+[33m7c72a60[m Merge branch 'main' of https://github.com/NguyenToanThang-kotaru/BadmintonShopMangager gc# Please enter a commit message to explain why this merge is necessary, fdasdfsd the commit.
+[33m019a680[m Merge branch 'main' of https://github.com/NguyenToanThang-kotaru/BadmintonShopMangager dfdsfo especially if it merges an updated upstream into a topic branch.
+[33m9b98a37[m ffff
+[33m391f411[m kk
+[33m14a94ed[m cap nhat vai thu
+[33m5b07a2d[m Module
+[33m3258833[m a
+[33m09a8b7d[m helloaa
+[33m0f97f45[m hello
+[33m811714f[m First commit
+[33mf6e11d9[m Initial commit
