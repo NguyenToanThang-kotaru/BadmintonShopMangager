@@ -1,42 +1,73 @@
 package GUI.Statistics.form;
 
+import BUS.StatisticsBUS;
+import DTO.Statistics.StatisticsByDayDTO;
+import DTO.Statistics.StatisticsByMonthDTO;
+import DTO.Statistics.StatisticsDTO;
 import GUI.Statistics.Chart.ModelChart;
 import java.awt.Color;
+import java.util.ArrayList;
 
 public class overviewFrom extends javax.swing.JPanel {
+
+    StatisticsBUS statisticsBUS;
+    StatisticsDTO dataset;
+    StatisticsByMonthDTO statisticsByMonthDTO;
+    ArrayList<StatisticsByMonthDTO> listMonth;
+    ArrayList<StatisticsByDayDTO> listDay;
 
     public overviewFrom() {
         initComponents();
         setOpaque(false);
-        init();
+        statisticsBUS = new StatisticsBUS();
+        this.dataset = this.statisticsBUS.getStatistics();
+        this.listMonth = this.statisticsBUS.getStatisticsBy6Month();
+        this.listDay = this.statisticsBUS.getStatisticsByDay();
+        loadDataChart(listDay);
+        loadDataLineChart(listMonth);
+        loadDataProgress(dataset);
     }
 
-    private void init() {
-        chart.addLegend("Doanh thu", new Color(12, 84, 175), new Color(0, 108, 247));
-        chart.addLegend("Chi phí", new Color(54, 4, 143), new Color(104, 49, 200));
-        chart.addLegend("Lợi nhuận", new Color(5, 125, 0), new Color(95, 209, 69));
-        chart.addLegend("Giá Vốn", new Color(186, 37, 37), new Color(241, 100, 120));
-        chart.addData(new ModelChart("Tháng 1", new double[]{500, 200, 80, 89}));
-        chart.addData(new ModelChart("Tháng 2", new double[]{600, 750, 90, 150}));
-        chart.addData(new ModelChart("Tháng 3", new double[]{200, 350, 460, 900}));
-        chart.addData(new ModelChart("Tháng 4", new double[]{480, 150, 750, 700}));
-        chart.addData(new ModelChart("Tháng 5", new double[]{350, 540, 300, 150}));
-        chart.addData(new ModelChart("Tháng 6", new double[]{190, 280, 81, 200}));
-        chart.start();
+    private void loadDataProgress(StatisticsDTO st) {
+        long tong = st.getCost() + st.getIncome() + st.getProfit();
+
+        // Kiểm tra nếu tổng bằng 0 để tránh phép chia cho 0
+        if (tong == 0) {
+            progress1.setValue(0);
+            progress2.setValue(0);
+            progress3.setValue(0);
+            return;
+        }
+
+        // Chỉ tính phần trăm nếu các giá trị không âm
+        double income = st.getIncome() >= 0 ? (double) st.getIncome() / tong * 100 : 0;
+        progress1.setValue((int) income);  // Chuyển giá trị thành int
+
+        double profit = st.getProfit() >= 0 ? (double) st.getProfit() / tong * 100 : 0;
+        progress2.setValue((int) profit);
+
+        double cost = st.getCost() >= 0 ? (double) st.getCost() / tong * 100 : 0;
+        progress3.setValue((int) cost);
+    }
+
+    private void loadDataLineChart(ArrayList<StatisticsByMonthDTO> list) {
         lineChart.addLegend("Doanh thu", new Color(12, 84, 175), new Color(0, 108, 247));
         lineChart.addLegend("Chi phí", new Color(54, 4, 143), new Color(104, 49, 200));
         lineChart.addLegend("Lợi nhuận", new Color(5, 125, 0), new Color(95, 209, 69));
-        lineChart.addLegend("Giá vốn", new Color(186, 37, 37), new Color(241, 100, 120));
-        lineChart.addData(new ModelChart("Tháng 1", new double[]{500, 200, 80, 89}));
-        lineChart.addData(new ModelChart("Tháng 2", new double[]{600, 750, 90, 150}));
-        lineChart.addData(new ModelChart("Tháng 3", new double[]{200, 350, 460, 900}));
-        lineChart.addData(new ModelChart("Tháng 4", new double[]{480, 150, 750, 700}));
-        lineChart.addData(new ModelChart("Tháng 5", new double[]{350, 540, 300, 150}));
-        lineChart.addData(new ModelChart("Tháng 6", new double[]{190, 280, 81, 200}));
+        for (StatisticsByMonthDTO i : list) {
+            lineChart.addData(new ModelChart("Tháng " + i.getMonth(), new double[]{i.getCost(), i.getIncome(), i.getProfit()}));
+        }
         lineChart.start();
-        progress1.start();
-        progress2.start();
-        progress3.start();
+    }
+
+    private void loadDataChart(ArrayList<StatisticsByDayDTO> list) {
+        chart.addLegend("Doanh thu", new Color(12, 84, 175), new Color(0, 108, 247));
+        chart.addLegend("Chi phí", new Color(54, 4, 143), new Color(104, 49, 200));
+        chart.addLegend("Lợi nhuận", new Color(5, 125, 0), new Color(95, 209, 69));
+        for (StatisticsByDayDTO i : list) {
+            chart.addData(new ModelChart("Ngày " + i.getDay(), new double[]{i.getCost(), i.getIncome(), i.getProfit()}));
+        }
+        chart.start();
     }
 
     @SuppressWarnings("unchecked")

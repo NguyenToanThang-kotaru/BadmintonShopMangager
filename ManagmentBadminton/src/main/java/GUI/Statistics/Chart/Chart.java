@@ -30,6 +30,7 @@ public class Chart extends javax.swing.JPanel {
     private float animate;
     private String showLabel;
     private Point labelLocation = new Point();
+
     public Chart() {
         initComponents();
         setOpaque(false);
@@ -74,13 +75,13 @@ public class Chart extends javax.swing.JPanel {
                     x += seriesSpace + seriesSize;
                 }
                 if (showLabel != null) {
-                    g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.2f));
+                    g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.8f));
                     Dimension s = getLabelWidth(showLabel, g2);
                     int space = 3;
                     int spaceTop = 5;
-                    g2.setColor(new Color(30, 30, 30));
+                    g2.setColor(new Color(255, 255, 255));
                     g2.fillRoundRect(labelLocation.x - s.width / 2 - 3, labelLocation.y - s.height - space * 2 - spaceTop, s.width + space * 2, s.height + space * 2, 10, 10);
-                    g2.setColor(new Color(200, 200, 200));
+                    g2.setColor(new Color(0, 0, 0));
                     g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
                     g2.drawString(showLabel, labelLocation.x - s.width / 2, labelLocation.y - spaceTop - space * 2);
                 }
@@ -167,6 +168,8 @@ public class Chart extends javax.swing.JPanel {
 
         setBackground(new java.awt.Color(255, 255, 255));
 
+        blankPlotChart.setForeground(new java.awt.Color(51, 51, 51));
+
         panelLegend.setOpaque(false);
         panelLegend.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 5, 0));
 
@@ -179,7 +182,7 @@ public class Chart extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(6, 6, 6)
-                        .addComponent(panelLegend, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(panelLegend, javax.swing.GroupLayout.DEFAULT_SIZE, 620, Short.MAX_VALUE))
                     .addComponent(blankPlotChart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );

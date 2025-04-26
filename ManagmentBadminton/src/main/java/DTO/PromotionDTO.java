@@ -20,6 +20,13 @@ public class PromotionDTO {
         this.discountRate = discountRate;
     }
     
+    public PromotionDTO(String name, Date startDate, Date endDate, double discountRate) {
+        this.name = name;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.discountRate = discountRate;
+    }
+    
     
     public int getId() {
         return id;
