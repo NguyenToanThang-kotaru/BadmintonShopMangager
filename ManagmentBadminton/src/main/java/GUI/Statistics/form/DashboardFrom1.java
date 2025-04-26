@@ -18,8 +18,9 @@ public class DashboardFrom1 extends javax.swing.JPanel {
     private ArrayList<StatisticsByMonthDTO> dataset;
     private DefaultTableModel model;
     static NumberFormat fm = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
-    
+
     public DashboardFrom1(StatisticsBUS statisticsBUS) {
+        initComponents();
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
         SpinnerNumberModel yearModel = new SpinnerNumberModel(currentYear, 2000, 2100, 1);
         jSpinner.setModel(yearModel);
@@ -27,28 +28,27 @@ public class DashboardFrom1 extends javax.swing.JPanel {
         int selectedYear = (int) jSpinner.getValue();
         this.statisticsBUS = statisticsBUS;
         this.dataset = this.statisticsBUS.getStatisticsByMonth(selectedYear);
-        initComponents();
         loadDataTalbe(dataset);
         loadDataChart(dataset);
-        
+        chart.addLegend("Doanh thu", new Color(12, 84, 175), new Color(0, 108, 247));
+        chart.addLegend("Chi phí", new Color(54, 4, 143), new Color(104, 49, 200));
+        chart.addLegend("Lợi nhuận", new Color(5, 125, 0), new Color(95, 209, 69));
     }
-    
-    private void loadDataTalbe(ArrayList<StatisticsByMonthDTO> list){
-        for(StatisticsByMonthDTO i : list){
+
+    private void loadDataTalbe(ArrayList<StatisticsByMonthDTO> list) {
+        model = (DefaultTableModel) table.getModel();
+        for (StatisticsByMonthDTO i : list) {
             model.addRow(new Object[]{
-                i.getMonth(), fm.format(i.getCost()).replace("₫", "VND"), 
-                fm.format(i.getIncome()).replace("₫", "VND"), 
+                i.getMonth(), fm.format(i.getCost()).replace("₫", "VND"),
+                fm.format(i.getIncome()).replace("₫", "VND"),
                 fm.format(i.getProfit()).replace("₫", "VND")
             });
         }
     }
-    
-    private void loadDataChart(ArrayList<StatisticsByMonthDTO> list){
-        chart.addLegend("Doanh thu", new Color(12, 84, 175), new Color(0, 108, 247));
-        chart.addLegend("Chi phí", new Color(54, 4, 143), new Color(104, 49, 200));
-        chart.addLegend("Lợi nhuận", new Color(5, 125, 0), new Color(95, 209, 69));
-        for(StatisticsByMonthDTO i : list){
-            chart.addData(new ModelChart("Năm " + i.getMonth(), new double[]{i.getCost(), i.getIncome(), i.getProfit()}));
+
+    private void loadDataChart(ArrayList<StatisticsByMonthDTO> list) {
+        for (StatisticsByMonthDTO i : list) {
+            chart.addData(new ModelChart("Tháng " + i.getMonth(), new double[]{i.getCost(), i.getIncome(), i.getProfit()}));
         }
         chart.start();
     }
@@ -84,8 +84,8 @@ public class DashboardFrom1 extends javax.swing.JPanel {
             roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(roundPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(chart, javax.swing.GroupLayout.DEFAULT_SIZE, 304, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(chart, javax.swing.GroupLayout.DEFAULT_SIZE, 333, Short.MAX_VALUE)
+                .addGap(10, 10, 10))
         );
 
         jScrollPane1.setBorder(null);
@@ -107,6 +107,12 @@ public class DashboardFrom1 extends javax.swing.JPanel {
             }
         });
         jScrollPane1.setViewportView(table);
+
+        jSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jSpinnerStateChanged(evt);
+            }
+        });
 
         jLabel2.setText("Chọn năm thống kê");
 
@@ -138,11 +144,22 @@ public class DashboardFrom1 extends javax.swing.JPanel {
                     .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(roundPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 213, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSpinnerStateChanged
+        int selectedYear = (int) jSpinner.getValue();
+        dataset = statisticsBUS.getStatisticsByMonth(selectedYear);
+
+        model.setRowCount(0);
+        loadDataTalbe(dataset);
+
+        chart.clear();
+        loadDataChart(dataset);
+    }//GEN-LAST:event_jSpinnerStateChanged
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

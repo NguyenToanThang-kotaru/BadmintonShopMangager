@@ -12,7 +12,7 @@ import javax.swing.table.DefaultTableModel;
 public class DashboardFrom extends javax.swing.JPanel {
 
     StatisticsBUS statisticsBUS;
-    private ArrayList<StatisticsByYearDTO> dataset;
+    ArrayList<StatisticsByYearDTO> dataset;
     private DefaultTableModel model;
     static NumberFormat fm = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
     
@@ -25,6 +25,7 @@ public class DashboardFrom extends javax.swing.JPanel {
     }
     
     private void loadDataTalbe(ArrayList<StatisticsByYearDTO> list){
+        model = (DefaultTableModel) table.getModel();
         for(StatisticsByYearDTO i : list){
             model.addRow(new Object[]{
                 i.getYear(), fm.format(i.getCost()).replace("₫", "VND"), 
@@ -73,7 +74,7 @@ public class DashboardFrom extends javax.swing.JPanel {
             roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(roundPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(chart, javax.swing.GroupLayout.DEFAULT_SIZE, 304, Short.MAX_VALUE)
+                .addComponent(chart, javax.swing.GroupLayout.DEFAULT_SIZE, 332, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -118,8 +119,8 @@ public class DashboardFrom extends javax.swing.JPanel {
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(roundPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 213, Short.MAX_VALUE)
+                .addGap(10, 10, 10)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents

@@ -1,6 +1,7 @@
 package DAO;
 
 import Connection.DatabaseConnection;
+import DTO.Statistics.StatisticsByDayDTO;
 import DTO.Statistics.StatisticsByMonthDTO;
 import DTO.Statistics.StatisticsByYearDTO;
 import DTO.Statistics.StatisticsDTO;
@@ -8,12 +9,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 public class StatisticsDAO {
 
-    public ArrayList<StatisticsDTO> getStatistics() {
-        ArrayList<StatisticsDTO> result = new ArrayList<>();
+    public StatisticsDTO getStatistics() {
         String query = "SELECT "
                 + "IFNULL((SELECT SUM(TotalPrice) FROM import_invoice_detail), 0) AS cost, "
                 + "IFNULL((SELECT SUM(TotalPrice) FROM sales_invoice_detail), 0) AS income, "
@@ -21,18 +24,18 @@ public class StatisticsDAO {
                 + "IFNULL((SELECT SUM(TotalPrice) FROM import_invoice_detail), 0) AS profit";
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
             try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    result.add(new StatisticsDTO(
+                if (rs.next()) {
+                    return new StatisticsDTO(
                             rs.getLong("cost"),
                             rs.getLong("income"),
                             rs.getLong("profit")
-                    ));
+                    );
                 }
             }
         } catch (SQLException es) {
             es.printStackTrace();
         }
-        return result;
+        return new StatisticsDTO(0, 0, 0);
     }
 
     public ArrayList<StatisticsByYearDTO> getStatisticsByYear() {
@@ -120,6 +123,87 @@ public class StatisticsDAO {
         } catch (SQLException es) {
             es.printStackTrace();
         }
+        return result;
+    }
+
+    public ArrayList<StatisticsByMonthDTO> getLast6MonthsStatistics() {
+        List<Integer> last6MonthNumbers = getLast6MonthNumbers();
+
+        int currentYear = YearMonth.now().getYear();
+        int previousYear = currentYear - 1;
+
+        // Lấy dữ liệu từ cả năm hiện tại và năm trước
+        ArrayList<StatisticsByMonthDTO> allData = new ArrayList<>();
+        allData.addAll(getStatisticsByMonth(currentYear));
+        allData.addAll(getStatisticsByMonth(previousYear));
+
+        // Lọc theo danh sách tháng
+        ArrayList<StatisticsByMonthDTO> filteredData = new ArrayList<>();
+        for (StatisticsByMonthDTO dto : allData) {
+            if (last6MonthNumbers.contains(dto.getMonth())) {
+                filteredData.add(dto);
+            }
+        }
+
+        // Sắp xếp theo thứ tự tháng từ bé đến lớn
+        filteredData.sort(Comparator.comparingInt(StatisticsByMonthDTO::getMonth));
+
+        return filteredData;
+    }
+
+    public List<Integer> getLast6MonthNumbers() {
+        List<Integer> result = new ArrayList<>();
+        YearMonth current = YearMonth.now();
+
+        for (int i = 1; i <= 6; i++) {
+            result.add(current.minusMonths(i).getMonthValue());
+        }
+
+        return result;
+    }
+
+    public ArrayList<StatisticsByDayDTO> getStatisticsLast7Days() {
+        ArrayList<StatisticsByDayDTO> result = new ArrayList<>();
+        String query = "SELECT day_table.day, "
+                + "       IFNULL(import_data.cost, 0) AS cost, "
+                + "       IFNULL(sales_data.income, 0) AS income, "
+                + "       IFNULL(sales_data.income, 0) - IFNULL(import_data.cost, 0) AS profit "
+                + "FROM ( "
+                + "    SELECT DISTINCT DATE(Date) AS day FROM import_invoice WHERE Date >= CURDATE() - INTERVAL 6 DAY "
+                + "    UNION "
+                + "    SELECT DISTINCT DATE(Date) AS day FROM sales_invoice WHERE Date >= CURDATE() - INTERVAL 6 DAY "
+                + ") AS day_table "
+                + "LEFT JOIN ( "
+                + "    SELECT DATE(ii.Date) AS day, SUM(iid.TotalPrice) AS cost "
+                + "    FROM import_invoice ii "
+                + "    JOIN import_invoice_detail iid ON ii.ImportID = iid.ImportID "
+                + "    WHERE ii.Date >= CURDATE() - INTERVAL 6 DAY "
+                + "    GROUP BY DATE(ii.Date) "
+                + ") AS import_data ON day_table.day = import_data.day "
+                + "LEFT JOIN ( "
+                + "    SELECT DATE(si.Date) AS day, SUM(sid.TotalPrice) AS income "
+                + "    FROM sales_invoice si "
+                + "    JOIN sales_invoice_detail sid ON si.SalesID = sid.SalesID "
+                + "    WHERE si.Date >= CURDATE() - INTERVAL 6 DAY "
+                + "    GROUP BY DATE(si.Date) "
+                + ") AS sales_data ON day_table.day = sales_data.day "
+                + "ORDER BY day_table.day";
+
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    result.add(new StatisticsByDayDTO(
+                            rs.getDate("day"),
+                            rs.getInt("cost"),
+                            rs.getInt("income"),
+                            rs.getInt("profit")
+                    ));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         return result;
     }
 

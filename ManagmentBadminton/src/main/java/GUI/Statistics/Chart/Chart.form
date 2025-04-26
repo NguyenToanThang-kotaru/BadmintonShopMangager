@@ -26,7 +26,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
-                      <Component id="panelLegend" max="32767" attributes="0"/>
+                      <Component id="panelLegend" pref="620" max="32767" attributes="0"/>
                   </Group>
                   <Component id="blankPlotChart" max="32767" attributes="0"/>
               </Group>
@@ -48,6 +48,11 @@
   </Layout>
   <SubComponents>
     <Container class="GUI.Statistics.Chart.BlankChart.BlankPlotChart" name="blankPlotChart">
+      <Properties>
+        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="33" green="33" red="33" type="rgb"/>
+        </Property>
+      </Properties>
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
         <Property name="useNullLayout" type="boolean" value="true"/>
