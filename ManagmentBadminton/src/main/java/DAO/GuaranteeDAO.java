@@ -105,7 +105,7 @@ public class GuaranteeDAO {
                 int number = Integer.parseInt(lastID.substring(2));
 
                 // Tạo ID mới với định dạng NVXXX
-                return String.format("W%03d", number + 1);
+                return String.format("W%02d", number + 1);
             }
 
         } catch (SQLException e) {

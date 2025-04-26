@@ -14,6 +14,7 @@ import java.awt.Insets;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,6 +68,7 @@ public class GUI_Form_Order extends JDialog {
     private JLabel lblProductImage, lblProductId, lblProductName, lblCategory, lblPrice;
     private JTextField txtQuantity, txtMaKhachHang, txtTenKhachHang, txtSoDienThoai;
     private JComboBox promotion;
+    List<PromotionDTO> promotions;
     private SaleInvoiceBUS orderBUS;
     private SaleInvoiceDTO currentOrder;
     private AccountDTO currentAccount;
@@ -324,18 +326,22 @@ public class GUI_Form_Order extends JDialog {
 
         gbc.gridx = 0; gbc.gridy = 8; detailPanel.add(new JLabel("Mã khuyến mãi:"), gbc);
         gbc.gridx = 1; 
-        List<PromotionDTO> promotions = promotionBUS.getAllPromotion();
+        promotions = promotionBUS.getAllPromotion();
         String[] promotionNames = new String[promotions.size()];
-        promotion = new JComboBox<>(promotionNames); 
+        for (int i = 0; i < promotions.size(); i++) {
+            promotionNames[i] = promotions.get(i).getName();
+        }
+        promotion = new JComboBox<>(promotionNames);
+        promotion.setSelectedIndex(-1); 
         detailPanel.add(promotion, gbc);
 
         // once the promotion combobox is changed, it will update the total price of the order
         promotion.addActionListener(e -> {
             int selectedIndex = promotion.getSelectedIndex();
-            if (selectedIndex > 0) {
-                PromotionDTO selectedPromotion = promotions.get(selectedIndex - 1);
+            if (selectedIndex >= 0) {
+                PromotionDTO selectedPromotion = promotions.get(selectedIndex);
                 double discount = selectedPromotion.getDiscountRate();
-                int totalPrice = (int)(totalAmount * (100 - discount));
+                int totalPrice = (int)(totalAmount * (1 - discount));
                 lblTongTien.setText(formatCurrency(totalPrice));
             } else {
                 lblTongTien.setText(formatCurrency(totalAmount));
@@ -405,8 +411,7 @@ public class GUI_Form_Order extends JDialog {
                 lblTongTien.setText(formatCurrency(totalAmount));
                 allProductsTable.clearSelection(); // Clear selection after add/update
                 productsTable.clearSelection();    // Clear selection after add/update
-                // Removed unnecessary assignment to selectedRow
-
+                promotion.setSelectedIndex(-1);
             } else {
                 JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm trong giỏ hàng để sửa.");
             }
@@ -482,6 +487,7 @@ public class GUI_Form_Order extends JDialog {
             txtTenKhachHang.setEditable(false);
             allProductsTable.clearSelection(); // Clear selection after add/update
             productsTable.clearSelection();    // Clear selection after add/update
+            promotion.setSelectedIndex(-1);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Lỗi khi thêm sản phẩm.");
         }
@@ -495,8 +501,9 @@ public class GUI_Form_Order extends JDialog {
             lblTongTien.setText(formatCurrency(totalAmount));
             String productId = orderTableModel.getValueAt(selectedRow, 0).toString();
             int quantity = Integer.parseInt(orderTableModel.getValueAt(selectedRow, 3).toString());
-            updateProductTableQuantity(productId, quantity);
+            updateProductTableQuantity(productId, (-1 * quantity));
             orderTableModel.removeRow(selectedRow);
+            promotion.setSelectedIndex(-1);
             // Mở lại nhập thông tin khách nếu giỏ trống
             if (orderTableModel.getRowCount() == 0) {
                 txtSoDienThoai.setEditable(true);
@@ -570,6 +577,27 @@ public class GUI_Form_Order extends JDialog {
             JOptionPane.showMessageDialog(this, "Giỏ hàng trống! Vui lòng thêm sản phẩm trước khi lưu hóa đơn.");
             return;
         }
+        int selectedIndex = promotion.getSelectedIndex();
+        if (selectedIndex == -1) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn khuyến mãi");
+            return;
+        }
+        if (selectedIndex > 0) {
+            PromotionDTO selectedPromotion = promotions.get(selectedIndex);
+            if (selectedPromotion.getStartDate().after(java.sql.Date.valueOf(LocalDate.now()))) {
+                JOptionPane.showMessageDialog(this, "Khuyến mãi chưa có hiệu lực!");
+                return;
+            } else if (selectedPromotion.getEndDate().before(java.sql.Date.valueOf(LocalDate.now()))) {
+                JOptionPane.showMessageDialog(this, "Khuyến mãi đã hết hạn!");
+                return;
+            } else {
+                System.out.println("Mã khuyến mãi được áp dụng");
+            }
+            double discount = selectedPromotion.getDiscountRate();
+            System.out.println("Discount: " + discount);
+            totalAmount = (int)(totalAmount * (1 - discount));
+            lblTongTien.setText(formatCurrency(totalAmount));
+        }
         if (currentAccount != null)
             System.out.println(currentAccount.getEmployeeID() + currentAccount.getUsername());
         else System.out.println("NV null");
@@ -597,13 +625,6 @@ public class GUI_Form_Order extends JDialog {
 
         orderBUS.add(dto);
 
-        // Save detail invoice
-        // Nếu hóa đơn đã tồn tại thì xóa chi tiết cũ
-        // Nếu không thì thêm mới
-        // DetailSaleInvoiceBUS detailOrderBUS = new DetailSaleInvoiceBUS();
-        // detailOrderBUS.add(dto);
-
-
         // 3. Lưu chi tiết hóa đơn
         DetailSaleInvoiceBUS detailOrderBUS = new DetailSaleInvoiceBUS();
 
@@ -627,7 +648,11 @@ public class GUI_Form_Order extends JDialog {
             // Lấy danh sách chi tiết sản phẩm theo mã sản phẩm và số lượng sản phẩm
 
             List<ProductDetailDTO> productDetails = productDetailBUS.getProductDetailByProductID(productId);
-            
+            if (productDetails.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Không có chi tiết sản phẩm nào cho sản phẩm này.");
+                return;
+            }            
+
             for (ProductDetailDTO productDetail : productDetails) {
                 System.out.println("ProductDetail: " + productDetail.getSeries());
             }
@@ -700,6 +725,7 @@ public class GUI_Form_Order extends JDialog {
         return String.format("C%02d", number + 1);
     }
 
+    // updating the price once the quantity of a product is changed
     public int updatePrice(int newQuantity, int selectedRow) {
         int oldQuantity = Integer.parseInt(orderTableModel.getValueAt(selectedRow, 3).toString());
         int oldPrice = Integer.parseInt(orderTableModel.getValueAt(selectedRow, 4).toString().replaceAll("[^0-9]", ""));
@@ -715,7 +741,18 @@ public class GUI_Form_Order extends JDialog {
         orderTableModel.setValueAt(formatCurrency(newTotal), selectedRow, 5);
 
         // Cập nhật tổng tiền
-        System.out.println("total price = total price - old total + new total = " + (totalAmount - oldTotal + newTotal));
-        return totalAmount - oldTotal + newTotal;
+        totalAmount -= oldTotal;
+        return newTotal;
+    }
+
+    public int updatePriceAfterPromotion() {
+        int selectedIndex = promotion.getSelectedIndex();
+        if (selectedIndex >= 0) {
+            PromotionDTO selectedPromotion = promotions.get(selectedIndex);
+            double discount = selectedPromotion.getDiscountRate();
+            int totalPrice = (int)(totalAmount * (1 - discount));
+            return totalPrice;
+        }
+        return totalAmount;
     }
 }
