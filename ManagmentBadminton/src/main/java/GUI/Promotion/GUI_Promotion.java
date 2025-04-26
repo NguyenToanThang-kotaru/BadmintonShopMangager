@@ -124,11 +124,11 @@ public class GUI_Promotion extends JPanel {
             int selectedRow = promoTable.getSelectedRow();
             if (selectedRow != -1) {
                 // Lấy dữ liệu từ bảng và chuyển đổi sang String một cách an toàn
-                String maKM = promoTable.getValueAt(selectedRow, 1).toString();
-                String ten = promoTable.getValueAt(selectedRow, 2).toString();
-                String discount = promoTable.getValueAt(selectedRow, 3).toString();
-                String start = promoTable.getValueAt(selectedRow, 4).toString();
-                String end = promoTable.getValueAt(selectedRow, 5).toString();
+                String maKM = promoTable.getValueAt(selectedRow, 0).toString();
+                String ten = promoTable.getValueAt(selectedRow, 1).toString();
+                String discount = promoTable.getValueAt(selectedRow, 2).toString();
+                String start = promoTable.getValueAt(selectedRow, 3).toString();
+                String end = promoTable.getValueAt(selectedRow, 4).toString();
 
                 int id = Integer.parseInt(maKM);
                 // Lấy dữ liệu khuyến mãi từ DAO hoặc BUS
