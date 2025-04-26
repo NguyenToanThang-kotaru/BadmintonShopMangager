@@ -1,30 +1,30 @@
 package DAO;
 
-import Connection.DatabaseConnection;
-import DTO.PromotionDTO;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import Connection.DatabaseConnection;
+import DTO.PromotionDTO;
+
 public class PromotionDAO {
 
     // Lấy tất cả khuyến mãi
     public static ArrayList<PromotionDTO> getAllPromotions() {
         ArrayList<PromotionDTO> list = new ArrayList<>();
-        String query = "SELECT * FROM Promotion";
+        String query = "SELECT * FROM promotion";
 
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
                 PromotionDTO promo = new PromotionDTO(
-                        rs.getInt("id"),
-                        rs.getString("name"),
-                        rs.getDate("start_date"),
-                        rs.getDate("end_date"),
-                        rs.getDouble("discount_rate")
+                        rs.getInt("PromotionID"),
+                        rs.getString("PromotionName"),
+                        rs.getDate("StartDate"),
+                        rs.getDate("EndDate"),
+                        rs.getDouble("DiscountRate")
                 );
                 list.add(promo);
             }
@@ -37,19 +37,19 @@ public class PromotionDAO {
     }
 
     // Lấy khuyến mãi theo ID
-    public static PromotionDTO getPromotionById(int id) {
-        String query = "SELECT * FROM Promotion WHERE id = ?";
+    public static PromotionDTO getPromotionById(int PromotionID) {
+        String query = "SELECT * FROM promotion WHERE PromotionID = ?";
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setInt(1, id);
+            stmt.setInt(1, PromotionID);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return new PromotionDTO(
-                            rs.getInt("id"),
-                            rs.getString("name"),
-                            rs.getDate("start_date"),
-                            rs.getDate("end_date"),
-                            rs.getDouble("discount_rate")
+                            rs.getInt("PromotionID"),
+                            rs.getString("PromotionName"),
+                            rs.getDate("StartDate"),
+                            rs.getDate("EndDate"),
+                            rs.getDouble("DiscountRate")
                     );
                 }
             }
@@ -63,7 +63,7 @@ public class PromotionDAO {
 
     // Thêm khuyến mãi
     public static boolean addPromotion(PromotionDTO promo) {
-        String query = "INSERT INTO Promotion (id, name, discount_rate, start_date, end_date) VALUES (?, ?, ?, ?, ?)";
+        String query = "INSERT INTO promotion (PromotionID, PromotionName, DiscountRate, StartDate, EndDate) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setInt(1, promo.getId());
@@ -84,7 +84,7 @@ public class PromotionDAO {
 
     // Cập nhật khuyến mãi
     public static boolean updatePromotion(PromotionDTO promo) {
-        String query = "UPDATE Promotion SET name = ?, discount_rate = ?, start_date = ?, end_date = ? WHERE id = ?";
+        String query = "UPDATE promotion SET PromotionName = ?, DiscountRate = ?, StartDate = ?, EndDate = ? WHERE PromotionID = ?";
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setString(1, promo.getName());
@@ -104,11 +104,11 @@ public class PromotionDAO {
     }
 
     // Xóa khuyến mãi theo ID
-    public static boolean deletePromotionById(int id) {
-        String query = "DELETE FROM Promotion WHERE id = ?";
+    public static boolean deletePromotionById(int PromotionID) {
+        String query = "DELETE FROM promotion WHERE PromotionID = ?";
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setInt(1, id);
+            stmt.setInt(1, PromotionID);
             int rowsDeleted = stmt.executeUpdate();
             return rowsDeleted > 0;
 

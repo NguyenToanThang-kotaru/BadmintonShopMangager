@@ -22,6 +22,7 @@ public class SaleInvoiceDAO {
                 saleInvoice.setCustomerId(rs.getString("CustomerID"));
                 saleInvoice.setEmployeeId(rs.getString("EmployeeID"));
                 saleInvoice.setDate(rs.getDate("Date").toLocalDate()); // Convert java.sql.Date to java.time.LocalDate
+                saleInvoice.setPromotionId(rs.getInt("PromotionID"));
                 saleInvoice.setTotalPrice(rs.getDouble("TotalPrice")); // Use getDouble for numeric columns
                 saleInvoices.add(saleInvoice);
             }
@@ -45,6 +46,7 @@ public class SaleInvoiceDAO {
                 saleInvoice.setCustomerId(rs.getString("CustomerID"));
                 saleInvoice.setEmployeeId(rs.getString("EmployeeID"));
                 saleInvoice.setDate(rs.getDate("Date").toLocalDate());
+                saleInvoice.setPromotionId(rs.getInt("PromotionID"));
                 saleInvoice.setTotalPrice(Double.parseDouble(rs.getString("TotalPrice")));
                 saleInvoices.add(saleInvoice);
             }
@@ -69,6 +71,7 @@ public class SaleInvoiceDAO {
                 saleInvoice.setCustomerId(rs.getString("CustomerID"));
                 saleInvoice.setEmployeeId(rs.getString("EmployeeID"));
                 saleInvoice.setDate(rs.getDate("Date").toLocalDate());
+                saleInvoice.setPromotionId(rs.getInt("PromotionID"));
                 saleInvoice.setTotalPrice(Double.parseDouble(rs.getString("TotalPrice")));
                 saleInvoices.add(saleInvoice);
             }
@@ -93,6 +96,7 @@ public class SaleInvoiceDAO {
                 saleInvoice.setCustomerId(rs.getString("CustomerID"));
                 saleInvoice.setEmployeeId(rs.getString("EmployeeID"));
                 saleInvoice.setDate(rs.getDate("Date").toLocalDate());
+                saleInvoice.setPromotionId(rs.getInt("PromotionID"));
                 saleInvoice.setTotalPrice(Double.parseDouble(rs.getString("TotalPrice")));
                 saleInvoices.add(saleInvoice);
             }
@@ -117,6 +121,7 @@ public class SaleInvoiceDAO {
                 saleInvoice.setCustomerId(rs.getString("CustomerID"));
                 saleInvoice.setEmployeeId(rs.getString("EmployeeID"));
                 saleInvoice.setDate(rs.getDate("Date").toLocalDate());
+                saleInvoice.setPromotionId(rs.getInt("PromotionID"));
                 saleInvoice.setTotalPrice(Double.parseDouble(rs.getString("TotalPrice")));
                 saleInvoices.add(saleInvoice);
             }
@@ -128,7 +133,7 @@ public class SaleInvoiceDAO {
     }
 
     public static boolean add(SaleInvoiceDTO saleInvoice) {
-        String sql = "insert into sales_invoice (SalesID, CustomerID, EmployeeID, Date, TotalPrice) values (?, ?, ?, ?, ?);";
+        String sql = "insert into sales_invoice (SalesID, CustomerID, EmployeeID, Date, PromotionID, TotalPrice) values (?, ?, ?, ?, ?, ?);";
         try {
             Connection conn = DatabaseConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -136,7 +141,8 @@ public class SaleInvoiceDAO {
             stmt.setString(2, saleInvoice.getCustomerId());
             stmt.setString(3, saleInvoice.getEmployeeId());
             stmt.setDate(4, java.sql.Date.valueOf(saleInvoice.getDate())); // Convert LocalDate to java.sql.Date
-            stmt.setDouble(5, saleInvoice.getTotalPrice());
+            stmt.setInt(5, saleInvoice.getPromotionId());
+            stmt.setDouble(6, saleInvoice.getTotalPrice());
             stmt.executeUpdate();
             return true;
         } catch (SQLException e) {
@@ -146,20 +152,55 @@ public class SaleInvoiceDAO {
     }
     // check lại, hình như không được update hóa đơn bán
     public static boolean update(SaleInvoiceDTO saleInvoice) {
-        String sql = "update sales_invoice set CustomerID = ?, EmployeeID = ?, Date = ? where SalesID = ?;";
+        String sql = "update sales_invoice set CustomerID = ?, EmployeeID = ?, Date = ?, PromotionID = ? where SalesID = ?;";
         try {
             Connection conn = DatabaseConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, saleInvoice.getCustomerId());
             stmt.setString(2, saleInvoice.getEmployeeId());
-            stmt.setString(3, saleInvoice.getEmployeeId());
-            stmt.setString(4, saleInvoice.getId());
-            stmt.setDouble(5, saleInvoice.getTotalPrice());
+            stmt.setDate(3, java.sql.Date.valueOf(saleInvoice.getDate())); // Convert LocalDate to java.sql.Date
+            stmt.setInt(4, saleInvoice.getPromotionId());
+            stmt.setString(5, saleInvoice.getId());
             stmt.executeUpdate();
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public static ArrayList<SaleInvoiceDTO> searchSaleInvoice(String keyword) {
+        ArrayList<SaleInvoiceDTO> sales = new ArrayList<>();
+
+        String accountQuery = "SELECT * FROM sales_invoice "
+        + "WHERE CAST(SalesID AS CHAR) LIKE ? "
+        + "OR CAST(EmployeeID AS CHAR) LIKE ? "
+        + "OR CAST(CustomerID AS CHAR) LIKE ? "
+        + "OR CAST(Date AS CHAR) LIKE ? "
+        + "OR CAST(TotalPrice AS CHAR) LIKE ?";
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement accountStmt = conn.prepareStatement(accountQuery)) {
+
+            String searchKeyword = "%" + keyword + "%";
+            accountStmt.setString(1, searchKeyword);
+            accountStmt.setString(2, searchKeyword);
+            accountStmt.setString(3, searchKeyword);
+            accountStmt.setString(4, searchKeyword);
+            accountStmt.setString(5, searchKeyword);
+            try (ResultSet rs = accountStmt.executeQuery()) {
+                while (rs.next()) {
+                    SaleInvoiceDTO saleInvoice = new SaleInvoiceDTO();
+                    saleInvoice.setId(rs.getString("SalesID"));
+                    saleInvoice.setCustomerId(rs.getString("CustomerID"));
+                    saleInvoice.setEmployeeId(rs.getString("EmployeeID"));
+                    saleInvoice.setDate(rs.getDate("Date").toLocalDate()); // Convert java.sql.Date to java.time.LocalDate
+                    saleInvoice.setPromotionId(rs.getInt("PromotionID"));
+                    saleInvoice.setTotalPrice(rs.getDouble("TotalPrice")); // Use getDouble for numeric columns
+                    sales.add(saleInvoice);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return sales;
     }
 }
