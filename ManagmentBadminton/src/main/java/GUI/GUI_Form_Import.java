@@ -9,6 +9,7 @@ import java.awt.Image;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -25,6 +26,7 @@ import BUS.ProductBUS;
 import BUS.SupplierBUS;
 import BUS.TypeProductBUS;
 import DTO.ImportInvoiceDTO;
+import DTO.ProductDTO;
 
 public class GUI_Form_Import extends JDialog {
     private InfoPanel infoPanel;
@@ -170,6 +172,11 @@ public class GUI_Form_Import extends JDialog {
             productDetailPanel.getTxtProductId().setText((String) details[0]);
             productDetailPanel.getTxtProductName().setText((String) details[1]);
             productDetailPanel.getTxtPrice().setText((String) details[2]);
+            if(Integer.parseInt((String) details[2]) == 0) {
+                productDetailPanel.getTxtPrice().setEditable(true);
+            } else {
+                productDetailPanel.getTxtPrice().setEditable(false);
+            }
             productDetailPanel.getTxtSupplierId().setText((String) details[3]);
             productDetailPanel.getCmbSupplier().setSelectedItem(SupplierBUS.getSupplierByID((String) details[3]).getSupplierName());
             productDetailPanel.getTxtProductTypeId().setText(TypeProductBUS.getTypeProductByName((String) details[4]).getTypeID());
@@ -200,7 +207,7 @@ public class GUI_Form_Import extends JDialog {
             String validationError = bus.validateProductToAdd(productId, quantityText);
             String productImg = productDetailPanel.getTxtImageFilename().getText();
             String productName = productDetailPanel.getTxtProductName().getText();
-            String price = productDetailPanel.getTxtPrice().getText().replaceAll("[^0-9]", "");
+            String price = productDetailPanel.getTxtPrice().getText();
             //Kiểm tra tất cả không để trống
             if (productName == null || productName.isEmpty() || price == null || price.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Vui lòng điền đầy đủ thông tin sản phẩm", "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -211,17 +218,25 @@ public class GUI_Form_Import extends JDialog {
                 JOptionPane.showMessageDialog(this, "Vui lòng nhập số lượng sản phẩm", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
             }
+            //Kiểm tra giá nhập hàng
+            if (price == null || price.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Vui lòng nhập số lượng sản phẩm", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             //Kiem tra hinh anh
             if (productImg == null || productImg.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Vui lòng chọn hình ảnh sản phẩm", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             ProductBUS productBUS = new ProductBUS();
-            if (productBUS.getProductByID(productId) == null && !bus.validateProductImport(productName, price, productImg)){
+            if (productBUS.getProductByID(productId) == null && !bus.validateProductImport(productName, productImg)){
+                return;
+            }
+            if (!bus.validateProductImport(price.replaceAll("[^0-9]", ""))){
                 return;
             }
             int quantity = Integer.parseInt(quantityText);
-            double priceImport = Double.parseDouble(price);
+            double priceImport = Double.parseDouble(price.replaceAll("[^0-9]", ""));
             double total = priceImport * quantity;
             if (validationError != null) {
                 JOptionPane.showMessageDialog(this, validationError, "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -351,11 +366,29 @@ public class GUI_Form_Import extends JDialog {
         if (bus.insert(importDTO, productData)) {
             JOptionPane.showMessageDialog(this, "Lưu phiếu nhập thành công", "Thành công", JOptionPane.INFORMATION_MESSAGE);
             parentImportPanel.loadImport();
+            loadProductData();
             loadAllProducts();
             resetForm();
         } else {
             JOptionPane.showMessageDialog(this, "Lỗi khi lưu phiếu nhập", "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    public void loadProductData() {
+        SwingUtilities.invokeLater(() -> {
+            DefaultTableModel model = (DefaultTableModel) GUI_Product.getProductTable().getModel();
+            model.setRowCount(0); // Xóa dữ liệu cũ
+
+            List<ProductDTO> products = ProductBUS.getAllProducts();
+            for (ProductDTO product : products) {
+                model.addRow(new Object[]{
+                    product.getProductID(),
+                    product.getProductName(),
+                    product.getGia(),
+                    product.getSoluong()
+                });
+            }
+        });
     }
 
     private void resetProductDetail() {
