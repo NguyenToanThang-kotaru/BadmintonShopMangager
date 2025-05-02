@@ -194,7 +194,7 @@ public class GUI_Permission extends JPanel {
     }
 
     // Phương thức tải danh sách tài khoản từ database lên bảng
-    private void loadPermissions() {
+    public void loadPermissions() {
         ArrayList<PermissionDTO> permission = PermissionBUS.getAllPermissions();
         tableModel.setRowCount(0); // Xóa dữ liệu cũ trước khi cập nhật
         int index = 1;
