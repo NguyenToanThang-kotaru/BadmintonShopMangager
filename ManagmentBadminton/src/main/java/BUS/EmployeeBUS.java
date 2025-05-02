@@ -29,11 +29,8 @@ public class EmployeeBUS {
     }
 
     public static Boolean deletedEmployee(String ID) {
-        if (EmployeeDAO.delete_Employee(ID) == true) {
-            return AccountDAO.delete_AccountByEmployee(ID);
-        } else {
-            return false;
-        }
+        AccountDAO.delete_AccountByEmployee(ID);
+        return EmployeeDAO.delete_Employee(ID); 
     }
 
     public static Boolean addEmployee(EmployeeDTO emp) {
