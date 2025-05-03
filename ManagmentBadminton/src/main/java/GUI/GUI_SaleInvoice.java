@@ -132,6 +132,7 @@ public class GUI_SaleInvoice extends JPanel {
             if (!GFO.isVisible()) {
                 loadOrder(); // Tải lại danh sách hóa đơn sau khi thêm
             }
+            
         });
 
         // Thêm các panel vào giao diện chính

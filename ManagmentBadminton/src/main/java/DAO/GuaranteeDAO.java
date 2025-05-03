@@ -94,18 +94,13 @@ public class GuaranteeDAO {
     }
 
     private static String generateNewGuaranteeID() {
-        String query = "SELECT WarrantyID FROM warranty ORDER BY WarrantyID DESC LIMIT 1";
+        String query = "SELECT MAX(CAST(SUBSTRING(WarrantyID, 2) AS UNSIGNED)) FROM warranty";
 
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
 
             if (rs.next()) {
-                String lastID = rs.getString("WarrantyID"); // Ví dụ: "NV005"
-
-                // Cắt bỏ "TK", chỉ lấy số
-                int number = Integer.parseInt(lastID.substring(2));
-
-                // Tạo ID mới với định dạng NVXXX
-                return String.format("W%02d", number + 1);
+                int lastNumber = rs.getInt(1); // Lấy số lớn nhất hiện có
+                return String.format("W%03d", lastNumber + 1); // Tăng lên 1
             }
 
         } catch (SQLException e) {
@@ -113,7 +108,7 @@ public class GuaranteeDAO {
             e.printStackTrace();
         }
 
-        return "W01"; // Nếu không có nhân viên nào, bắt đầu từ "NV001"
+        return "W001"; // Mặc định nếu không có bản ghi nào
     }
 
     public static boolean addGuarantee(String Series) {

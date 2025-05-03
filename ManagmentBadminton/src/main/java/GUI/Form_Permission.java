@@ -134,6 +134,7 @@ public class Form_Permission extends JDialog {
 //            }
 
             if (!isEditMode) {
+                
                 if (PermissionBUS.add_Permisison(newPermission) && PermissionBUS.add_FunctionAction(newPermission)) {
                     System.out.println("them quyen thanh con");
                     parent.loadPermissions();
