@@ -15,8 +15,6 @@ import DTO.EmployeeDTO;
 import java.util.ArrayList;
 
 public class GUI_Employee extends JPanel {
-    
-    
 
     // Khai báo các thành phần giao diện
     private JPanel midPanel, topPanel, botPanel;
@@ -188,11 +186,18 @@ public class GUI_Employee extends JPanel {
             );
 
             if (result == JOptionPane.YES_OPTION) {
-                if (EmployeeBUS.deletedEmployee(employeeChoosing.getEmployeeID())) {
-                    JOptionPane.showMessageDialog(this, "Xóa thành công");
-                    loadEmployees();
+                if (employeeChoosing.getEmployeeID().equals(a.getEmployeeID())) {
+                    JOptionPane.showMessageDialog(this, "Bạn không thể xóa khi đang đăng nhập vào tài khoản thuộc về nhân viên này!");
                 } else {
-                    JOptionPane.showMessageDialog(this, "Xóa thất bại", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    if (EmployeeBUS.deletedEmployee(employeeChoosing.getEmployeeID())) {
+
+                        JOptionPane.showMessageDialog(this, "Xóa thành công");
+                        GUI_Account GA = new GUI_Account(a);
+                        GA.loadAccounts();
+                        loadEmployees();
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Xóa thất bại", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    }
                 }
             }
         });
