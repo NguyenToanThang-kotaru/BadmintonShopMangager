@@ -20,16 +20,16 @@ import javax.swing.JOptionPane;
  */
 public class PermissionBUS {
 
-    public static Boolean ValidationPermission(PermissionDTO per) {
-        if(getPermissionByName(per.getName())== null){
+    public static Boolean ValidationPermission(PermissionDTO per, int mode) {
+        if(getPermissionByName(per.getName()) != null && mode == 1 ){
             JOptionPane.showMessageDialog(null, "Quyền đã tồn tại! Không thể thêm");
             return false;
         }
-        if (per.getName() == "") {
+        if (per.getName().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Tên quyền không được để trống");
             return false;
-        }
-        if (per.getFunction().size() < 1) {
+        }   
+        if (per.getTotalFunction().equals("0")) {
             JOptionPane.showMessageDialog(null, "Vui lòng chọn ít nhất 1 chức năng");
             return false;
         }
@@ -53,6 +53,7 @@ public class PermissionBUS {
 
     public static Boolean update_Permission(PermissionDTO per) {
         delete_FunctionAction(per);
+        PermissionDAO.update_Permission(per);
         return PermissionDAO.add_FunctionAction(per);
     }
 
