@@ -14,7 +14,6 @@ import java.awt.Insets;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -636,7 +635,8 @@ public class GUI_Form_Order extends JDialog {
             detail.setQuantity(Integer.parseInt(String.valueOf(orderTableModel.getValueAt(i, 3))));
             String priceStr = orderTableModel.getValueAt(i, 4).toString().replaceAll("[^0-9]", "");
             detail.setPrice(Double.parseDouble(priceStr));
-
+            String totalPrice = orderTableModel.getValueAt(i, 5).toString().replaceAll("[^0-9]", "");
+            detail.setTotalPrice(Double.parseDouble(totalPrice));
             detailOrderBUS.add(detail);
 
             // 4. Lưu sản phẩm đã bán
