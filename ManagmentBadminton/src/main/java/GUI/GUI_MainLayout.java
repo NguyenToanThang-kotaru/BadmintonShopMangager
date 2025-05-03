@@ -22,8 +22,8 @@ public class GUI_MainLayout extends JFrame {
     private GUI_TittleBar tittleBar;
     public GUI_MainLayout(JFrame login, AccountDTO logined) {
         setTitle("Quản Lý Kho Hàng");
-        // setExtendedState(JFrame.MAXIMIZED_BOTH);
-        setSize(1200, 800);
+         setExtendedState(JFrame.MAXIMIZED_BOTH);
+//        setSize(1200, 800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(0, 0));

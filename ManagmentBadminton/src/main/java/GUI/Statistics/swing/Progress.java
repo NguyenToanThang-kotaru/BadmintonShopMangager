@@ -22,5 +22,9 @@ public class Progress extends JProgressBar {
     public void start() {
         ui.start();
     }
+
+    public void setValue(long income) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
     
 }

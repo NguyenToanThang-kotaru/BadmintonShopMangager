@@ -49,6 +49,8 @@ public class ImportInvoiceBUS {
                 }
                 else {
                     productDAO.updateProductQuantity(productID, quantity);
+                    if(productDAO.isImportPriceZero(productID))
+                        productDAO.updatePrice(productID, price);
                 }
                 ImportInvoiceDetailDTO importDetail = new ImportInvoiceDetailDTO(importInvoice.getImportID(), productID, supplierID, quantity, price, totalPrice);
                 if (!importDetailDAO.insert(importDetail)) {
@@ -77,7 +79,7 @@ public class ImportInvoiceBUS {
         return result;
     }
 
-    public boolean validateProductImport(String productName, String priceImport, String image){
+    public boolean validateProductImport(String productName, String image){
         // Không cho tên chỉ toàn số
         if (productName.matches("\\d+")) {
             JOptionPane.showMessageDialog(null,
@@ -91,21 +93,6 @@ public class ImportInvoiceBUS {
         if (!productName.matches("^[\\p{L}0-9\\s+\\-\\.]+$")) {
             JOptionPane.showMessageDialog(null,
                     "Tên sản phẩm không được chứa ký tự đặc biệt.",
-                    "Lỗi nhập liệu",
-                    JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-
-        if (!priceImport.matches("^\\d+$")) {
-            JOptionPane.showMessageDialog(null,
-                    "Giá chỉ được chứa số.",
-                    "Lỗi nhập liệu",
-                    JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-        if (Double.parseDouble(priceImport) <= 0) {
-            JOptionPane.showMessageDialog(null,
-                    "Giá phải lớn hơn 0.",
                     "Lỗi nhập liệu",
                     JOptionPane.ERROR_MESSAGE);
             return false;
@@ -129,6 +116,26 @@ public class ImportInvoiceBUS {
         }
         return true;
     }
+
+    public boolean validateProductImport(String priceImport){
+    
+        if (!priceImport.matches("^\\d+$")) {
+            JOptionPane.showMessageDialog(null,
+                    "Giá chỉ được chứa số.",
+                    "Lỗi nhập liệu",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        if (Double.parseDouble(priceImport) <= 0) {
+            JOptionPane.showMessageDialog(null,
+                    "Giá phải lớn hơn 0.",
+                    "Lỗi nhập liệu",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
 
     public String generateNextSeriesFrom(String lastID) {
         int num = Integer.parseInt(lastID.substring(2)) + 1;

@@ -23,7 +23,7 @@ import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 
 public class Form_Promotion extends JDialog {
 
-    private JTextField txtMa, txtTen, txtMucGiam;
+    private JTextField txtTen, txtMucGiam;
     private CustomDatePicker dateStart, dateEnd;
     private CustomButton btnSave, btnCancel;
     private PromotionBUS promotionBUS;
@@ -52,22 +52,18 @@ public class Form_Promotion extends JDialog {
         gbc.gridwidth = 1;
         gbc.gridy = 1;
 
-        txtMa = new CustomTextField(20);
         txtTen = new CustomTextField(20);
         txtMucGiam = new CustomTextField(20);
         dateStart = new CustomDatePicker();
         dateEnd = new CustomDatePicker();
 
         if (promotion != null) {
-            txtMa.setText(String.valueOf(promotion.getId()));
-            txtMa.setEditable(false);
             txtTen.setText(promotion.getName());
             txtMucGiam.setText(String.valueOf(promotion.getDiscountRate() * 100));
             dateStart.setDate(promotion.getStartDate().toLocalDate());
             dateEnd.setDate(promotion.getEndDate().toLocalDate());
         }
 
-        addComponent("Mã khuyến mãi:", txtMa, gbc);
         addComponent("Tên chương trình:", txtTen, gbc);
         addComponent("Tỷ lệ giảm (%):", txtMucGiam, gbc);
         addComponent("Ngày bắt đầu:", dateStart, gbc);
@@ -88,11 +84,10 @@ public class Form_Promotion extends JDialog {
         btnCancel.addActionListener(e -> dispose());
 
         btnSave.addActionListener((ActionEvent e) -> {
-            String ma = txtMa.getText().trim();
             String ten = txtTen.getText().trim();
             String mucGiamStr = txtMucGiam.getText().trim();
 
-            if (ma.isEmpty() || ten.isEmpty() || mucGiamStr.isEmpty()) {
+            if (ten.isEmpty() || mucGiamStr.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Vui lòng điền đầy đủ thông tin.");
                 return;
             }
@@ -108,7 +103,6 @@ public class Form_Promotion extends JDialog {
                 LocalDate end = dateEnd.getDate();
 
                 PromotionDTO newPromotion = new PromotionDTO(
-                        Integer.parseInt(ma),
                         ten,
                         java.sql.Date.valueOf(start),
                         java.sql.Date.valueOf(end),
@@ -124,7 +118,16 @@ public class Form_Promotion extends JDialog {
                         JOptionPane.showMessageDialog(this, "Thêm thất bại. Mã khuyến mãi có thể đã tồn tại.");
                     }
                 } else {
-                    if (promotionBUS.updatePromotion(newPromotion)) {
+
+                    PromotionDTO upPromotion = new PromotionDTO(
+                            promotion.getId(),
+                            ten,
+                            java.sql.Date.valueOf(start),
+                            java.sql.Date.valueOf(end),
+                            mucGiam / 100.0
+                    );
+
+                    if (promotionBUS.updatePromotion(upPromotion)) {
                         JOptionPane.showMessageDialog(this, "Cập nhật thành công!");
                         parent.loadKhuyenMai();
                         dispose();

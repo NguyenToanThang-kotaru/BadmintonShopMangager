@@ -35,4 +35,8 @@ public class PromotionBUS {
         return PromotionDAO.deletePromotionById(maKM);
     }
     
+    public List<PromotionDTO> search(String searchText){
+        return PromotionDAO.search(searchText);
+    }
+    
 }

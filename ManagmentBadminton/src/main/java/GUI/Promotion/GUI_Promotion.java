@@ -51,7 +51,7 @@ public class GUI_Promotion extends JPanel {
         midPanel = new JPanel(new BorderLayout());
         midPanel.setBackground(Color.WHITE);
 
-        String[] columns = {"STT", "Mã KM", "Tên chương trình", "Mức giảm (%)", "Ngày bắt đầu", "Ngày kết thúc"};
+        String[] columns = {"Mã KM", "Tên chương trình", "Mức giảm (%)", "Ngày bắt đầu", "Ngày kết thúc"};
         CustomTable customTable = new CustomTable(columns);
         promoTable = customTable.getAccountTable();
         tableModel = customTable.getTableModel();
@@ -124,11 +124,11 @@ public class GUI_Promotion extends JPanel {
             int selectedRow = promoTable.getSelectedRow();
             if (selectedRow != -1) {
                 // Lấy dữ liệu từ bảng và chuyển đổi sang String một cách an toàn
-                String maKM = (String) promoTable.getValueAt(selectedRow, 1);
-                String ten = (String) promoTable.getValueAt(selectedRow, 2);
-                String discount = promoTable.getValueAt(selectedRow, 3).toString();
-                String start = (String) promoTable.getValueAt(selectedRow, 4);
-                String end = (String) promoTable.getValueAt(selectedRow, 5);
+                String maKM = promoTable.getValueAt(selectedRow, 0).toString();
+                String ten = promoTable.getValueAt(selectedRow, 1).toString();
+                String discount = promoTable.getValueAt(selectedRow, 2).toString();
+                String start = promoTable.getValueAt(selectedRow, 3).toString();
+                String end = promoTable.getValueAt(selectedRow, 4).toString();
 
                 int id = Integer.parseInt(maKM);
                 // Lấy dữ liệu khuyến mãi từ DAO hoặc BUS
@@ -188,17 +188,27 @@ public class GUI_Promotion extends JPanel {
         });
 
         searchField.setSearchListener(e -> {
-            // TODO: Viết tìm kiếm nếu cần
+            List<PromotionDTO> list = promotionBUS.search(searchField.getText());
+            tableModel.setRowCount(0);
+            for (PromotionDTO km : list) {
+                tableModel.addRow(new Object[]{
+                    km.getId(), km.getName(), km.getDiscountRate() * 100, km.getStartDate(), km.getEndDate()
+                });
+            }
+            lblMaKM.setText("Chọn khuyến mãi");
+            lblTen.setText("");
+            lblDiscount.setText("");
+            lblStart.setText("");
+            lblEnd.setText("");
         });
     }
 
     public void loadKhuyenMai() {
         List<PromotionDTO> list = promotionBUS.getAllPromotion();
         tableModel.setRowCount(0);
-        int stt = 1;
         for (PromotionDTO km : list) {
             tableModel.addRow(new Object[]{
-                stt++, km.getId(), km.getName(), km.getDiscountRate(), km.getStartDate(), km.getEndDate()
+                km.getId(), km.getName(), km.getDiscountRate() * 100, km.getStartDate(), km.getEndDate()
             });
         }
         lblMaKM.setText("Chọn khuyến mãi");

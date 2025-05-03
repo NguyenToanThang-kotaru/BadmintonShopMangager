@@ -430,4 +430,33 @@ public class ProductDAO {
         return false;
     }
 
+    //Kiểm tra giá nhập có đang là 0 hay không
+    public boolean isImportPriceZero(String productID) {
+        String query = "SELECT ImportPrice FROM product WHERE ProductID = ? AND IsDeleted = 0";
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, productID);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getDouble("ImportPrice") == 0.0; // Trả về true nếu giá nhập là 0
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    //Cập nhật giá nhập và giá bán = 1.2 * giá nhập
+    public boolean updatePrice(String productID, double importPrice) {
+        String query = "UPDATE product SET ImportPrice = ?, Price = ? WHERE ProductID = ? AND IsDeleted = 0";
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setDouble(1, importPrice);
+            stmt.setDouble(2, importPrice * 1.2); // Giá bán = Giá nhập * 1.2 (lãi 20%)
+            stmt.setString(3, productID);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

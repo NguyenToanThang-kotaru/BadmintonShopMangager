@@ -1,9 +1,25 @@
 package GUI.Statistics;
 
-public class StatisticsPanel extends javax.swing.JPanel {
+import BUS.StatisticsBUS;
+import GUI.Statistics.form.DashboardFrom;
+import GUI.Statistics.form.DashboardFrom1;
 
+public class StatisticsPanel extends javax.swing.JPanel {
+    
+    private StatisticsBUS statisticsBUS;
+    
     public StatisticsPanel() {
         initComponents();
+        addFinancialTabs();
+    }
+
+    private void addFinancialTabs() {
+        statisticsBUS = new StatisticsBUS();
+        DashboardFrom dashboardFrom = new DashboardFrom(statisticsBUS);
+        jTabbedPane2.addTab("Thống kê theo năm", dashboardFrom);
+        DashboardFrom1 dashboardFrom1 = new DashboardFrom1(statisticsBUS);
+        jTabbedPane2.addTab("Thống kê theo tháng", dashboardFrom1);
+        
     }
 
     @SuppressWarnings("unchecked")
