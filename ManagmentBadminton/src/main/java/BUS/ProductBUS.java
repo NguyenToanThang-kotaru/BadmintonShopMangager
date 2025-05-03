@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
-
 public class ProductBUS {
 
     public static List<ProductDTO> getAllProducts() {
         return ProductDAO.getAllProducts();
     }
+
     public static void updateProduct(ProductDTO product) {
         ProductDAO dao = new ProductDAO();
         dao.updateProduct(product);
@@ -51,6 +51,7 @@ public class ProductBUS {
         String productName = product.getProductName().trim();
         String gia = product.getGia().trim();
         String soluong = product.getSoluong().trim();
+        String HLBH = product.getTGBH().trim();
 
         // Không cho tên chỉ toàn số
         if (productName.matches("\\d+")) {
@@ -73,6 +74,14 @@ public class ProductBUS {
         if (!gia.matches("^\\d+$")) {
             JOptionPane.showMessageDialog(null,
                     "Giá chỉ được chứa số.",
+                    "Lỗi nhập liệu",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        if (!HLBH.matches("^\\d+$")) {
+            JOptionPane.showMessageDialog(null,
+                    "Hiệu lực bảo hành chỉ được chứa số.",
                     "Lỗi nhập liệu",
                     JOptionPane.ERROR_MESSAGE);
             return false;

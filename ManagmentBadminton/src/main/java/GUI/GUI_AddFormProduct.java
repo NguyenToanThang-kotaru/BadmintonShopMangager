@@ -14,7 +14,7 @@ import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 
 public class GUI_AddFormProduct extends JDialog {
 
-    private JTextField nameField, priceField, maNCCField, soluongField, tsktField;
+    private JTextField nameField, priceField, maNCCField, soluongField, tsktField, HLBHField;
     private CustomCombobox TLField, NCCField;
     private CustomButton saveButton, cancelButton, btnChooseImage;
     private JLabel imageLabel;
@@ -39,7 +39,7 @@ public class GUI_AddFormProduct extends JDialog {
 //        addComponent("Giá:", priceField = new JTextField(20), gbc, 1);
 //        addComponent("Mã NCC:", maNCCField = new JTextField(20), gbc, 2);
 //        addComponent("Số lượng:", soluongField = new JTextField(20), gbc, 3);
-//        addComponent("Thông số kỹ thuật:", tsktField = new JTextField(20), gbc, 1);
+        addComponent("Hiệu lực bảo hành:", HLBHField = new JTextField(20), gbc, 1);
 
         // Loại sản phẩm
         gbc.gridx = 0;
@@ -130,9 +130,10 @@ public class GUI_AddFormProduct extends JDialog {
         String tenLoai = (String) TLField.getSelectedItem();
         String tenNCC = (String) NCCField.getSelectedItem();
         String giaNhap = "0";
+        String HLBH = HLBHField.getText().trim();
         String anh = null;
 
-        if (name.isEmpty() || price.isEmpty()) {
+        if (name.isEmpty() || price.isEmpty() || HLBH.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -143,7 +144,7 @@ public class GUI_AddFormProduct extends JDialog {
         }
 
         // Tạo sản phẩm mới, truyền vào productID là null vì đây là sản phẩm mới (sẽ tự động sinh ID khi thêm vào DB)
-        ProductDTO newProduct = new ProductDTO(null, name, price, soluong, null, null, tenLoai, anh, tenNCC, giaNhap);
+        ProductDTO newProduct = new ProductDTO(null, name, price, soluong, null, null, tenLoai, anh, tenNCC, giaNhap, HLBH);
         
           ProductBUS bus = new ProductBUS();
         if (!bus.validateProduct(newProduct)) {
