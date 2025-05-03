@@ -81,20 +81,59 @@ public class PermissionDAO {
     }
 
     public static Boolean delete_Permission(String rankID) {
+        Connection conn = null;
+        PreparedStatement ps1 = null;
+        PreparedStatement ps2 = null;
+
         try {
-            String sql = "UPDATE `employee_rank` SET `IsDeleted` = 1 WHERE rankID = ?;";
-            Connection conn = DatabaseConnection.getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql);
+            conn = DatabaseConnection.getConnection();
+            conn.setAutoCommit(false); // Bắt đầu transaction
 
-            ps.setString(1, rankID);  // Gán giá trị cho dấu hỏi
+            // 1. Xóa các bản ghi liên quan trong function_detail trước
+            String sql2 = "DELETE FROM `function_detail` WHERE `RankID` = ?";
+            ps2 = conn.prepareStatement(sql2);
+            ps2.setString(1, rankID);
+            ps2.executeUpdate();
 
-            int affectedRows = ps.executeUpdate();  // Trả về số dòng bị ảnh hưởng
+            // 2. Xóa permission chính trong employee_rank
+            String sql1 = "DELETE FROM `employee_rank` WHERE `rankID` = ?";
+            ps1 = conn.prepareStatement(sql1);
+            ps1.setString(1, rankID);
+            int affectedRows = ps1.executeUpdate();
 
+            conn.commit(); // Commit transaction nếu thành công
             return affectedRows > 0;
 
         } catch (Exception e) {
+            if (conn != null) {
+                try {
+                    conn.rollback(); // Rollback nếu có lỗi
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
             e.printStackTrace();
             return false;
+        } finally {
+            // Đóng tất cả tài nguyên
+            try {
+                if (ps1 != null) {
+                    ps1.close();
+                }
+            } catch (Exception e) {
+            }
+            try {
+                if (ps2 != null) {
+                    ps2.close();
+                }
+            } catch (Exception e) {
+            }
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (Exception e) {
+            }
         }
     }
 
@@ -314,6 +353,9 @@ public class PermissionDAO {
                 }
                 // === Tìm hoặc tạo FunctionActionDTO ===
                 FunctionActionDTO function = null;
+                if (permission == null) {
+                    continue;
+                }
                 for (FunctionActionDTO f : permission.getFunction()) {
                     if (f.getID().equals(functionId)) {
                         function = f;
