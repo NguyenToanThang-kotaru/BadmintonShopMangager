@@ -156,6 +156,12 @@ public class GUI_Guarantee extends JPanel {
             tableModel.fireTableDataChanged();
         });
 
+        searchField.setSearchListener(e -> {
+            String keyword = searchField.getText();
+            ArrayList<GuaranteeDTO> ketQua = GuaranteeBUS.searchGuarantees(keyword);
+            capNhatBangBaoHanh(ketQua); // Hiển thị kết quả tìm được trên bảng
+        });
+
         loadGuaranteeData();
 
         ArrayList<ActionDTO> actions = PermissionBUS.getPermissionActions(a, "Quan ly bao hanh");
@@ -181,7 +187,7 @@ public class GUI_Guarantee extends JPanel {
         fixButton.setVisible(canEdit);
 //        deleteButton.setVisible(canDelete);
         scrollPane.setVisible(canWatch);
-        reloadButton.setVisible(false);
+        reloadButton.setVisible(true);
         // Xử lý sự kiện chọn dòng trong bảng
         // Xử lý sự kiện chọn dòng trong bảng
     }
@@ -195,6 +201,18 @@ public class GUI_Guarantee extends JPanel {
             });
         }
 
+    }
+
+    private void capNhatBangBaoHanh(ArrayList<GuaranteeDTO> guarantees) {
+        tableModel.setRowCount(0); // Xóa dữ liệu cũ
+        for (GuaranteeDTO guarantee : guarantees) {
+            tableModel.addRow(new Object[]{
+                guarantee.getBaohanhID(),
+                guarantee.getSerialID(),
+                guarantee.getLydo(),
+                guarantee.gettrangthai()
+            });
+        }
     }
 //
 

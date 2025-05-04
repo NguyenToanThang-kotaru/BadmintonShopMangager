@@ -151,6 +151,13 @@ public class GUI_Product extends JPanel {
         JLabel ImportPrice = new JLabel("");
         infoPanel.add(ImportPrice, gbcInfo);
 
+        gbcInfo.gridx = 0;
+        gbcInfo.gridy = 7;
+        infoPanel.add(new JLabel("Hiệu lực bảo hành: "), gbcInfo);
+        gbcInfo.gridx = 1;
+        JLabel HLBH = new JLabel("");
+        infoPanel.add(HLBH, gbcInfo);
+
 // Nút Lưu
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
         buttonPanel.setOpaque(false);
@@ -168,7 +175,7 @@ public class GUI_Product extends JPanel {
         buttonPanel.add(fixButton);
 
         gbcInfo.gridx = 0;
-        gbcInfo.gridy = 7;
+        gbcInfo.gridy = 8;
         gbcInfo.gridwidth = 2;
         gbcInfo.fill = GridBagConstraints.HORIZONTAL;
 
@@ -192,6 +199,7 @@ public class GUI_Product extends JPanel {
                     NameNCC.setText(product.gettenNCC());
                     TypeName.setText(product.getTL());
                     ImportPrice.setText(product.getgiaNhap());
+                    HLBH.setText(product.getTGBH());
 
                     infoPanel.add(buttonPanel, gbcInfo);
 
@@ -233,6 +241,7 @@ public class GUI_Product extends JPanel {
                     NameNCC.setText("");
                     TypeName.setText("");
                     ImportPrice.setText("");
+                    HLBH.setText("");
                     imageLabel.setIcon(null);
                     infoPanel.remove(buttonPanel); // Ẩn nút nếu không có sản phẩm
                     infoPanel.revalidate();
@@ -302,6 +311,7 @@ public class GUI_Product extends JPanel {
                 NameNCC.setText("");
                 TypeName.setText("");
                 ImportPrice.setText("");
+                HLBH.setText("");
 
                 String productImg = productChoosing.getAnh();
                 String imagePath = "images/noimage.png"; // Đường dẫn mặc định nếu không có ảnh sản phẩm
@@ -352,7 +362,6 @@ public class GUI_Product extends JPanel {
         fixButton.setVisible(canEdit);
         deleteButton.setVisible(canDelete);
         scrollPane.setVisible(canWatch);
-        reloadButton.setVisible(false);
     }
 
 //    private void showEditForm() {

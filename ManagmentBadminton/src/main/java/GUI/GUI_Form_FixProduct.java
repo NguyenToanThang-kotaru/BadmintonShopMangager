@@ -15,7 +15,7 @@ import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 
 public class GUI_Form_FixProduct extends JDialog {
 
-    private JTextField nameField, priceField, soluongField;
+    private JTextField nameField, priceField, soluongField, HLBHField;
     private CustomCombobox TLField, NCCField;
     private CustomButton saveButton, cancelButton, btnChooseImage;
     private JLabel imageLabel;
@@ -46,9 +46,12 @@ public class GUI_Form_FixProduct extends JDialog {
 
         addComponent("Tên sản phẩm:", nameField = new JTextField(20), gbc, 1);
         nameField.setText(product.getProductName());
-        
+
+        addComponent("Hiệu lực bảo hành:", HLBHField = new JTextField(20), gbc, 2);
+        HLBHField.setText(product.getTGBH());
+
         gbc.gridx = 0;
-        gbc.gridy = 2;
+        gbc.gridy = 3;
         add(new JLabel("Giá bán: "), gbc);
         gbc.gridx = 1;
         JLabel Price = new JLabel(String.valueOf(product.getGia()));
@@ -60,14 +63,14 @@ public class GUI_Form_FixProduct extends JDialog {
 //        addComponent("Thông số kỹ thuật:", tsktField = new JTextField(20), gbc, 5);
 //        tsktField.setText(product.getTSKT());
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         add(new JLabel("Giá nhập: "), gbc);
         gbc.gridx = 1;
         JLabel ImportPrice = new JLabel(String.valueOf(product.getgiaNhap()));
         add(ImportPrice, gbc);
 
         gbc.gridx = 0;
-        gbc.gridy = 6;
+        gbc.gridy = 5;
         add(new JLabel("Tên loại:"), gbc);
         gbc.gridx = 1;
         ArrayList<String> categoryList = ProductBUS.getAllCategoryNames();
@@ -77,7 +80,7 @@ public class GUI_Form_FixProduct extends JDialog {
         add(TLField, gbc);
 
         gbc.gridx = 0;
-        gbc.gridy = 7;
+        gbc.gridy = 6;
         add(new JLabel("Nhà cung cấp:"), gbc);
         gbc.gridx = 1;
         ArrayList<String> NCCList = SupplierBUS.getAllNCCNames();
@@ -159,6 +162,7 @@ public class GUI_Form_FixProduct extends JDialog {
 //        String tskt = tsktField.getText().trim();
         String tenLoai = (String) TLField.getSelectedItem();
         String tenNCC = (String) NCCField.getSelectedItem();
+        String HLBH = HLBHField.getText().trim();
         String anh = product.getAnh();
 
         if (name.isEmpty()) {
@@ -171,6 +175,7 @@ public class GUI_Form_FixProduct extends JDialog {
         }
 
         product.setProductName(name);
+        product.setTGBH(HLBH);
 //        product.setGia(price);
         product.settenNCC(tenNCC);
 //        product.setSoluong(soluong);

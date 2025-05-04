@@ -12,6 +12,7 @@ public class ProductDTO {
     private String TL;
     private String tenNCC;
     private String giaNhap;
+    private String TGBH;
 
     public ProductDTO() {
         this.productID = "";
@@ -24,9 +25,10 @@ public class ProductDTO {
         this.TL = "";
         this.tenNCC = "";
         this.giaNhap = "";
+        this.TGBH = "";
     }
 
-    public ProductDTO(String productID, String productName, String gia, String soluong, String maNCC, String ML, String TL, String anh, String tenNCC, String giaNhap) {
+    public ProductDTO(String productID, String productName, String gia, String soluong, String maNCC, String ML, String TL, String anh, String tenNCC, String giaNhap, String TGBH) {
         this.productID = productID;
         this.productName = productName;
         this.gia = gia;
@@ -37,7 +39,9 @@ public class ProductDTO {
         this.TL = TL;
         this.tenNCC = tenNCC;
         this.giaNhap = giaNhap;
+        this.TGBH = TGBH;
     }
+
     public ProductDTO(String productID, String productName, String giaNhap, String soluong, String maNCC, String ML, String anh) {
         this.productID = productID;
         this.productName = productName;
@@ -46,6 +50,18 @@ public class ProductDTO {
         this.maNCC = maNCC;
         this.ML = ML;
         this.anh = anh;
+    }
+    
+        public ProductDTO(String productID, String productName, String gia, String soluong, String maNCC, String ML, String anh, String giaNhap, String TGBH) {
+        this.productID = productID;
+        this.productName = productName;
+        this.gia = gia;
+        this.giaNhap = giaNhap;
+        this.soluong = soluong;
+        this.maNCC = maNCC;
+        this.ML = ML;
+        this.anh = anh;
+        this.TGBH = TGBH;
     }
 
     public String getProductID() {
@@ -134,5 +150,13 @@ public class ProductDTO {
 
     public void setgiaNhap(String giaNhap) {
         this.giaNhap = giaNhap;
+    }
+
+    public String getTGBH() {
+        return TGBH;
+    }
+
+    public void setTGBH(String TGBH) {
+        this.TGBH = TGBH;
     }
 }
