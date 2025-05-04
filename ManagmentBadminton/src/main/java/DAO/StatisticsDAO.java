@@ -1,6 +1,7 @@
 package DAO;
 
 import Connection.DatabaseConnection;
+import DTO.Statistics.ProductStatisticsDTO;
 import DTO.Statistics.StatisticsByDayDTO;
 import DTO.Statistics.StatisticsByMonthDTO;
 import DTO.Statistics.StatisticsByYearDTO;
@@ -11,8 +12,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.YearMonth;
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class StatisticsDAO {
 
@@ -86,9 +90,8 @@ public class StatisticsDAO {
                 + "       IFNULL(sales_data.income, 0) AS income, "
                 + "       IFNULL(sales_data.income, 0) - IFNULL(import_data.cost, 0) AS profit "
                 + "FROM ( "
-                + "    SELECT DISTINCT MONTH(Date) AS month FROM import_invoice WHERE YEAR(Date) = ? "
-                + "    UNION "
-                + "    SELECT DISTINCT MONTH(Date) AS month FROM sales_invoice WHERE YEAR(Date) = ? "
+                + "    SELECT 1 AS month UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 "
+                + "    UNION SELECT 7 UNION SELECT 8 UNION SELECT 9 UNION SELECT 10 UNION SELECT 11 UNION SELECT 12 "
                 + ") AS month_table "
                 + "LEFT JOIN ( "
                 + "    SELECT MONTH(ii.Date) AS month, SUM(iid.TotalPrice) AS cost "
@@ -108,8 +111,6 @@ public class StatisticsDAO {
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, year);
             stmt.setInt(2, year);
-            stmt.setInt(3, year);
-            stmt.setInt(4, year);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     result.add(new StatisticsByMonthDTO(
@@ -127,38 +128,46 @@ public class StatisticsDAO {
     }
 
     public ArrayList<StatisticsByMonthDTO> getLast6MonthsStatistics() {
-        List<Integer> last6MonthNumbers = getLast6MonthNumbers();
-
-        int currentYear = YearMonth.now().getYear();
-        int previousYear = currentYear - 1;
-
-        // Lấy dữ liệu từ cả năm hiện tại và năm trước
+        ArrayList<YearMonth> last6Months = getLast6YearMonths(); // danh sách 6 tháng gần nhất (đã có năm)
         ArrayList<StatisticsByMonthDTO> allData = new ArrayList<>();
-        allData.addAll(getStatisticsByMonth(currentYear));
-        allData.addAll(getStatisticsByMonth(previousYear));
 
-        // Lọc theo danh sách tháng
-        ArrayList<StatisticsByMonthDTO> filteredData = new ArrayList<>();
-        for (StatisticsByMonthDTO dto : allData) {
-            if (last6MonthNumbers.contains(dto.getMonth())) {
-                filteredData.add(dto);
+        // Lấy danh sách các năm cần truy vấn
+        Set<Integer> yearsToQuery = new HashSet<>();
+        for (YearMonth ym : last6Months) {
+            yearsToQuery.add(ym.getYear());
+        }
+
+        // Gộp tất cả dữ liệu các năm cần thiết
+        for (int year : yearsToQuery) {
+            allData.addAll(getStatisticsByMonth(year));
+        }
+
+        // Tạo Map<YearMonth, StatisticsByMonthDTO> để tra cứu nhanh
+        Map<YearMonth, StatisticsByMonthDTO> dataMap = new HashMap<>();
+        for (int year : yearsToQuery) {
+            for (StatisticsByMonthDTO dto : getStatisticsByMonth(year)) {
+                YearMonth ym = YearMonth.of(year, dto.getMonth());
+                dataMap.put(ym, dto);
             }
         }
 
-        // Sắp xếp theo thứ tự tháng từ bé đến lớn
-        filteredData.sort(Comparator.comparingInt(StatisticsByMonthDTO::getMonth));
-
-        return filteredData;
-    }
-
-    public List<Integer> getLast6MonthNumbers() {
-        List<Integer> result = new ArrayList<>();
-        YearMonth current = YearMonth.now();
-
-        for (int i = 1; i <= 6; i++) {
-            result.add(current.minusMonths(i).getMonthValue());
+        // Lấy đúng 6 tháng gần nhất từ map, theo đúng thứ tự
+        ArrayList<StatisticsByMonthDTO> result = new ArrayList<>();
+        for (YearMonth ym : last6Months) {
+            StatisticsByMonthDTO dto = dataMap.getOrDefault(
+                    ym, new StatisticsByMonthDTO(ym.getMonthValue(), 0, 0, 0));
+            result.add(dto);
         }
 
+        return result;
+    }
+
+    public ArrayList<YearMonth> getLast6YearMonths() {
+        ArrayList<YearMonth> result = new ArrayList<>();
+        YearMonth current = YearMonth.now();
+        for (int i = 5; i >= 0; i--) { // từ 5 tháng trước đến tháng hiện tại
+            result.add(current.minusMonths(i));
+        }
         return result;
     }
 
@@ -198,6 +207,72 @@ public class StatisticsDAO {
                             rs.getInt("income"),
                             rs.getInt("profit")
                     ));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    public static HashMap<String, List<ProductStatisticsDTO>> getInventoryStatistics(String txt, int month, int year) {
+        HashMap<String, List<ProductStatisticsDTO>> result = new HashMap<>();
+        String keyword = "%" + txt + "%";
+
+        String query = "SELECT "
+                + "    p.ProductID, "
+                + "    p.ProductName, "
+                + "    IFNULL(( "
+                + "        (SELECT SUM(iid.Quantity) "
+                + "         FROM import_invoice_detail iid "
+                + "         JOIN import_invoice ii ON iid.ImportID = ii.ImportID "
+                + "         WHERE iid.ProductID = p.ProductID AND MONTH(ii.Date) < ? AND YEAR(ii.Date) = ?) "
+                + "        - "
+                + "        (SELECT SUM(sid.Quantity) "
+                + "         FROM sales_invoice_detail sid "
+                + "         JOIN sales_invoice si ON sid.SalesID = si.SalesID "
+                + "         WHERE sid.ProductID = p.ProductID AND MONTH(si.Date) < ? AND YEAR(si.Date) = ?) "
+                + "    ), 0) AS inventoryStartsMonth, "
+                + "    IFNULL(( "
+                + "        SELECT SUM(iid.Quantity) "
+                + "        FROM import_invoice_detail iid "
+                + "        JOIN import_invoice ii ON iid.ImportID = ii.ImportID "
+                + "        WHERE iid.ProductID = p.ProductID AND MONTH(ii.Date) = ? AND YEAR(ii.Date) = ? "
+                + "    ), 0) AS importsInMonth, "
+                + "    IFNULL(( "
+                + "        SELECT SUM(sid.Quantity) "
+                + "        FROM sales_invoice_detail sid "
+                + "        JOIN sales_invoice si ON sid.SalesID = si.SalesID "
+                + "        WHERE sid.ProductID = p.ProductID AND MONTH(si.Date) = ? AND YEAR(si.Date) = ? "
+                + "    ), 0) AS exportInMonth "
+                + "FROM product p "
+                + "WHERE p.ProductName LIKE ? OR p.ProductID LIKE ?";
+
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            // Set parameters
+            stmt.setInt(1, month);
+            stmt.setInt(2, year);
+            stmt.setInt(3, month);
+            stmt.setInt(4, year);
+            stmt.setInt(5, month);
+            stmt.setInt(6, year);
+            stmt.setInt(7, month);
+            stmt.setInt(8, year);
+            stmt.setString(9, keyword);
+            stmt.setString(10, keyword);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    String id = rs.getString("ProductID");
+                    String name = rs.getString("ProductName");
+                    int inventoryStart = rs.getInt("inventoryStartsMonth");
+                    int imported = rs.getInt("importsInMonth");
+                    int exported = rs.getInt("exportInMonth");
+                    int inventoryEnd = inventoryStart + imported - exported;
+
+                    ProductStatisticsDTO dto = new ProductStatisticsDTO(id, name, inventoryStart, imported, exported, inventoryEnd);
+                    result.computeIfAbsent(id, k -> new ArrayList<>()).add(dto);
                 }
             }
         } catch (SQLException e) {

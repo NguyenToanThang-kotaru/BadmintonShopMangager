@@ -3,6 +3,7 @@ package GUI.Statistics;
 import BUS.StatisticsBUS;
 import GUI.Statistics.form.DashboardFrom;
 import GUI.Statistics.form.DashboardFrom1;
+import GUI.Statistics.form.InventoryProductStatisticsFrom;
 
 public class StatisticsPanel extends javax.swing.JPanel {
     
@@ -19,7 +20,8 @@ public class StatisticsPanel extends javax.swing.JPanel {
         jTabbedPane2.addTab("Thống kê theo năm", dashboardFrom);
         DashboardFrom1 dashboardFrom1 = new DashboardFrom1(statisticsBUS);
         jTabbedPane2.addTab("Thống kê theo tháng", dashboardFrom1);
-        
+        InventoryProductStatisticsFrom inventoryProductStatisticsFrom = new InventoryProductStatisticsFrom();
+        jTabbedPane3.add(inventoryProductStatisticsFrom);
     }
 
     @SuppressWarnings("unchecked")
@@ -29,9 +31,11 @@ public class StatisticsPanel extends javax.swing.JPanel {
         jTabbedPane1 = new javax.swing.JTabbedPane();
         overviewFrom2 = new GUI.Statistics.form.overviewFrom();
         jTabbedPane2 = new javax.swing.JTabbedPane();
+        jTabbedPane3 = new javax.swing.JTabbedPane();
 
         jTabbedPane1.addTab("Tổng Quan", overviewFrom2);
         jTabbedPane1.addTab("Tài Chính", jTabbedPane2);
+        jTabbedPane1.addTab("Tồn Kho", jTabbedPane3);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -53,6 +57,7 @@ public class StatisticsPanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTabbedPane jTabbedPane2;
+    private javax.swing.JTabbedPane jTabbedPane3;
     private GUI.Statistics.form.overviewFrom overviewFrom2;
     // End of variables declaration//GEN-END:variables
 }
