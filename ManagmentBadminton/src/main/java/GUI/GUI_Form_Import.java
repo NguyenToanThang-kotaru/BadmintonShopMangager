@@ -172,11 +172,11 @@ public class GUI_Form_Import extends JDialog {
             productDetailPanel.getTxtProductId().setText((String) details[0]);
             productDetailPanel.getTxtProductName().setText((String) details[1]);
             productDetailPanel.getTxtPrice().setText((String) details[2]);
-            if(Integer.parseInt((String) details[2]) == 0) {
+
+            if (Integer.parseInt(((String) details[2]).replace(",", "")) == 0) 
                 productDetailPanel.getTxtPrice().setEditable(true);
-            } else {
+            else 
                 productDetailPanel.getTxtPrice().setEditable(false);
-            }
             productDetailPanel.getTxtSupplierId().setText((String) details[3]);
             productDetailPanel.getCmbSupplier().setSelectedItem(SupplierBUS.getSupplierByID((String) details[3]).getSupplierName());
             productDetailPanel.getTxtProductTypeId().setText(TypeProductBUS.getTypeProductByName((String) details[4]).getTypeID());
