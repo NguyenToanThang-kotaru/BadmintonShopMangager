@@ -15,13 +15,19 @@ public class DashboardFrom extends javax.swing.JPanel {
     ArrayList<StatisticsByYearDTO> dataset;
     private DefaultTableModel model;
     static NumberFormat fm = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+    private int chartPage = 1;
+    private int chartsPerPage = 5;
+    private int totalChartPage = 1;
     
     public DashboardFrom(StatisticsBUS statisticsBUS) {
         this.statisticsBUS = statisticsBUS;
         this.dataset = this.statisticsBUS.getStatisticsByYear();
         initComponents();
         loadDataTalbe(dataset);
-        loadDataChart(dataset);
+//        loadDataChart(dataset);
+        totalChartPage = (int) Math.ceil((double) dataset.size() / chartsPerPage);
+        loadChartPage(chartPage);
+        updateChartButtons();
     }
     
     private void loadDataTalbe(ArrayList<StatisticsByYearDTO> list){
@@ -44,6 +50,38 @@ public class DashboardFrom extends javax.swing.JPanel {
         }
         chart.start();
     }
+    
+    private void loadChartPage(int page) {
+        chart.clear(); 
+
+        chart.addLegend("Doanh thu", new Color(12, 84, 175), new Color(0, 108, 247));
+        chart.addLegend("Chi phí", new Color(54, 4, 143), new Color(104, 49, 200));
+        chart.addLegend("Lợi nhuận", new Color(5, 125, 0), new Color(95, 209, 69));
+
+        int start = (page - 1) * chartsPerPage;
+        int end = Math.min(start + chartsPerPage, dataset.size());
+
+        for (int i = start; i < end; i++) {
+            StatisticsByYearDTO data = dataset.get(i);
+            chart.addData(new ModelChart("Năm " + data.getYear(), new double[]{
+                data.getCost(), data.getIncome(), data.getProfit()
+            }));
+        }
+        chart.start();
+    }
+
+    private void goToChartPage(int page) {
+        if (page >= 1 && page <= totalChartPage) {
+            chartPage = page;
+            loadChartPage(chartPage);
+            updateChartButtons();
+        }
+    }
+
+    private void updateChartButtons() {
+        btnChartPrev.setEnabled(chartPage > 1);
+        btnChartNext.setEnabled(chartPage < totalChartPage);
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -54,6 +92,8 @@ public class DashboardFrom extends javax.swing.JPanel {
         chart = new GUI.Statistics.Chart.Chart();
         jScrollPane1 = new javax.swing.JScrollPane();
         table = new GUI.Statistics.swing.TableColumn();
+        btnChartPrev = new javax.swing.JButton();
+        btnChartNext = new javax.swing.JButton();
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
         jLabel1.setText("Báo Cáo");
@@ -74,7 +114,7 @@ public class DashboardFrom extends javax.swing.JPanel {
             roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(roundPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(chart, javax.swing.GroupLayout.DEFAULT_SIZE, 332, Short.MAX_VALUE)
+                .addComponent(chart, javax.swing.GroupLayout.DEFAULT_SIZE, 330, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -98,6 +138,22 @@ public class DashboardFrom extends javax.swing.JPanel {
         });
         jScrollPane1.setViewportView(table);
 
+        btnChartPrev.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnChartPrev.setText("<<");
+        btnChartPrev.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnChartPrevActionPerformed(evt);
+            }
+        });
+
+        btnChartNext.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnChartNext.setText(">>");
+        btnChartNext.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnChartNextActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -108,7 +164,11 @@ public class DashboardFrom extends javax.swing.JPanel {
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 794, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnChartPrev)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnChartNext)
+                        .addGap(71, 71, 71))
                     .addComponent(roundPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -116,7 +176,10 @@ public class DashboardFrom extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(btnChartPrev)
+                    .addComponent(btnChartNext))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(roundPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(10, 10, 10)
@@ -125,8 +188,18 @@ public class DashboardFrom extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnChartPrevActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChartPrevActionPerformed
+        goToChartPage(chartPage - 1);
+    }//GEN-LAST:event_btnChartPrevActionPerformed
+
+    private void btnChartNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChartNextActionPerformed
+         goToChartPage(chartPage + 1);
+    }//GEN-LAST:event_btnChartNextActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnChartNext;
+    private javax.swing.JButton btnChartPrev;
     private GUI.Statistics.Chart.Chart chart;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
