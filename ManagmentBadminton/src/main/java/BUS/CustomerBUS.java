@@ -18,6 +18,9 @@ public class CustomerBUS {
     public CustomerDTO getByPhone(String phone) {
         return CustomerDAO.getByPhone(phone);
     }
+    public boolean addSpending(String id, double spending) {
+        return CustomerDAO.addSpending(id, spending);
+    }
     public boolean add(CustomerDTO customer) {
         return CustomerDAO.add(customer);
     }

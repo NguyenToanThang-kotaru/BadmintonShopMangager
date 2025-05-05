@@ -606,11 +606,12 @@ public class GUI_Form_Order extends JDialog {
         String sdt = txtSoDienThoai.getText().trim();
 
         // 1. Nếu khách hàng chưa tồn tại, thêm vào database
-        CustomerDTO existingCustomer = customerBUS.getByPhone(sdt);
-        if (existingCustomer == null) {
+        CustomerDTO cus = customerBUS.getByPhone(sdt);
+        if (cus == null) {
             // Trường hợp khách mới => thêm vào
             CustomerDTO newCustomer = new CustomerDTO(maKH, tenKH, sdt, 0); // Có thể thêm email nếu có
             customerBUS.add(newCustomer);  // Bạn cần tạo hàm addCustomer trong BUS và DAO
+            cus = newCustomer;
         }
 
         // 2. Lưu hóa đơn
@@ -680,6 +681,14 @@ public class GUI_Form_Order extends JDialog {
             }
         }
 
+        // 6. Cap nhat khach hang
+        if (customerBUS.addSpending(cus.getId(), totalAmount)) {
+            System.out.println("Cập nhật thành công");
+        } else {
+            System.out.println("Cập nhật thất bại");
+        }
+
+
         JOptionPane.showMessageDialog(this, "Lưu hóa đơn thành công!");
         dispose();
     }
@@ -715,7 +724,6 @@ public class GUI_Form_Order extends JDialog {
     }
 
     private String getNextCustomerID() {
-        System.out.println("Hello i'm in getNextCustomerID()");
         ArrayList<CustomerDTO> customerIDs = customerBUS.getAll();
         if (customerIDs.isEmpty()) {
             return "C01";

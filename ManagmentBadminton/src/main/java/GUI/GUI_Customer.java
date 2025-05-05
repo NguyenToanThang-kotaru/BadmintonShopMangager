@@ -6,7 +6,6 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.LayoutManager;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -20,7 +19,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import BUS.CustomerBUS;
-import BUS.EmployeeBUS;
 import BUS.PermissionBUS;
 import DAO.CustomerDAO;
 import DTO.AccountDTO;
@@ -237,7 +235,13 @@ public class GUI_Customer extends JPanel {
         tableModel.setRowCount(0); // Xóa dữ liệu cũ trước khi cập nhật
         int index = 1;
         for (CustomerDTO cus : customers) {
-            tableModel.addRow(new Object[]{index++, cus.getName(), cus.getPhone(), cus.getSpending()});
+            tableModel.addRow(new Object[]{index++, cus.getName(), cus.getPhone(), formatCurrency(cus.getSpending())});
         }
+    }
+
+    private String formatCurrency(double amount) {
+        // Định dạng số tiền với dấu phẩy
+        String formattedAmount = String.format("%,.0f", amount);
+        return formattedAmount;
     }
 }

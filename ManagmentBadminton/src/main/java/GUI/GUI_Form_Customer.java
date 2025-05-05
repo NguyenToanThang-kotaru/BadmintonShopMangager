@@ -1,12 +1,24 @@
 package GUI;
 
 // import DAO.CustomerDAO;
-import BUS.CustomerBUS;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.util.ArrayList;
 
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+
+import BUS.CustomerBUS;
 import DTO.CustomerDTO;
 
 public class GUI_Form_Customer extends JDialog {
@@ -53,7 +65,7 @@ public class GUI_Form_Customer extends JDialog {
             txtCustomerID.setBackground(Color.WHITE); 
             txtFullName.setText(customer.getName());
             txtSDT.setText(customer.getPhone());
-            txtSpending.setText(String.valueOf(customer.getSpending()));
+            txtSpending.setText(formatCurrency(customer.getSpending()));
         } else {
             txtCustomerID.setText(getNextCustomerID(customers));
             txtCustomerID.setEditable(false); // Không cho sửa
@@ -144,5 +156,11 @@ public class GUI_Form_Customer extends JDialog {
             int nextID = Integer.parseInt(lastID.substring(2)) + 1; // Lấy số sau "KH" và tăng lên 1
             return String.format("C%02d", nextID); // Định dạng lại ID với 3 chữ số
         }
+    }
+
+    private String formatCurrency(double amount) {
+        // Định dạng số tiền với dấu phẩy
+        String formattedAmount = String.format("%,.0f", amount);
+        return formattedAmount;
     }
 }

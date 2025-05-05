@@ -97,6 +97,21 @@ public class CustomerDAO {
         return null;
     }
 
+    public static boolean addSpending(String id, double spending) {
+        String sql = "update customer set TotalSpending = TotalSpending + ? where CustomerID = ?;";
+        try {
+            Connection conn = DatabaseConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setDouble(1, spending);
+            stmt.setString(2, id);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
     public static boolean add(CustomerDTO customer) {
         String sql = "insert into customer(CustomerID, FullName, Phone, TotalSpending, IsDeleted) values (?, ?, ?, ?, 0);";
         try {
