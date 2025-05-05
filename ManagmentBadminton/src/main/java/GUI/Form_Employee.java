@@ -1,5 +1,6 @@
 package GUI;
 
+import BUS.EmployeeBUS;
 import DTO.EmployeeDTO;
 import DAO.EmployeeDAO;
 import java.awt.*;
@@ -94,16 +95,14 @@ public class Form_Employee extends JDialog {
         if (employee == null) {
             // Tạo Employee mới
             EmployeeDTO newEmployee = new EmployeeDTO(null, name, age, phone, email, address, gender );
-            boolean success = EmployeeDAO.addEmployee(newEmployee);
+            boolean success = EmployeeBUS.addEmployee(newEmployee);
 
             if (success) {
                 JOptionPane.showMessageDialog(this, "Thêm nhân viên thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                 parent.loadEmployees();
                 dispose();
             }
-            else{
-                JOptionPane.showMessageDialog(this, "Thêm nhân viên thất bại!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-            }
+           
         } // Nếu là cập nhật nhân viên
         else {
 
@@ -114,7 +113,7 @@ public class Form_Employee extends JDialog {
             employee.setAge(age);
             employee.setEmail(email);
             employee.setGender(gender);
-            boolean success = EmployeeDAO.updateEmployee(employee);
+            boolean success = EmployeeBUS.updateEmployee(employee);
 
             if (success) {
                 JOptionPane.showMessageDialog(this, "Cập nhật nhân viên thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);

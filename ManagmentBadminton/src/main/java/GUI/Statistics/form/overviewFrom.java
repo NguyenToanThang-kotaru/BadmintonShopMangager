@@ -48,6 +48,10 @@ public class overviewFrom extends javax.swing.JPanel {
 
         double cost = st.getCost() >= 0 ? (double) st.getCost() / tong * 100 : 0;
         progress3.setValue((int) cost);
+        
+        progress1.start();
+        progress2.start();
+        progress3.start();
     }
 
     private void loadDataLineChart(ArrayList<StatisticsByMonthDTO> list) {

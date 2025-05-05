@@ -12,12 +12,30 @@ import DTO.FunctionActionDTO;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author Thang Nguyen
  */
 public class PermissionBUS {
+
+    public static Boolean ValidationPermission(PermissionDTO per, int mode) {
+        if(getPermissionByName(per.getName()) != null && mode == 1 ){
+            JOptionPane.showMessageDialog(null, "Quyền đã tồn tại! Không thể thêm");
+            return false;
+        }
+        if (per.getName().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Tên quyền không được để trống");
+            return false;
+        }   
+        if (per.getTotalFunction().equals("0")) {
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn ít nhất 1 chức năng");
+            return false;
+        }
+        return true;
+       
+    }
 
     public static ArrayList<ActionDTO> getPermissionActions(AccountDTO account, String functionUnsignedName) {
 //        ArrayList<String> actions = new ArrayList<>();
@@ -35,6 +53,7 @@ public class PermissionBUS {
 
     public static Boolean update_Permission(PermissionDTO per) {
         delete_FunctionAction(per);
+        PermissionDAO.update_Permission(per);
         return PermissionDAO.add_FunctionAction(per);
     }
 

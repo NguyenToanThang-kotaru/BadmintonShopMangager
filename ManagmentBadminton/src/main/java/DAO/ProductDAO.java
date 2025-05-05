@@ -61,7 +61,7 @@ public class ProductDAO {
             }
 
             // Tiếp tục thêm sản phẩm...
-            String sql = "INSERT INTO product (ProductID, ProductName, Price, Quantity, SupplierID, TypeID, ProductImg, ImportPrice, IsDeleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO product (ProductID, ProductName, Price, Quantity, SupplierID, TypeID, ProductImg, ImportPrice, IsDeleted, WarrantyTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
 
                 String newID = generateNewProductID(); // Tạo ID mới
@@ -75,6 +75,7 @@ public class ProductDAO {
                 stmt.setString(7, product.getAnh());
                 stmt.setString(8, product.getgiaNhap());
                 stmt.setInt(9, 0); // Gán mặc định là 0
+                stmt.setString(10, product.getTGBH());
 
                 stmt.executeUpdate();
                 System.out.println("Thêm sản phẩm thành công với ID: " + newID);
@@ -132,7 +133,7 @@ public class ProductDAO {
     // Lấy thông tin của một sản phẩm
     public static ProductDTO getProduct(String ProductID) {
         String query = "SELECT sp.ProductID, sp.ProductName, sp.Price, sp.Quantity, sp.SupplierID, "
-                + "sp.TypeID, lsp.TypeName, sp.ProductImg, ncc.SupplierName, sp.ImportPrice "
+                + "sp.TypeID, lsp.TypeName, sp.ProductImg, ncc.SupplierName, sp.ImportPrice, sp.WarrantyTime "
                 + "FROM product sp "
                 + "JOIN type_product lsp ON sp.TypeID = lsp.TypeID "
                 + "LEFT JOIN supplier ncc ON sp.SupplierID = ncc.SupplierID "
@@ -162,7 +163,8 @@ public class ProductDAO {
                             rs.getString("TypeName"),
                             rs.getString("ProductImg"),
                             supplierName,
-                            importPrice2
+                            importPrice2,
+                            rs.getString("WarrantyTime")
                     );
                 }
             }
@@ -207,7 +209,7 @@ public class ProductDAO {
     public static ArrayList<ProductDTO> getAllProducts() {
         ArrayList<ProductDTO> products = new ArrayList<>();
         String query = "SELECT sp.ProductID, sp.ProductName, sp.Price, sp.Quantity, sp.SupplierID, "
-                + "sp.TypeID, lsp.TypeName, sp.ProductImg, ncc.SupplierName, sp.ImportPrice "
+                + "sp.TypeID, lsp.TypeName, sp.ProductImg, ncc.SupplierName, sp.ImportPrice, sp.WarrantyTime "
                 + "FROM product sp "
                 + "JOIN type_product lsp ON sp.TypeID = lsp.TypeID "
                 + "LEFT JOIN supplier ncc ON sp.SupplierID = ncc.SupplierID "
@@ -235,7 +237,8 @@ public class ProductDAO {
                         rs.getString("TypeName"),
                         rs.getString("ProductImg"),
                         supplierName,
-                        importPrice2
+                        importPrice2,
+                        rs.getString("WarrantyTime")
                 ));
             }
             System.out.println("Lấy danh sách sản phẩm thành công.");
@@ -250,7 +253,7 @@ public class ProductDAO {
     public static void updateProduct(ProductDTO product) {
         String findMaLoaiSQL = "SELECT TypeID FROM type_product WHERE TypeName = ?";
         String findMaNCCSQL = "SELECT SupplierID FROM supplier WHERE SupplierName = ?";
-        String updateProductSQL = "UPDATE product SET ProductName = ?, Price = ?, Quantity = ?, SupplierID = ?, TypeID = ?, ProductImg = ?, ImportPrice = ? WHERE ProductID = ? AND IsDeleted = 0";
+        String updateProductSQL = "UPDATE product SET ProductName = ?, Price = ?, Quantity = ?, SupplierID = ?, TypeID = ?, ProductImg = ?, ImportPrice = ?, WarrantyTime = ? WHERE ProductID = ? AND IsDeleted = 0";
 
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement findMaLoaiStmt = conn.prepareStatement(findMaLoaiSQL); PreparedStatement findMaNCCStmt = conn.prepareStatement(findMaNCCSQL); PreparedStatement updateProductStmt = conn.prepareStatement(updateProductSQL)) {
 
@@ -284,7 +287,8 @@ public class ProductDAO {
             updateProductStmt.setString(5, maLoai); // Cập nhật TypeID tìm được
             updateProductStmt.setString(6, product.getAnh());
             updateProductStmt.setString(7, product.getgiaNhap());
-            updateProductStmt.setString(8, product.getProductID());
+            updateProductStmt.setString(8, product.getTGBH());
+            updateProductStmt.setString(9, product.getProductID());
 
             int rowsUpdated = updateProductStmt.executeUpdate();
             if (rowsUpdated > 0) {
@@ -334,7 +338,7 @@ public class ProductDAO {
 
         String query = "SELECT sp.ProductID, sp.ProductName, sp.Price, sp.Quantity, "
                 + "sp.SupplierID, sp.TypeID, "
-                + "lsp.TypeName, sp.ProductImg, ncc.SupplierName, sp.ImportPrice "
+                + "lsp.TypeName, sp.ProductImg, ncc.SupplierName, sp.ImportPrice, sp.WarrantyTime "
                 + "FROM product sp "
                 + "JOIN type_product lsp ON sp.TypeID = lsp.TypeID "
                 + "JOIN supplier ncc ON sp.SupplierID = ncc.SupplierID "
@@ -361,7 +365,8 @@ public class ProductDAO {
                             rs.getString("TypeName"),
                             rs.getString("ProductImg"),
                             rs.getString("SupplierName"),
-                            rs.getString("ImportPrice")
+                            rs.getString("ImportPrice"),
+                            rs.getString("WarrantyTime")
                     ));
                 }
             }
@@ -390,11 +395,10 @@ public class ProductDAO {
         return serials;
     }
 
-    public boolean insert(ProductDTO product){
+    public boolean insert(ProductDTO product) {
         boolean result = false;
-        String sql = "Insert into product(ProductID, ProductName, ProductImg, Quantity, SupplierID, TypeID, ImportPrice, Price, IsDeleted) values(?,?,?,?,?,?,?,?,?)";
-        try(Connection conn = DatabaseConnection.getConnection();
-            PreparedStatement pst = conn.prepareStatement(sql)){
+        String sql = "Insert into product(ProductID, ProductName, ProductImg, Quantity, SupplierID, TypeID, ImportPrice, Price, WarrantyTime, IsDeleted) values(?,?,?,?,?,?,?,?,?,?)";
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement pst = conn.prepareStatement(sql)) {
             pst.setString(1, product.getProductID());
             pst.setString(2, product.getProductName());
             pst.setString(3, product.getAnh());
@@ -403,13 +407,15 @@ public class ProductDAO {
             pst.setString(6, product.getML());
             pst.setDouble(7, Double.parseDouble(product.getGiaNhap()));
             pst.setDouble(8, Double.parseDouble(product.getGiaNhap()) * 1.2); // Giá bán = Giá nhập * 1.2 (lãi 20%)
-            pst.setInt(9, 0);
+            pst.setString(9, product.getTGBH());
+            pst.setInt(10, 0);
             // In thu cau truy van de kiem tra
             System.out.println(pst.toString());
 
-            if(pst.executeUpdate()>=1)
+            if (pst.executeUpdate() >= 1) {
                 result = true;
-        }catch(SQLException e){
+            }
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return result;

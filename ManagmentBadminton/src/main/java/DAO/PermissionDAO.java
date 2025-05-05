@@ -24,6 +24,23 @@ import java.util.List;
  */
 public class PermissionDAO {
 
+    public static Boolean update_Permission(PermissionDTO per) {
+        try {
+            String sql = "UPDATE employee_rank SET RankName = ?, RankNameUnsigned = ? WHERE RankID = ? AND IsDeleted = 0";
+            Connection conn = DatabaseConnection.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, per.getName());
+            ps.setString(2, per.getnameUnsinged());
+            ps.setString(3, per.getID());
+
+            int result = ps.executeUpdate();
+            return result > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public static Boolean add_Permission(PermissionDTO per) {
         try {
             String sql = "INSERT INTO employee_rank (`RankID`, `RankName`, `RankNameUnsigned`, `IsDeleted`) VALUES (?, ?, ?, 0)";

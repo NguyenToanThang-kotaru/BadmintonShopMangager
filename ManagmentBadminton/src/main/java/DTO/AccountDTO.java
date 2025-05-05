@@ -66,6 +66,5 @@ public class AccountDTO {
     public void setPermission(PermissionDTO permission) {
         this.permission = permission;
     }
-    
-    
+
 }

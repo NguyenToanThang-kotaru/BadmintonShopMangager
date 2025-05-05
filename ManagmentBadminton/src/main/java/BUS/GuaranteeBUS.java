@@ -33,4 +33,8 @@ public class GuaranteeBUS {
     public static Boolean addGuarantee(String Series) {
         return GuaranteeDAO.addGuarantee(Series);
     }
+
+    public static ArrayList<GuaranteeDTO> searchGuarantees(String keyword) {
+        return GuaranteeDAO.searchGuarantees(keyword);
+    }
 }

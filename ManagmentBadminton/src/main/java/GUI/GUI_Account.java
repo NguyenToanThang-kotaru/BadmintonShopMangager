@@ -7,6 +7,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
 import BUS.AccountBUS;
+import BUS.EmployeeBUS;
 import BUS.PermissionBUS;
 import DAO.AccountDAO;
 import DTO.ActionDTO;
@@ -171,18 +172,23 @@ public class GUI_Account extends JPanel {
         deleteButton.addActionListener(e -> {
             int result = JOptionPane.showConfirmDialog(
                     this,
-                    "Bạn có chắc chắn muốn xóa quyền này?",
+                    "Bạn có chắc chắn muốn xóa tài khoản này?",
                     "Xác nhận xóa",
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE
             );
 
             if (result == JOptionPane.YES_OPTION) {
-                if (AccountBUS.deletedAccount(accountChoosing.getUsername())) {
-                    JOptionPane.showMessageDialog(this, "Xóa thành công");
-                    loadAccounts();
+                if (accountChoosing.getEmployeeID().equals(a.getEmployeeID())) {
+                    JOptionPane.showMessageDialog(this, "Bạn không thể xóa khi đang đăng nhập vào tài khoản thuộc về nhân viên này!");
                 } else {
-                    JOptionPane.showMessageDialog(this, "Xóa thất bại", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    if (AccountBUS.deletedAccount(accountChoosing.getUsername())) {
+
+                        JOptionPane.showMessageDialog(this, "Xóa thành công");
+                        loadAccounts();
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Xóa thất bại", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    }
                 }
             }
         });
@@ -216,7 +222,6 @@ public class GUI_Account extends JPanel {
         editButton.setVisible(canEdit);
         deleteButton.setVisible(canDelete);
         scrollPane.setVisible(canWatch);
-        reloadButton.setVisible(false);
     }
 
     // Phương thức tải danh sách tài khoản từ database lên bảng

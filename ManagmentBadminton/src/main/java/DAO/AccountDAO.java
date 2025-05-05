@@ -16,10 +16,10 @@ public class AccountDAO {
         ArrayList<AccountDTO> accounts = new ArrayList<>();
 
         String accountQuery = "SELECT a.*, e.* FROM account a "
-                   + "JOIN employee e ON a.EmployeeID = e.EmployeeID "
-                   + "WHERE a.IsDeleted = 0 "
-                   + "AND (a.Username LIKE ? OR a.Password LIKE ? OR a.EmployeeID LIKE ? "
-                   + "OR a.RankID LIKE ? OR e.FullName LIKE ?)";
+                + "JOIN employee e ON a.EmployeeID = e.EmployeeID "
+                + "WHERE a.IsDeleted = 0 "
+                + "AND (a.Username LIKE ? OR a.Password LIKE ? OR a.EmployeeID LIKE ? "
+                + "OR a.RankID LIKE ? OR e.FullName LIKE ?)";
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement accountStmt = conn.prepareStatement(accountQuery)) {
 
             String searchKeyword = "%" + keyword + "%";
@@ -167,8 +167,14 @@ public class AccountDAO {
 //            System.out.println(account.);
 
             int rowsUpdated = stmt.executeUpdate();
-            System.out.println("thanh connnggg");
-            return rowsUpdated > 0;
+            if (rowsUpdated > 0) {
+                System.out.println("okkkkk");
+
+                return true;
+            }
+            System.out.println("khong co rows");
+
+            return false;
 
         } catch (Exception e) {
             e.printStackTrace();

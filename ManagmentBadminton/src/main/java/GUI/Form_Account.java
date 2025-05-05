@@ -15,8 +15,8 @@ import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 
 public class Form_Account extends JDialog {
 
-    private JTextField txtEditPassword, txtUsername;
-    private JPasswordField txtRePassword, txtPassword;
+    private JTextField txtEditPassword, txtUsername, txtPassword;
+    private JPasswordField txtRePassword;
     private JLabel title, lblEmployeeName, txtAccount;
     private CustomCombobox<String> cbRole, cbEmployeeName;
     private CustomButton btnSave, btnCancel;
@@ -55,7 +55,7 @@ public class Form_Account extends JDialog {
         cbEmployeeName = new CustomCombobox<>(names);
         txtAccount = new JLabel();
         txtUsername = new JTextField(20);
-        txtPassword = new JPasswordField(20);
+        txtPassword = new JTextField(20);
         txtRePassword = new JPasswordField(20);
         txtEditPassword = new JTextField(20);
 //        cbRole = new CustomCombobox<>();
@@ -99,7 +99,6 @@ public class Form_Account extends JDialog {
 //            addComponent("Tên nhân viên:",lblEmployeeName, gbc);
             addComponent("Tên đăng nhập: ", txtUsername, gbc);
             addComponent("Mật Khẩu: ", txtPassword, gbc);
-            addComponent("Nhập Lại Mật Khẩu:", txtRePassword, gbc);
         }
 
         addComponent("Quyền:", cbRole, gbc);
@@ -121,19 +120,23 @@ public class Form_Account extends JDialog {
         btnSave.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (account == null) {
+                    if (cbEmployeeName.getSelectedItem()==null) {
+                        JOptionPane.showMessageDialog(null, "Vui lòng chọn nhân viên");
+                    }else{                    
                     System.out.println(cbEmployeeName.getSelectedItem().toString());
-                    char[] passwordChars = txtPassword.getPassword();
+                    String passwordChars = txtPassword.getText();
                     String username = txtUsername.getText();
                     String password = new String(passwordChars);
                     EmployeeDTO emp = EmployeeBUS.getEmployeeByID(cbEmployeeName.getSelectedItem().toString());
                     PermissionDTO role = PermissionDAO.getPermissionByName(cbRole.getSelectedItem().toString());
-                    AccountDTO a = new AccountDTO(username, password,emp.getEmployeeID(),emp.getFullName(), role);
-                    if (AccountBUS.addAccount(a))  {
-                        System.out.println("Thanh cong");
-                        parent.loadAccounts();
-                        dispose();
-                    } else {
-                        System.out.println("That bai");
+                    AccountDTO a = new AccountDTO(username, password, emp.getEmployeeID(), emp.getFullName(), role);
+                        if (AccountBUS.addAccount(a)) {
+                            System.out.println("Thanh cong");
+                            parent.loadAccounts();
+                            dispose();
+                        } else {
+                            System.out.println("That bai");
+                        }
                     }
                 } else {
                     String username = txtAccount.getText();
@@ -142,12 +145,11 @@ public class Form_Account extends JDialog {
                     String empID = account.getEmployeeID();
                     String empFullName = account.getFullName();
                     System.out.println(username + password + role);
-                    AccountDTO a = new AccountDTO(username, password,empID,empFullName, role);
+                    AccountDTO a = new AccountDTO(username, password, empID, empFullName, role);
                     if (AccountBUS.updateAccount(a) == true) {
-                        System.out.println("Thanh cong");
+                        System.out.println("Thanh con sua tai khoan");
                         parent.loadAccounts();
                         dispose();
-
                     } else {
                         System.out.println("That bai");
                     }
