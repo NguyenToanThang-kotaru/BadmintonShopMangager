@@ -173,7 +173,7 @@ public class GUI_Form_Import extends JDialog {
             productDetailPanel.getTxtProductName().setText((String) details[1]);
             productDetailPanel.getTxtPrice().setText((String) details[2]);
 
-            if (Integer.parseInt(((String) details[2]).replace(",", "")) == 0) 
+            if (Integer.parseInt(((String) details[2]).replace(",", "").trim()) == 0) 
                 productDetailPanel.getTxtPrice().setEditable(true);
             else 
                 productDetailPanel.getTxtPrice().setEditable(false);

@@ -52,7 +52,7 @@ public class ProductDTO {
         this.anh = anh;
     }
     
-        public ProductDTO(String productID, String productName, String gia, String soluong, String maNCC, String ML, String anh, String giaNhap, String TGBH) {
+    public ProductDTO(String productID, String productName, String gia, String soluong, String maNCC, String ML, String anh, String giaNhap, String TGBH) {
         this.productID = productID;
         this.productName = productName;
         this.gia = gia;
