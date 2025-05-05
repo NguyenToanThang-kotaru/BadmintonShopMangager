@@ -141,12 +141,14 @@ public class GuaranteeDAO {
     public static ArrayList<GuaranteeDTO> searchGuarantees(String keyword) {
         ArrayList<GuaranteeDTO> guarantees = new ArrayList<>();
 
-        String query = "SELECT * FROM warranty WHERE WarrantyID LIKE ? OR Series LIKE ?";
+        String query = "SELECT * FROM warranty WHERE WarrantyID LIKE ? OR Series LIKE ? OR WarrantyReason LIKE ? OR Status LIKE ?";
 
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
             String searchKeyword = "%" + keyword + "%";
             stmt.setString(1, searchKeyword);
             stmt.setString(2, searchKeyword);
+            stmt.setString(3, searchKeyword);
+            stmt.setString(4, searchKeyword);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
