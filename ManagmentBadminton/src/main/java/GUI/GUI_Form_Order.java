@@ -71,6 +71,7 @@ public class GUI_Form_Order extends JDialog {
     private SaleInvoiceBUS orderBUS;
     private SaleInvoiceDTO currentOrder;
     private AccountDTO currentAccount;
+    private final double profit = 1.2;
     private int totalAmount;
     private ProductBUS productBUS = new ProductBUS();
     private CustomerBUS customerBUS = new CustomerBUS();
@@ -522,11 +523,12 @@ public class GUI_Form_Order extends JDialog {
         productTableModel.setRowCount(0);
         List<ProductDTO> list = ProductDAO.getAllProducts();
         for (ProductDTO p : list) {
+            double sellingPrice = Integer.parseInt(p.getGia()) * profit;
             productTableModel.addRow(new Object[]{
                 p.getProductID(),
                 p.getProductName(),
                 p.getTL(),
-                p.getGia(),
+                formatCurrency((int) sellingPrice),
                 p.getSoluong()
             });
         }
