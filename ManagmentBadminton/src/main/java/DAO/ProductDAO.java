@@ -407,7 +407,7 @@ public class ProductDAO {
             pst.setString(6, product.getML());
             pst.setDouble(7, Double.parseDouble(product.getGiaNhap()));
             pst.setDouble(8, Double.parseDouble(product.getGiaNhap()) * 1.2); // Giá bán = Giá nhập * 1.2 (lãi 20%)
-            pst.setString(9, product.getTGBH());
+            pst.setInt(9, 0);
             pst.setInt(10, 0);
             // In thu cau truy van de kiem tra
             System.out.println(pst.toString());
