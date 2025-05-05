@@ -59,7 +59,7 @@ public class overviewFrom extends javax.swing.JPanel {
         lineChart.addLegend("Chi phí", new Color(54, 4, 143), new Color(104, 49, 200));
         lineChart.addLegend("Lợi nhuận", new Color(5, 125, 0), new Color(95, 209, 69));
         for (StatisticsByMonthDTO i : list) {
-            lineChart.addData(new ModelChart("Tháng " + i.getMonth(), new double[]{i.getCost(), i.getIncome(), i.getProfit()}));
+            lineChart.addData(new ModelChart("Tháng " + i.getMonth(), new double[]{i.getIncome(), i.getCost(), i.getProfit()}));
         }
         lineChart.start();
     }
@@ -69,7 +69,7 @@ public class overviewFrom extends javax.swing.JPanel {
         chart.addLegend("Chi phí", new Color(54, 4, 143), new Color(104, 49, 200));
         chart.addLegend("Lợi nhuận", new Color(5, 125, 0), new Color(95, 209, 69));
         for (StatisticsByDayDTO i : list) {
-            chart.addData(new ModelChart("Ngày " + i.getDay(), new double[]{i.getCost(), i.getIncome(), i.getProfit()}));
+            chart.addData(new ModelChart("Ngày " + i.getDay(), new double[]{i.getIncome(), i.getCost(), i.getProfit()}));
         }
         chart.start();
     }

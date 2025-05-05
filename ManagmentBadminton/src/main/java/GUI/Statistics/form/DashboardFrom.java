@@ -64,7 +64,7 @@ public class DashboardFrom extends javax.swing.JPanel {
         for (int i = start; i < end; i++) {
             StatisticsByYearDTO data = dataset.get(i);
             chart.addData(new ModelChart("Năm " + data.getYear(), new double[]{
-                data.getCost(), data.getIncome(), data.getProfit()
+                data.getIncome(), data.getCost(), data.getProfit()
             }));
         }
         chart.start();

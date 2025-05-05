@@ -66,7 +66,7 @@ public class DashboardFrom1 extends javax.swing.JPanel {
 
     private void loadDataChart(ArrayList<StatisticsByMonthDTO> list) {
         for (StatisticsByMonthDTO i : list) {
-            chart.addData(new ModelChart("Tháng " + i.getMonth(), new double[]{i.getCost(), i.getIncome(), i.getProfit()}));
+            chart.addData(new ModelChart("Tháng " + i.getMonth(), new double[]{i.getIncome(), i.getCost(), i.getProfit()}));
         }
         chart.start();
     }

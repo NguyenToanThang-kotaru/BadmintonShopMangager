@@ -715,12 +715,14 @@ public class GUI_Form_Order extends JDialog {
     }
 
     private String getNextCustomerID() {
+        System.out.println("Hello i'm in getNextCustomerID()");
         ArrayList<CustomerDTO> customerIDs = customerBUS.getAll();
         if (customerIDs.isEmpty()) {
             return "C01";
         }
-        String lastID = customerIDs.get(customerIDs.size() - 1).getId();
-        int number = Integer.parseInt(lastID.substring(2));
+        CustomerDTO cus = customerIDs.get(customerIDs.size() - 1);
+        String lastID = cus.getId();
+        int number = Integer.parseInt(lastID.substring(1));
         return String.format("C%02d", number + 1);
     }
 
